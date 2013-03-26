@@ -1,0 +1,14 @@
+\contentsline {section}{\numberline {1}Introdu\IeC {\c c}\IeC {\~a}o ao trabalho}{3}{section.1}
+\contentsline {section}{\numberline {2}Problema}{3}{section.2}
+\contentsline {section}{\numberline {3}C\IeC {\'o}digo}{4}{section.3}
+\contentsline {section}{\numberline {4}Sobre os testes}{10}{section.4}
+\contentsline {subsection}{\numberline {4.1}M\IeC {\'a}quina utilizada}{11}{subsection.4.1}
+\contentsline {section}{\numberline {5}Testes}{12}{section.5}
+\contentsline {subsection}{\numberline {5.1}Teste 1 - M = 10, N = 1}{12}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Teste 2 - M = 100, N = 1}{14}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Teste 3 - M = 1000, N = 1}{16}{subsection.5.3}
+\contentsline {subsection}{\numberline {5.4}Teste 4 - M = 1000, N = 10}{18}{subsection.5.4}
+\contentsline {subsection}{\numberline {5.5}Teste 5 - M = 1000, N = 100}{20}{subsection.5.5}
+\contentsline {subsection}{\numberline {5.6}Teste 6 - M = 1000, N = 1000}{22}{subsection.5.6}
+\contentsline {subsection}{\numberline {5.7}Teste 7 - M = 1000, N = 10000}{24}{subsection.5.7}
+\contentsline {section}{\numberline {6}Conclus\IeC {\~o}es}{26}{section.6}

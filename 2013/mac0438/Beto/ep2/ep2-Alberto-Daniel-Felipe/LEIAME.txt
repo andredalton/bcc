@@ -1,0 +1,20 @@
+|============ Alunos ============|
+Alberto Bueno Júnior - 6514202
+Daniel Reverbel - 4512210
+Felipe Solferini - 6431304
+
+|============ Algoritmo Utilizado ============|
+O algoritmo de sincronização de barreiras utilizado é o "Shared Counter", que pode ser visto na seção 3.4.1 do
+livro "Foundations of Multithreaded Parallel and Distributed Programming".
+
+|============ Compilação ============|
+Basta rodar o comando "make".
+
+|============ Rodando o programa ============|
+Basta rodar o comando "ep2 <entrada>", onde entrada é um float.
+
+|============ Máquina Utilizada ============|
+A máquina utilizada para testes tem a seguinte configuraçao:
+
+Processador: Core 2 Duo 2.26 GHz
+Memória: 4 GB

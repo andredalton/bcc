@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+
+$n = $ARGV[0];
+$a = $ARGV[1];
+$b = $ARGV[2];
+$dir_ep = "/home/shin/Documents/IME/2011_1/Concorrente/ep1";
+$dir_testes = "$dir_ep/testes";
+
+@testes = (
+	[1,1],
+	[10, 1],
+	[100, 1],
+	[1000, 1],
+	[1000, 10],
+	[1000, 100],
+	[1000, 1000],
+	[1000, 10000]
+);
+my @copias;
+
+for($t = $a; $t < $b; $t++) {
+	open(SAIDA, " > $dir_testes/teste$t");
+	for ($i = 1; $i <= $n; $i++) {
+		print "[$i] - Começando\n";
+		system "date";
+		$saida = qx($dir_ep/a $testes[$t][0] $testes[$t][1] s); chomp $saida;
+		print SAIDA "$saida\n";
+		print "[$i] - Terminei!\n";
+		system "date";
+	}
+	close(SAIDA);
+	open(SAIDA, " < $dir_testes/teste$t");
+	open(SAIDA2, "> $dir_testes/dados$t");
+	foreach $line (<SAIDA>) {
+		chomp $line;
+		if ($line =~ /^([0-9]+)(\s)([0-9]+)(\s)(.*)/) {
+			$copias[$1] += $3;
+		}
+	}
+	for($i = 1; $i < @copias; $i++) {
+		print SAIDA2 "$i $copias[$i]\n";
+	}
+	close(SAIDA2);
+	close(SAIDA);
+}

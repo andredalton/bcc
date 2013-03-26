@@ -1,0 +1,5 @@
+#!/usr/bin/perl
+
+system "pdflatex ep1.tex";
+system "pdflatex ep1.tex";
+system "evince ep1.pdf";

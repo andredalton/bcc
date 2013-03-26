@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+
+$dir_ep = "/home/shin/Documents/IME/2011_1/Concorrente/ep1";
+$dir_testes = "$dir_ep/testes/feito";
+
+
+for($t = 1; $t <= 7; $t++) {
+	my @copiadores;
+	my %maxmin;
+	open(ENTRADA, "< $dir_testes/teste$t");
+	print "TESTE $t: ";
+	foreach $line (<ENTRADA>) {
+		chomp $line;
+		if ($line =~ /^([0-9]+)(\s)([0-9]+)(\s)([0-9]+)(\s)([.0-9]+)(\s)([.0-9]+)$/) {
+			$copiadores[$1]{copias} += $3;
+			$copiadores[$1]{bytes} += $5;
+			$copiadores[$1]{ociosidade} += $7;
+			$copiadores[$1]{total} += $9;
+			if ($3 <= $maxmin{min}) {
+				$maxmin{min} = $3;
+			}
+			if ($3 > $maxmin{max}) {
+				$maxmin{max} = $3;
+			}
+		}
+		else {
+			print "Encontrei uma linha incorreta: ($line)\n";
+		}
+		
+	}
+	close(ENTRADA);
+
+	open(SAIDA, "> $dir_testes/dados$t");
+	$n = @copiadores - 1;
+	print "N = $n; ";
+	for ($i = 1; $i <= $n; $i++) {
+		$media_copias = $copiadores[$i]{copias} / 30;
+		$media_bytes = $copiadores[$i]{bytes} / 30;
+		$media_ociosidade = $copiadores[$i]{ociosidade} / 30;
+		$media_total = $copiadores[$i]{total} / 30;
+		print SAIDA "$i $media_copias $media_bytes $media_ociosidade $media_total\n";
+#		print "$i $media_copias $media_bytes $media_ociosidade $media_total\n";
+	}
+	$max = $maxmin{max};
+	$min = $maxmin{min};
+	$dif = $max - $min;
+	print "MAX CÓPIAS = $max; MIN CÓPIAS = $min; DIF (MAX - MIN) = $dif\n";
+	close(SAIDA);
+}

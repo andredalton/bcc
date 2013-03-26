@@ -1,0 +1,4 @@
+Nome: Andre Meneghelli Vale
+NUSP: 4898948
+
+1) Nao, pois o vertice 4 nao e adjacente ao vertice 3.

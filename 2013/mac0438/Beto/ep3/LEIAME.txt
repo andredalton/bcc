@@ -1,0 +1,58 @@
+|=========  Alunos =========|
+Alberto Bueno Júnior - 6514202
+Daniel Reverbel - 4512210
+Felipe Solferini - 6431304
+
+|=========  Monitor =========|
+
+1) Recurso compartilhado:
+
+O Recurso compartilhado implementado como Monitor foi o Elevador (controlado pelo ascensorista que é o próprio Monitor).
+
+2) Variáveis permanentes e de condição:
+
+private int tempo;
+private int nPessoasElevador;
+private int capacidadeTotal;
+private int andarAtual;
+private int subindo;
+private int nAndares;
+private int entraramRodada;
+private int sairamRodada;
+private int nThreads;
+private int barreira;  <- Variável de condição
+public Semaphore s;  <- Variável de condição
+
+3) Comandos de inicialização
+
+public Monitor(int andares, int capacidade, int nThreads) {
+	this.nThreads = nThreads;
+	this.nPessoasElevador = 1;
+	this.capacidadeTotal = capacidade;
+	this.andarAtual = 1;
+	this.subindo = 1;
+	this.tempo = 0;
+	this.nAndares = andares;
+	this.entraramRodada = 0;
+	this.sairamRodada = 0;
+	this.s = new Semaphore(1, true);
+	this.barreira = 1;
+	start();
+}
+
+4) Procedimentos do Monitor
+
+public void movimenta();
+public boolean terminouThreads();
+public int getBarreira();
+public void incBarreira();
+public int getNPessoasElevador();
+public void entraPessoa();
+public void saiPessoa();
+public boolean tentaEntrarPessoa(int andarPessoa);
+public boolean tentaSairPessoa(int andarPessoa);
+public int getEntraramRodada();
+public int getSairamRodada();
+public int getTempo();
+public int getNAndares();
+public int getAndarAtual();

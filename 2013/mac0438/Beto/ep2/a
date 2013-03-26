@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+
+$entrada = $ARGV[0];
+if (!$entrada) {
+	$entrada = 1.3;
+}
+
+system "clear";
+system "make";
+if (! $?) {
+	system "ep2 $entrada";
+}

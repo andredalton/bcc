@@ -1,0 +1,10 @@
+#!/usr/bin/perl
+
+system "./parser";
+
+for($i = 1; $i <= 7; $i++) {
+	system "./faz_graficos_copias $i";
+	system "./faz_graficos_ociosidade $i";
+	system "./faz_graficos_bytes $i";
+}
+

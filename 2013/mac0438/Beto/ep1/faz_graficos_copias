@@ -1,0 +1,158 @@
+#!/usr/bin/perl
+
+$teste = $ARGV[0];
+$dir_ep = "/home/shin/Documents/IME/2011_1/Concorrente/ep1";
+$dir_graficos = "$dir_ep/graficos";
+$dir_testes = "$dir_ep/testes/feito";
+
+if ($teste eq "1") {
+$grafico = "$dir_graficos/grafico_copias1.png";
+$entrada = "$dir_testes/dados1";
+open (GNUPLOT, "| gnuplot");
+print GNUPLOT <<EOPLOT;
+set term png
+set output "$grafico"
+set xlabel "Copiadores"
+set ylabel "Número médio de Cópias"
+set xtics 1
+set ytics 1
+set title "Teste 1 (m = 10, n = 1)"
+set boxwidth 0.75 absolute
+set style fill solid 1.00 border -1
+set style histogram rowstacked
+set style data histograms
+plot "$entrada" using 2:xtic(1) t ''
+EOPLOT
+close(GNUPLOT);
+exit 0;
+}
+if ($teste eq "2") {
+$grafico = "$dir_graficos/grafico_copias2.png";
+$entrada = "$dir_testes/dados2";
+open (GNUPLOT, "| gnuplot");
+print GNUPLOT <<EOPLOT;
+set term png
+set output "$grafico"
+set xlabel "Copiadores"
+set ylabel "Número médio de Cópias"
+set xtics 1
+set ytics 10
+set title "Teste 2 (m = 100, n = 1)"
+set boxwidth 0.75 absolute
+set style fill solid 1.00 border -1
+set style histogram rowstacked
+set style data histograms
+plot "$entrada" using 2:xtic(1) t ''
+EOPLOT
+close(GNUPLOT);
+exit 0;
+}
+if ($teste eq "3") {
+$grafico = "$dir_graficos/grafico_copias3.png";
+$entrada = "$dir_testes/dados3";
+open (GNUPLOT, "| gnuplot");
+print GNUPLOT <<EOPLOT;
+set term png
+set output "$grafico"
+set xlabel "Copiadores"
+set ylabel "Número médio de Cópias"
+set xtics 1
+set ytics 100
+set title "Teste 3 (m = 1000, n = 1)"
+set boxwidth 0.75 absolute
+set style fill solid 1.00 border -1
+set style histogram rowstacked
+set style data histograms
+plot "$entrada" using 2:xtic(1) t ''
+EOPLOT
+close(GNUPLOT);
+exit 0;
+}
+if ($teste eq "4") {
+$grafico = "$dir_graficos/grafico_copias4.png";
+$entrada = "$dir_testes/dados4";
+open (GNUPLOT, "| gnuplot");
+print GNUPLOT <<EOPLOT;
+set term png
+set output "$grafico"
+set xlabel "Copiadores"
+set ylabel "Número médio de Cópias"
+set xtics 1
+set ytics 100
+set title "Teste 4 (m = 1000, n = 10)"
+set boxwidth 0.75 absolute
+set style fill solid 1.00 border -1
+set style histogram rowstacked
+set style data histograms
+plot "$entrada" using 2:xtic(1) t ''
+EOPLOT
+close(GNUPLOT);
+exit 0;
+}
+if ($teste eq "5") {
+$grafico = "$dir_graficos/grafico_copias5.png";
+$entrada = "$dir_testes/dados5";
+open (GNUPLOT, "| gnuplot");
+print GNUPLOT <<EOPLOT;
+set term png
+set output "$grafico"
+set xlabel "Copiadores"
+set ylabel "Número médio de Cópias"
+set xrange[1:100]
+set xtics 10
+set ytics 10
+set title "Teste 5 (m = 1000, n = 100)"
+set boxwidth 0.75 absolute
+set style fill solid 1.00 border -1
+set style histogram rowstacked
+set style data histograms
+plot "$entrada" using 2 t ''
+EOPLOT
+close(GNUPLOT);
+exit 0;
+}
+if ($teste eq "6") {
+$grafico = "$dir_graficos/grafico_copias6.png";
+$entrada = "$dir_testes/dados6";
+open (GNUPLOT, "| gnuplot");
+print GNUPLOT <<EOPLOT;
+set term png
+set output "$grafico"
+set xlabel "Copiadores"
+set ylabel "Número médio de Cópias"
+set xrange[1:1000]
+set xtics 100
+set ytics 1
+set title "Teste 6 (m = 1000, n = 1000)"
+set boxwidth 0.30 absolute
+set style fill solid 1.00 border -1
+set style histogram rowstacked
+set style data histograms
+plot "$entrada" using 2 t ''
+EOPLOT
+close(GNUPLOT);
+exit 0;
+}
+if ($teste eq "7") {
+$grafico = "$dir_graficos/grafico_copias7.png";
+$entrada = "$dir_testes/dados7";
+open (GNUPLOT, "| gnuplot");
+print GNUPLOT <<EOPLOT;
+set term png
+set output "$grafico"
+set xlabel "Copiadores"
+set ylabel "Número médio de Cópias"
+set xrange [1:10000]
+set xtics 1000
+set ytics 0.05
+set title "Teste 7 (m = 1000, n = 10000)"
+set boxwidth 0.30 absolute
+set style fill solid 1.00 border -1
+set style histogram rowstacked
+set style data histograms
+plot "$entrada" using 2 t ''
+EOPLOT
+close(GNUPLOT);
+exit 0;
+}
+
