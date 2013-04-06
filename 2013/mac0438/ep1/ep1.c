@@ -25,6 +25,9 @@
 #define CITAM 180        /* x1km  */
 #define COTAM 42         /* x1km  */
 
+#define T1 0
+#define T2 1
+
 typedef struct tmp{
     unsigned int h;
 	unsigned int m;
@@ -42,16 +45,23 @@ typedef struct posAtleta{
 	double position;
 } PosicaoAtleta;
 
+/* Inicialização das variáveis globais. */
+
 int PortalT1Ent;
 int PortalT2Ent;
 int PortalT1Sai;
 int PortalT2Sai;
-int *estrada[180];
+int *estrada[3][180];
+
+int conclusao = 0;
 
 int deltaTime=1800000;
 int linEntregue=0;
 int maxTime=0;
 PosicaoAtleta **relatividade;
+
+/* Termino da declaração das variáveis globais. */
+
 
 void *mallocX (unsigned int nbytes) 
 {
@@ -109,6 +119,9 @@ int timeRand(int min, int max){
 	return (int)(1000.0*min + 1000.0*rand()/RAND_MAX*(max-min));
 }
 
+/* As funções a seguir calculam o tempo gasto em cada etapa para um Atleta a.
+*  Dependendo da etapa deve ser passado um parametro extra para a função.
+*/	
 void natacao(Atleta a){
 	int i;
 	
@@ -139,6 +152,7 @@ void corrida(Atleta a){
 	}
 }
 
+/* Para esta função o tipo de terreno também deve ser passado como parametro de entrada. */
 int ciclismo( Atleta a, int terreno){
 	switch(terreno){
 		case SUBIDA:
@@ -175,6 +189,32 @@ int ciclismo( Atleta a, int terreno){
 	return 0;
 }
 
+/* Para esta função é preciso especificar o numero da transicao no segundo parametro. */
+int transicao( Atleta a, int t){
+	if(t==T1){
+		if( a->sexo == FEMININO && a->categoria == AMADOR )
+			return timeRand(150, 390);
+		if( a->sexo == MASCULINO && a->categoria == AMADOR )
+			return timeRand(150, 330);
+		if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
+			return timeRand(90, 150);
+		if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
+			return timeRand(90, 150);
+	}
+	else{
+		if( a->sexo == FEMININO && a->categoria == AMADOR )
+			return timeRand(270, 720);
+		if( a->sexo == MASCULINO && a->categoria == AMADOR )
+			return timeRand(240, 600);
+		if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
+			return timeRand(150, 360);
+		if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
+			return timeRand(120, 180);
+	}
+
+	return 0;
+}
+
 void classificacao(void){
 	int i;
 	
@@ -183,6 +223,7 @@ void classificacao(void){
 		sleep(rand()%5);
 	}
 	
+	conclusao++;
 	/*
 	relatividade = reallocX(NULL, sizeof(PosicaoAtleta)*m);
 	relatividade = reallocX(relatividade, sizeof(PosicaoAtleta)*m++);
@@ -198,19 +239,32 @@ int main(int argc, char *argv[]){
 	char *filename=NULL;
 	int i;
 	int m = 100;
+	int mem;
 	
-	pthread_t *atleta;
-	pthread_t ids_classificacao[10];
+	pthread_t ;
+	pthread_t ids_atletas[10];
 	
 	srand( time(NULL) );
 	
 	for (i = 0; i < 10; i++) {
-		if (pthread_create(&(ids_classificacao[i]),NULL,(void *)classificacao,NULL)) {
+		if (pthread_create(&(ids_atletas[i]),NULL,(void *)classificacao,NULL)) {
 			fprintf(stderr,"Erro no pthread_create\n");
 			return(2);
 		}
 	}
 	
+	mem = 0;
+
+	printf("Thread principal a esperar a terminação das threads criadas \n");
+	for(i=0;i < 10;i++)
+		pthread_join(ids_atletas[i],NULL); /* Esperara a junção das threads */
+
+
+	printf("Thread principal a esperar a terminação das threads criadas \n");
+	for(i=0;i < NUM_THREADS;i++)
+		pthread_join(threads[i],NULL); /* Esperara a junção das threads */
+
+
 	/*
 	for( i=1; i<argc; i++){
 		if( strcmp(argv[i], "-debug")==0 )
@@ -222,5 +276,6 @@ int main(int argc, char *argv[]){
 	if(filename==NULL)
 		return 1;
 	*/
+
 	return 0;
 }
