@@ -6,105 +6,21 @@
 #include <string.h>
 #include <unistd.h>
 
-#define NPROVAS 3
-#define NATACAO 0
-#define CICLISMO 1
-#define CORRIDA 2
-
-#define MASCULINO 0
-#define FEMININO 1
-
-#define PROFISSIONAL 0
-#define AMADOR 1
-
-#define SUBIDA 0
-#define PLANO 1
-#define DESCIDA 2
-
-#define NATAM 38         /* x100m */ 
-#define CITAM 180        /* x1km  */
-#define COTAM 42         /* x1km  */
-
-#define T1 0
-#define T2 1
-
-typedef struct tmp{
-    unsigned int h;
-	unsigned int m;
-	unsigned int ms;
-} *Tempo;
-
-typedef struct atl{
-	int sexo;
-	int categoria;
-	int ms[NPROVAS];
-} *Atleta;
-
-typedef struct posAtleta{
-	int id;
-	double position;
-} PosicaoAtleta;
+#include "tempos.h"
 
 /* Inicialização das variáveis globais. */
-
 int PortalT1Ent;
 int PortalT2Ent;
 int PortalT1Sai;
 int PortalT2Sai;
 int *estrada[3][180];
+PosicaoAtleta **tempoEspaco;
 
-int conclusao = 0;
-
-int deltaTime=1800000;
-int linEntregue=0;
-int maxTime=0;
-PosicaoAtleta **relatividade;
+int tic = 0;					/* O tic de tempo para impressão da classificação. ( default 30min, com -debug 1min ). */
+int lPrint = 0;
+int run;
 
 /* Termino da declaração das variáveis globais. */
-
-
-void *mallocX (unsigned int nbytes) 
-{
-   void *ptr;
-   ptr = malloc (nbytes);
-   if (ptr == NULL) {
-      printf ("Socorro! malloc devolveu NULL! (%d)\n", nbytes);
-      exit (EXIT_FAILURE);
-   }
-   return ptr;
-}
-
-void *reallocX (void *ptr, unsigned int nbytes) 
-{
-   ptr = realloc( ptr, nbytes);
-   if (ptr == NULL) {
-      printf ("Socorro! realloc devolveu NULL! (%d)\n", nbytes);
-      exit (EXIT_FAILURE);
-   }
-   return ptr;
-}
-
-Tempo converteTempo(int ms){
-	Tempo t = (Tempo) mallocX(sizeof(struct tmp));
-	
-	t->ms = ms%60000;
-	t->m = ms%3600000/60000;
-	t->h = ms/3600000;
-	
-	return t;
-}
-
-Atleta novoAtleta(int sexo, int categoria ) {
-	int i;
-	Atleta a = (Atleta) mallocX(sizeof(struct atl));
-	
-	a->sexo = sexo;
-	a->categoria = categoria;
-	for(i=0; i<NPROVAS; i++){
-		a->ms[i] = 0;
-	}
-	return a;
-}
 
 /*
 int carregaArquivo(char nome[], int &hp, &mp, &ha, &ma, ){
@@ -114,116 +30,26 @@ int carregaArquivo(char nome[], int &hp, &mp, &ha, &ma, ){
 }
 */
 
-/* Função que calcula um tempo aleatório que tem valor minimo de min e máximo de max. */
-int timeRand(int min, int max){
-	return (int)(1000.0*min + 1000.0*rand()/RAND_MAX*(max-min));
-}
-
-/* As funções a seguir calculam o tempo gasto em cada etapa para um Atleta a.
-*  Dependendo da etapa deve ser passado um parametro extra para a função.
-*/	
-void natacao(Atleta a){
-	int i;
+/* Imprime a possição dos atletas a cada t segundos de prova. */
+void *classificacao(int n) {
+	int i=5;
 	
-	for(i=0; i<NATAM; i++){
-		if( a->sexo == FEMININO && a->categoria == AMADOR )
-			a->ms[NATACAO] += timeRand(150, 300);
-		if( a->sexo == MASCULINO && a->categoria == AMADOR )
-			a->ms[NATACAO] += timeRand(120, 240);
-		if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
-			a->ms[NATACAO] += timeRand(90, 120);
-		if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
-			a->ms[NATACAO] += timeRand(75, 100);
-	}
-}
 
-void corrida(Atleta a){
-	int i;
+	while(run){
+		for(i=0; i<n; i++)
+			if(tempoEspaco[tic][i].id==0) break;
+		
+		printf("(%d %d) \n", tic, i);
+
+		if(i==n){
+			printf("Imprimindo linha: %d\n", tic);
+			tic++;
+		}
+		sleep(1);
+	}
+
+	printf("Ahhhhhh\n");
 	
-	for(i=0; i<COTAM; i++){
-		if( a->sexo == FEMININO && a->categoria == AMADOR )
-			a->ms[NATACAO] += timeRand(330, 420);
-		if( a->sexo == MASCULINO && a->categoria == AMADOR )
-			a->ms[NATACAO] += timeRand(300, 420);
-		if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
-			a->ms[NATACAO] += timeRand(260, 290);
-		if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
-			a->ms[NATACAO] += timeRand(240, 260);
-	}
-}
-
-/* Para esta função o tipo de terreno também deve ser passado como parametro de entrada. */
-int ciclismo( Atleta a, int terreno){
-	switch(terreno){
-		case SUBIDA:
-			if( a->sexo == FEMININO && a->categoria == AMADOR )
-				return timeRand(3600/10, 3600/15);
-			if( a->sexo == MASCULINO && a->categoria == AMADOR )
-				return timeRand(3600/12, 3600/20);
-			if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
-				return timeRand(3600/20, 3600/30);
-			if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
-				return timeRand(3600/30, 3600/40);
-			break;
-		case PLANO:
-			if( a->sexo == FEMININO && a->categoria == AMADOR )
-				return timeRand(3600/25, 3600/40);
-			if( a->sexo == MASCULINO && a->categoria == AMADOR )
-				return timeRand(3600/30, 3600/45);
-			if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
-				return timeRand(3600/45, 3600/50);
-			if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
-				return timeRand(3600/50, 3600/55);
-			break;
-		case DESCIDA:
-			if( a->sexo == FEMININO && a->categoria == AMADOR )
-				return timeRand(3600/50, 3600/65);
-			if( a->sexo == MASCULINO && a->categoria == AMADOR )
-				return timeRand(3600/50, 3600/70);
-			if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
-				return timeRand(3600/70, 3600/90);
-			if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
-				return timeRand(3600/100, 3600/100);
-			break;
-	}
-	return 0;
-}
-
-/* Para esta função é preciso especificar o numero da transicao no segundo parametro. */
-int transicao( Atleta a, int t){
-	if(t==T1){
-		if( a->sexo == FEMININO && a->categoria == AMADOR )
-			return timeRand(150, 390);
-		if( a->sexo == MASCULINO && a->categoria == AMADOR )
-			return timeRand(150, 330);
-		if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
-			return timeRand(90, 150);
-		if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
-			return timeRand(90, 150);
-	}
-	else{
-		if( a->sexo == FEMININO && a->categoria == AMADOR )
-			return timeRand(270, 720);
-		if( a->sexo == MASCULINO && a->categoria == AMADOR )
-			return timeRand(240, 600);
-		if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
-			return timeRand(150, 360);
-		if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
-			return timeRand(120, 180);
-	}
-
-	return 0;
-}
-
-void classificacao(void){
-	int i;
-	
-	for( i=0; i<5; i++){
-		printf("%d\n", i);
-		sleep(rand()%5);
-	}
-	
-	conclusao++;
 	/*
 	relatividade = reallocX(NULL, sizeof(PosicaoAtleta)*m);
 	relatividade = reallocX(relatividade, sizeof(PosicaoAtleta)*m++);
@@ -233,38 +59,76 @@ void classificacao(void){
 	relatividade = reallocX(relatividade[1], sizeof(PosicaoAtleta)*m--);
 	relatividade = reallocX(relatividade[1], sizeof(PosicaoAtleta)*m--);
 	*/
+
+	return NULL;
 }
 
-int main(int argc, char *argv[]){
-	char *filename=NULL;
+void *atleta(Atleta a){
 	int i;
-	int m = 100;
-	int mem;
+	double p = 0;
+
+	for(i=0; i<10; i++){
+		/*
+		printf("AA\t%d %f\n", a->id, p);
+		atualizaPosicao( &tempoEspaco[i][a->id], a->id, p );
+		*/
+		tempoEspaco[i][a->id].id = a->id;
+		tempoEspaco[i][a->id].posicao = p;
+		printf("\t\t[%d, %d] = %f\n", i, a->id, p);
+		p += (double) (rand()%500);
+		sleep(rand()%5);
+	}
+
+	return NULL;
+}
+
+/* Função principal de verdade */
+int ironMain(int argc, char *argv[]){
+	int
+		i,
+		j,
+		n=10;
 	
-	pthread_t ;
 	pthread_t ids_atletas[10];
+	pthread_t id_classificacao;
 	
 	srand( time(NULL) );
+
+	tempoEspaco = (PosicaoAtleta**) mallocX(10*sizeof(PosicaoAtleta*));
 	
+	printf("A\n");
+
+	for(i=0; i<10; i++){
+		printf("B\n");
+		tempoEspaco[i] = novasPossicoes(n);
+		for (j = 0; j < n; ++j)
+		{
+			tempoEspaco[i][j].id = 0;
+			tempoEspaco[i][j].posicao = 0;
+		}
+	}
+
+	run = 1;
+
+	printf("Inicio das threads.\n");
+
+	pthread_create(&(id_classificacao),NULL,  classificacao, (void *)n);
+
 	for (i = 0; i < 10; i++) {
-		if (pthread_create(&(ids_atletas[i]),NULL,(void *)classificacao,NULL)) {
+		if (pthread_create(&(ids_atletas[i]),NULL, atleta, (void *) novoAtleta(FEMININO, PROFISSIONAL, i) )) {
 			fprintf(stderr,"Erro no pthread_create\n");
 			return(2);
 		}
 	}
 	
-	mem = 0;
-
-	printf("Thread principal a esperar a terminação das threads criadas \n");
 	for(i=0;i < 10;i++)
 		pthread_join(ids_atletas[i],NULL); /* Esperara a junção das threads */
 
+	run = 0;
 
-	printf("Thread principal a esperar a terminação das threads criadas \n");
-	for(i=0;i < NUM_THREADS;i++)
-		pthread_join(threads[i],NULL); /* Esperara a junção das threads */
+	pthread_join(id_classificacao,NULL);
 
-
+	printf("Termino de todas as threads.\n");
 	/*
 	for( i=1; i<argc; i++){
 		if( strcmp(argv[i], "-debug")==0 )
@@ -276,6 +140,13 @@ int main(int argc, char *argv[]){
 	if(filename==NULL)
 		return 1;
 	*/
+
+	return 0;
+}
+
+/* Função principal. */
+int main(int argc, char *argv[]){
+	ironMain(argc, argv);
 
 	return 0;
 }
