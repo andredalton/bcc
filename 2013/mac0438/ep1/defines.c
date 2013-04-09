@@ -52,6 +52,16 @@ Atleta novoAtleta(int sexo, int categoria, int id) {
 	return a;
 }
 
+int tempoTotal (Atleta a){
+	int i, T=0;
+
+	for ( i=0; i<ETAPAS; i++)	{
+		T += a->ms[i];
+	}
+
+	return T;
+}
+
 PosicaoAtleta *novasPossicoes(int n){
 	int i;
 	PosicaoAtleta *p = (PosicaoAtleta *) mallocX(n*sizeof(struct posAtleta));
@@ -59,13 +69,15 @@ PosicaoAtleta *novasPossicoes(int n){
 	for ( i=0; i < n; i++)
 	{
 		p[i].id = -1;
+		p[i].ms = 0;
 		p[i].posicao = 0;
 	}
 
 	return p;
 }
 
-void atualizaPosicao(PosicaoAtleta *p, int id, double posicao){
+void atualizaPosicao(PosicaoAtleta *p, int id, int t, double posicao){
 	p->id = id;
+	p->ms = t;
 	p->posicao = posicao;
 }

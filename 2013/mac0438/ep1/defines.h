@@ -35,7 +35,8 @@ typedef struct atl{
 } *Atleta;
 
 typedef struct posAtleta{
-	int id;					/* Id do atleta. */
+	int id;				/* Id do atleta. */
+	int ms;				/* Tempo em milissegundos. */
 	double posicao;		/* Possição do atleta em metros. */
 } PosicaoAtleta;
 
@@ -44,4 +45,5 @@ void *reallocX (void *ptr, unsigned int nbytes);
 Tempo converteTempo(int ms);
 Atleta novoAtleta(int sexo, int categoria, int id);
 PosicaoAtleta *novasPossicoes(int n);
-void atualizaPosicao(PosicaoAtleta *p, int id, double posicao);
+void atualizaPosicao(PosicaoAtleta *p, int id, int t, double posicao);
+int tempoTotal (Atleta a);
