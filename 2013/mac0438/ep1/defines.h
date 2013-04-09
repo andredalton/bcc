@@ -19,6 +19,8 @@
 #define CITAM 180			/* x1km  */
 #define COTAM 42 			/* x1km  */
 
+#define TMAX 53				/* Máximo de tempo possível para a prova em intervalos de meia hora. */
+
 typedef struct tmp{
     unsigned int h;			/* Hora */
 	unsigned int m;			/* Minuto */

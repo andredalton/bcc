@@ -56,9 +56,9 @@ PosicaoAtleta *novasPossicoes(int n){
 	int i;
 	PosicaoAtleta *p = (PosicaoAtleta *) mallocX(n*sizeof(struct posAtleta));
 
-	for ( i=0; i < n; ++i)
+	for ( i=0; i < n; i++)
 	{
-		p[i].id = 0;
+		p[i].id = -1;
 		p[i].posicao = 0;
 	}
 

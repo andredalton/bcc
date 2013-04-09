@@ -8,6 +8,8 @@
 
 #include "tempos.h"
 
+#define ironMain main
+
 /* Inicialização das variáveis globais. */
 int PortalT1Ent;
 int PortalT2Ent;
@@ -16,65 +18,59 @@ int PortalT2Sai;
 int *estrada[3][180];
 PosicaoAtleta **tempoEspaco = NULL;
 
-int tic;		/* O tic de tempo para impressão da classificação. ( default 30min, com -debug 1min ). */
-int lPrint;
+int lPrint;			/* Numero do tic impresso (1 ou 30min). */
 int run;
 int natletas;
 int deltaTime;
+int debug;
 
 /* Termino da declaração das variáveis globais. */
 
+/* Imprime a classificação dos atletas. */
 void imprimeClassificacao(){
-	printf("Imprimindo linha: %d\n", tic);
+	if(debug)
+		printf("Classificacao %dmin:\n", lPrint);
+	else
+		printf("Classificacao %dmin:\n", 30*lPrint);
+
+	printf("\t%d %f\n", tempoEspaco[lPrint][0].id, tempoEspaco[lPrint][0].posicao );
 }
 
-/* Imprime a possição dos atletas a cada t segundos de prova. */
-void *classificacao(int n) {
+/* Função usada na thread que imprime a classificação dos atletas a cada tic de tempo. */
+void *classificacao(void) {
 	int i;
 	
 	while(run){
-		if( (tic-lPrint)>0 ){
-			for(i=0; i<n; i++)
-				if(tempoEspaco[tic][i].id==-1) break;
-			/* Inicio da sessao critica. */
-			if(i==n){
-				imprimeClassificacao();
-				lPrint++;
-
-				tempoEspaco = reallocX(tempoEspaco[1], sizeof(PosicaoAtleta*)*(tic-lPrint));
-			}
-			/* Termino da sessao critica. */
+		for(i=0; i<natletas; i++)
+			if(tempoEspaco[lPrint][i].id==-1) break;
+		if(i==natletas){
+			imprimeClassificacao();
+			lPrint++;
 		}
-		sleep(1);
 	}
 
 	printf("Classificacao final:\n");
-	
+	printf("\t%d %f\n", tempoEspaco[lPrint][0].id, tempoEspaco[lPrint][0].posicao );
+		
 	return NULL;
 }
 
+/* Função usada na thread atleta. */
 void *atleta(Atleta a){
 	int i;
 	int t;
 	double p;
 	/* Natação */
-	printf("B\n");
 	for(i=0; i<NATAM; i++){
-		printf("C\n");
 		natacao(a);
-		printf("D\n");
+		/*
+		printf("\t[%d] %d - %d\n", i, a->ms[NATACAO], a->ms[NATACAO]/deltaTime );
+		*/
 		if( a->ms[NATACAO]/deltaTime != t/deltaTime ){
-			/* Inicio da sessao critica. */
-			if( a->ms[NATACAO]/deltaTime > tic ){
-				tic++;
-				printf("F\n");
-				tempoEspaco = reallocX(tempoEspaco, sizeof(PosicaoAtleta*)*(tic+1-lPrint) );
-				tempoEspaco[tic-lPrint] = novasPossicoes(natletas);
-			}
-			/* Aqui acaba a sessao critica. */
-
-			printf("E\n");
-			p = 100*(i-1) + 100*( (a->ms[NATACAO]-a->ms[NATACAO]%deltaTime)-t)/(a->ms[NATACAO]-t);
+			p = 100*i + 100*( (a->ms[NATACAO]-a->ms[NATACAO]%deltaTime)-t)/(a->ms[NATACAO]-t);
+			/*
+			printf("\t%f\n", p);
+			*/
 			atualizaPosicao( &tempoEspaco[i][a->id], a->id, p );
 		}
 	}
@@ -90,13 +86,13 @@ void *atleta(Atleta a){
 	return NULL;
 }
 
-/* Função principal de verdade */
+/* Função principal. */
 int ironMain(int argc, char *argv[]){
 	char *filename;
 	int
 		i,
 		j,
-		n=10;
+		debug=0;
 	
 	pthread_t *ids_atletas;
 	pthread_t id_classificacao;
@@ -105,32 +101,38 @@ int ironMain(int argc, char *argv[]){
 
 	/* Inicializando variáveis globais. */
 	tempoEspaco = NULL;	
-	tic = 0;
 	lPrint = 0;
-	natletas = 10;
+	natletas = 1;
 	deltaTime = 1800000;
 	run = 1;
 
 	for( i=1; i<argc; i++){
-		if( strcmp(argv[i], "-debug")==0 )
+		if( strcmp(argv[i], "-debug")==0 ){
 			deltaTime = 60000;
+			debug=1;
+		}
 		else
 			filename = argv[i];
 	}
 
-	/*	
+	/* Alocando a quantidade máxima de tics necessária para guardar as informações de tempo dos atletas. */
+	tempoEspaco = (PosicaoAtleta **) mallocX( (29*debug+1)*TMAX*sizeof(PosicaoAtleta*) );
+	for( i=0; i<(59*debug+1)*TMAX; i++)
+		tempoEspaco[i] = novasPossicoes(natletas);
+
+	/*
 	if(filename==NULL)
 		return 1;
 	*/
 
 	printf("Inicio das threads.\n");
 
-	pthread_create(&(id_classificacao),NULL,  classificacao, (void *)n);
+	pthread_create(&(id_classificacao),NULL,  classificacao, NULL);
 
 	ids_atletas = mallocX(natletas*sizeof(pthread_t));
 	for (i=0; i<natletas; i++) {
-		printf("A\n");
-		if (pthread_create(&(ids_atletas[i]),NULL, atleta, (void *) novoAtleta(FEMININO, PROFISSIONAL, i) )) {
+		printf("Criando thread #%d\n", i);
+		if (pthread_create(&(ids_atletas[i]),NULL, atleta, (void *) novoAtleta(MASCULINO, PROFISSIONAL, i) )) {
 			fprintf(stderr,"Erro no pthread_create\n");
 			return(2);
 		}
@@ -145,12 +147,5 @@ int ironMain(int argc, char *argv[]){
 
 	printf("Termino de todas as threads.\n");
 	
-	return 0;
-}
-
-/* Função principal. */
-int main(int argc, char *argv[]){
-	ironMain(argc, argv);
-
 	return 0;
 }
