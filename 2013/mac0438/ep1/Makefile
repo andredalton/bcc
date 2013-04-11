@@ -1,5 +1,5 @@
 CC = gcc
-OPTS = -Wall -pedantic -ansi -O2 -U_FORTFY_SOURCE
+OPTS = -Wall -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
 
 ep1: ep1.o tempos.o defines.o
 	$(CC) ep1.o tempos.o defines.o -o ep1 -lm -lpthread

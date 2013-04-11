@@ -31,7 +31,6 @@ PosicaoAtleta **tempoEspaco = NULL;
 PosicaoAtleta **estrada = NULL;
 
 int ticMax;
-int run;
 int natletas;
 int deltaTime;
 int debug;
@@ -49,11 +48,10 @@ void imprimeClassificacao(int lPrint, int tempo){
 	Tempo t;
 	
 	for( i=0; i<natletas; i++){
-		if( tempoEspaco[lPrint][i].id==-1 ) continue;
 		if(!debug && i>=3) break;
 		if(tempo) {
 			t = converteTempo(tempoEspaco[lPrint][i].ms);
-			printf(" %d) \"%s %s\"\t%dh%dm%02.3fs\n", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome, t->h, t->m, (double)t->ms/1000 );
+			printf(" %d) \"%s %s\"\t%dh%dm%06.3fs\n", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome, t->h, t->m, (double)t->ms/1000 );
 			free(t);
 		}
 		else
@@ -67,32 +65,37 @@ void imprimeClassificacao(int lPrint, int tempo){
 void *classificacao(void) {
 	int i;
 	int lPrint=0;			/* Numero do tic impresso (1 ou 30min). */
+	int vencedores = 0;
 
-	while(run){
+	while( lPrint<(29*debug+1)*TMAX && !vencedores ){
 		printf("\r");
 		for(i=0; i<natletas; i++)
 			if( tempoEspaco[lPrint][i].id==-1) break;
 		if(i==natletas){
-			if(debug)
-				printf("\nClassificacao %dmin:\n", lPrint);
-			else
-				printf("\nClassificacao %dmin:\n", 30*(lPrint));
 			ordenaPosicaoAtleta( tempoEspaco[lPrint], natletas);
+			if(debug)
+				printf("\nClassificacao %dmin:\n", lPrint+1);
+			else {
+				for(i=0; i<3; i++)
+					if( tempoEspaco[lPrint][i].posicao != 100*NATAM + 1000*CITAM + 1000*COTAM) break;
+				if(i==3 || i==natletas)
+					vencedores=1;
+				printf("\nClassificacao %dmin:\n", 30*(lPrint+1));
+			}
 			imprimeClassificacao(lPrint, 0);
 			lPrint++;
 		}
 	}
 
-	while(lPrint<ticMax-1){
+	while( lPrint<ticMax-1 && !vencedores ){
 		if(debug)
-			printf("\nClassificacao %dmin:\n", lPrint);
+			printf("\n2Classificacao %dmin:    - %d\n", lPrint+1, ticMax);
 		else
-			printf("\nClassificacao %dmin:\n", 30*(lPrint));
+			printf("\n2Classificacao %dmin:\n", 30*(lPrint));
 		ordenaPosicaoAtleta( tempoEspaco[lPrint], natletas);
 		imprimeClassificacao(lPrint, 0);
 		lPrint++;
 	}
-
 	printf("\nClassificacao final:\n");
 	ordenaPosicaoAtleta( tempoEspaco[ticMax], natletas);
 	imprimeClassificacao(ticMax, 1);
@@ -103,17 +106,17 @@ void *classificacao(void) {
 /* Função usada na thread atleta.
  ********************************/
 void *atleta(Atleta a){
-	int i;
+	int i, j;
 	int t=0;
 	double p;
 	/* Natação */
 	for(i=0; i<NATAM; i++){
 		natacao(a);
-		if( tempoTotal(a)/deltaTime != t/deltaTime ){
-			p = 100.0*i + 100.0*( (tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
-			atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime-1][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), p );
-			t = tempoTotal(a);
+		for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++) {
+			p = 100.0*i + 100.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
+			atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 		}
+		t = tempoTotal(a);
 	}
 	
 	/* T1 */
@@ -122,9 +125,12 @@ void *atleta(Atleta a){
     *******************/
 	t = tempoTotal(a);
 	transicao(a, T1);
-	if( tempoTotal(a)/deltaTime != t/deltaTime ){
-		atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime-1][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM );
-	}
+	for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++)
+		atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM );
+	t = tempoTotal(a);
+
+
+
 	t = tempoTotal(a);
 	/**********************
     * Termino S. critica!!!
@@ -135,11 +141,11 @@ void *atleta(Atleta a){
     /* Ciclismo */
 	for(i=0; i<CITAM; i++){
 		ciclismo(a, PLANO);
-		if( tempoTotal(a)/deltaTime != t/deltaTime ){
-			p = 100*NATAM + 1000.0*i + 1000.0*( (tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
-			atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime-1][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), p );
-			t = tempoTotal(a);
+		for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++) {
+			p = 100*NATAM + 100.0*i + 100.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
+			atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 		}
+		t = tempoTotal(a);
 	}	
 	/**********************
     * Termino S. critica!!!
@@ -150,29 +156,30 @@ void *atleta(Atleta a){
 	/* T2 */
 	t = tempoTotal(a);
 	transicao(a, T2);
-	if( tempoTotal(a)/deltaTime != t/deltaTime ){
-		atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime-1][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM + 1000*CITAM);
-	}
+	for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++)
+		atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM + 1000*CITAM);
 	t = tempoTotal(a);
+
 	/**********************
     * Termino S. critica!!!
     **********************/
 	/* Corrida */
 	for(i=0; i<COTAM; i++){
 		corrida(a);
-		if( tempoTotal(a)/deltaTime != t/deltaTime ){
-			p = 100*NATAM + 1000*CITAM + 1000.0*i + 1000.0*( (tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
-			atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime-1][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), p );
-			t = tempoTotal(a);
+		for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++) {
+			p = 100*NATAM + 1000*CITAM + 100.0*i + 100.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
+			atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 		}
+		t = tempoTotal(a);
 	}
 	/* Guardadndo tempo final na linha correspondente na matriz tempoEspaco. */
-	for( i=tempoTotal(a)/deltaTime; i<(29*debug+1)*TMAX; i++){
+	for( i=tempoTotal(a)/deltaTime; i<(29*debug+1)*TMAX; i++)
 		atualizaPosicao( &tempoEspaco[i][a->id], a->id, tempoTotal(a), 100*NATAM + 1000*CITAM + 1000*COTAM );
-	}
 
+	/* SC */
 	if(ticMax<tempoTotal(a)/deltaTime)
 		ticMax = tempoTotal(a)/deltaTime;
+	/* SC */
 
 	return NULL;
 }
@@ -205,7 +212,6 @@ int ironMain(int argc, char *argv[]){
 	/* Inicializando variáveis globais. */
 	tempoEspaco = NULL;	
 	deltaTime = 1800000;
-	run = 1;
 	ticMax = 0;
 	debug = 0;
 
@@ -270,7 +276,7 @@ int ironMain(int argc, char *argv[]){
 
 	printf("\tFeminino Profissional: %d\n", mp);
 	for (; i<hp+mp; i++) {
-		atletas[i] = novoAtleta(FEMININO, PROFISSIONAL, randomName(H), randomName(S), i);
+		atletas[i] = novoAtleta(FEMININO, PROFISSIONAL, randomName(M), randomName(S), i);
 		if (pthread_create(&(ids_atletas[i]),NULL, atleta, (void *) atletas[i] )) {
 			fprintf(stderr,"Erro no pthread_create\n");
 			return(2);
@@ -287,18 +293,16 @@ int ironMain(int argc, char *argv[]){
 	}
 
 	printf("\tFeminino Amador: %d\n", ma);
-	for (i=0; i<hp+mp+ha+ma; i++) {
-		atletas[i] = novoAtleta(FEMININO, AMADOR, randomName(H), randomName(S), i);
+	for (; i<hp+mp+ha+ma; i++) {
+		atletas[i] = novoAtleta(FEMININO, AMADOR, randomName(M), randomName(S), i);
 		if (pthread_create(&(ids_atletas[i]),NULL, atleta, (void *) atletas[i] )) {
 			fprintf(stderr,"Erro no pthread_create\n");
 			return(2);
 		}
 	}
-	
-	for(i=0; i<natletas; i++)
-		pthread_join(ids_atletas[i],NULL); /* Esperara a junção das threads */
 
-	run = 0;
+	for(i=0; i<natletas; i++) 
+		pthread_join(ids_atletas[i],NULL); /* Esperara a junção das threads */
 	
 	pthread_join(id_classificacao,NULL);
 	

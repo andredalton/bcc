@@ -104,7 +104,6 @@ void ordenaPosicaoAtleta( PosicaoAtleta *vet, int tam_vet) {
 ListName listaNomes(char entrada[]){
 	FILE *fe = fopen(entrada, "r");
 	char buffer[100];
-	char nome[80];
 	ListName lista = (ListName) mallocX(sizeof(struct listName));
 	int i, k;
 
