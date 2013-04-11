@@ -84,6 +84,20 @@ void atualizaPosicao(PosicaoAtleta *p, int id, int t, double posicao){
 	p->posicao = posicao;
 }
 
+/* Recebe dois pondeiros para a estrutura 'PosicaoAtleta' e compara-os (ordem).
+ * Retorna int > 0 se p1 '>' p2, int == 0 se p1 '==' p2 e int < 0 c.c.
+ ******************************************************************************/
+int comparePosicaoAtleta( const void *p1, const void *p2) {
+   PosicaoAtleta *a, *b;
+   a = (PosicaoAtleta *) p1;
+   b = (PosicaoAtleta *) p2;
+   return ((int) 100*b->posicao - (int) 100*a->posicao);
+}
+
+void ordenaPosicaoAtleta( PosicaoAtleta *vet, int tam_vet) {
+   qsort( vet, tam_vet, sizeof (PosicaoAtleta), (void *) comparePosicaoAtleta);
+}
+
 ListName listaNomes(char entrada[]){
 	FILE *fe = fopen(entrada, "r");
 	char buffer[100];

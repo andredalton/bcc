@@ -10,7 +10,8 @@
 
 #define ironMain main
 
-/* Inicialização das variáveis globais. */
+/* Inicialização das variáveis globais.
+ **************************************/
 int PortalT1Ent;
 int PortalT2Ent;
 int PortalT1Sai;
@@ -21,10 +22,11 @@ int *TPortalT2Ent;
 int *TPortalT1Sai;
 int *TPortalT2Sai;
 
-/* Guarda a posição de cada um dos atletas como uma trinca entre o id, tempo e espaço.
-*  Sendo que a primeira linha serve para guardar o tempo total de percurso e as demais
-*  linhas o tempo pra cada um dos tics que deve ser mostrado.
-*/
+/* Guarda a posição de cada um dos atletas como uma trinca entre o id, tempo e
+ * espaço. Sendo que a primeira linha serve para guardar o tempo total de 
+ * percurso e as demais linhas o tempo pra cada um dos tics que deve ser 
+ * mostrado.
+ *****************************************************************************/
 PosicaoAtleta **tempoEspaco = NULL;
 PosicaoAtleta **estrada = NULL;
 
@@ -36,19 +38,29 @@ int debug;
 
 Atleta *atletas;
 
-/* Termino da declaração das variáveis globais. */
+/**********************************************
+ * Termino da declaração das variáveis globais.
+ **********************************************/
 
-/* Imprime a classificação dos atletas. */
+/* Imprime a classificação dos atletas.
+ **************************************/
 void imprimeClassificacao(int lPrint){
+	int i;
 	if(1){
 		if(debug)
-			printf("Classificacao %dmin:\n", lPrint+1);
+			printf("\nClassificacao %dmin:\n", lPrint);
 		else
-			printf("Classificacao %dmin:\n", 30*(lPrint+1));
+			printf("\nClassificacao %dmin:\n", 30*(lPrint));
+	}
+	for( i=0; i<3; i++){
+		if(debug && i>=3) break;
+		printf(" %d) \"%s %s\"\t%.2fm\n", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome, tempoEspaco[lPrint][i].posicao);
 	}
 }
 
-/* Função usada na thread que imprime a classificação dos atletas a cada tic de tempo. */
+/* Função usada na thread que imprime a classificação dos atletas a cada tic de 
+ * tempo.
+ ******************************************************************************/
 void *classificacao(void) {
 	int i;
 	int lPrint=1;			/* Numero do tic impresso (1 ou 30min). */
@@ -59,6 +71,7 @@ void *classificacao(void) {
 		for(i=0; i<natletas; i++)
 			if( tempoEspaco[lPrint][i].id==-1) break;
 		if(i==natletas){
+			ordenaPosicaoAtleta( tempoEspaco[lPrint], natletas);
 			imprimeClassificacao(lPrint);
 			lPrint++;
 		}
@@ -77,7 +90,8 @@ void *classificacao(void) {
 	return NULL;
 }
 
-/* Função usada na thread atleta. */
+/* Função usada na thread atleta.
+ ********************************/
 void *atleta(Atleta a){
 	int i;
 	int t=0;
@@ -86,35 +100,43 @@ void *atleta(Atleta a){
 	for(i=0; i<NATAM; i++){
 		natacao(a);
 		if( tempoTotal(a)/deltaTime != t/deltaTime ){
-			p = 100*i + 100*( (tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
+			p = 100.0*i + 100.0*( (tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
 			atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 			t = tempoTotal(a);
 		}
 	}
 	
 	/* T1 */
-	/* Sessao critica!!! */
+    /*******************
+    * Sessao critica!!!
+    *******************/
 	t = tempoTotal(a);
 	transicao(a, T1);
 	if( tempoTotal(a)/deltaTime != t/deltaTime ){
 		atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM );
 	}
 	t = tempoTotal(a);
-	/* Sessao critica!!! */
-
-	/* Sessao critica!!! */
-	/* Ciclismo */
+	/**********************
+    * Termino S. critica!!!
+    **********************/
+    /*******************
+    * Sessao critica!!!
+    *******************/
+    /* Ciclismo */
 	for(i=0; i<CITAM; i++){
 		ciclismo(a, PLANO);
 		if( tempoTotal(a)/deltaTime != t/deltaTime ){
-			p = 1000*i + 1000*( (tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
+			p = 100*NATAM + 1000.0*i + 1000.0*( (tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
 			atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 			t = tempoTotal(a);
 		}
 	}	
-	/* Sessao critica!!! */
-
-	/* Sessao critica!!! */
+	/**********************
+    * Termino S. critica!!!
+    **********************/
+    /*******************
+    * Sessao critica!!!
+    *******************/
 	/* T2 */
 	t = tempoTotal(a);
 	transicao(a, T2);
@@ -122,20 +144,19 @@ void *atleta(Atleta a){
 		atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM + 1000*CITAM);
 	}
 	t = tempoTotal(a);
-	/* Sessao critica!!! */
-
+	/**********************
+    * Termino S. critica!!!
+    **********************/
 	/* Corrida */
 	for(i=0; i<COTAM; i++){
 		corrida(a);
 		if( tempoTotal(a)/deltaTime != t/deltaTime ){
-			p = 100*NATAM + 1000*i + 1000*( (tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
+			p = 100*NATAM + 1000*CITAM + 1000.0*i + 1000.0*( (tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
 			atualizaPosicao( &tempoEspaco[tempoTotal(a)/deltaTime][a->id], a->id, (tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 			t = tempoTotal(a);
 		}
 	}
-
-	/* Aqui deve colocar o tempo final */
-
+	/* Guardadndo tempo final na linha correspondente na matriz tempoEspaco. */
 	atualizaPosicao( &tempoEspaco[0][a->id], a->id, tempoTotal(a), 100*NATAM + 1000*CITAM + 1000*COTAM );
 
 	if(ticMax<tempoTotal(a)/deltaTime)
@@ -145,8 +166,8 @@ void *atleta(Atleta a){
 }
 
 
-
-/* Função principal. */
+/* Função principal.
+ *******************/
 int ironMain(int argc, char *argv[]){
 	char *filename = NULL;
 	FILE *entrada;

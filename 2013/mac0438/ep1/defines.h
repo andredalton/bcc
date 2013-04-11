@@ -57,6 +57,8 @@ Tempo converteTempo(int ms);
 Atleta novoAtleta(int sexo, int categoria, char *nome, char *sobrenome, int id);
 PosicaoAtleta *novasPossicoes(int n);
 void atualizaPosicao(PosicaoAtleta *p, int id, int t, double posicao);
+int comparePosicaoAtleta( const void *p1, const void *p2);
+void ordenaPosicaoAtleta( PosicaoAtleta *vet, int tam_vet);
 int tempoTotal (Atleta a);
 ListName listaNomes(char entrada[]);
 char *randomName(ListName L);
