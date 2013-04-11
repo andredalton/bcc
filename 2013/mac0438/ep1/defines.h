@@ -21,6 +21,8 @@
 
 #define TMAX 53				/* Máximo de tempo possível para a prova em intervalos de meia hora. */
 
+#define MAXNAMES 10000
+
 typedef struct tmp{
     unsigned int h;			/* Hora */
 	unsigned int m;			/* Minuto */
@@ -29,6 +31,8 @@ typedef struct tmp{
 
 typedef struct atl{
 	int id;
+	char *nome;
+	char *sobrenome;
 	int sexo;
 	int categoria;
 	int ms[ETAPAS];			/* Tempo em milisegundos pra cada uma das etapas da prova */
@@ -40,10 +44,19 @@ typedef struct posAtleta{
 	double posicao;		/* Possição do atleta em metros. */
 } PosicaoAtleta;
 
+typedef struct listName
+{
+	unsigned int max;
+	unsigned int prob[MAXNAMES];
+	char nome[MAXNAMES][100];
+} *ListName;
+
 void *mallocX (unsigned int nbytes);
 void *reallocX (void *ptr, unsigned int nbytes);
 Tempo converteTempo(int ms);
-Atleta novoAtleta(int sexo, int categoria, int id);
+Atleta novoAtleta(int sexo, int categoria, char *nome, char *sobrenome, int id);
 PosicaoAtleta *novasPossicoes(int n);
 void atualizaPosicao(PosicaoAtleta *p, int id, int t, double posicao);
 int tempoTotal (Atleta a);
+ListName listaNomes(char entrada[]);
+char *randomName(ListName L);
