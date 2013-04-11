@@ -88,10 +88,13 @@ void atualizaPosicao(PosicaoAtleta *p, int id, int t, double posicao){
  * Retorna int > 0 se p1 '>' p2, int == 0 se p1 '==' p2 e int < 0 c.c.
  ******************************************************************************/
 int comparePosicaoAtleta( const void *p1, const void *p2) {
+   int r;
    PosicaoAtleta *a, *b;
    a = (PosicaoAtleta *) p1;
    b = (PosicaoAtleta *) p2;
-   return ((int) 100*b->posicao - (int) 100*a->posicao);
+   r = ((int) 100*b->posicao - (int) 100*a->posicao);
+   if(r) return r;
+   return ( a->ms - b->ms );
 }
 
 void ordenaPosicaoAtleta( PosicaoAtleta *vet, int tam_vet) {
