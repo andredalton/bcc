@@ -54,7 +54,7 @@ void imprimeClassificacao(int lPrint, int tempo){
 			/*
 			printf(" %d) \"%s %s\"\t%dh%dm%06.3fs\n%d\n", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome, t->h, t->m, (double)t->ms/1000, strlen(atletas[tempoEspaco[lPrint][i].id]->sobrenome) );
 			*/
-			printf(" %d) \"%s %s\"", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome);
+			printf("%4d) \"%s %s\"", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome);
 			for (j=0; j<22-strlen(atletas[tempoEspaco[lPrint][i].id]->nome)-strlen(atletas[tempoEspaco[lPrint][i].id]->sobrenome); j++) {
 				printf(" ");
 			}
@@ -65,7 +65,7 @@ void imprimeClassificacao(int lPrint, int tempo){
 			/*
 			printf(" %d) \"%s %s\"\t%.2fm\n", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome, tempoEspaco[lPrint][i].posicao);
 			*/
-			printf(" %d) \"%s %s\"", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome);
+			printf("%4d) \"%s %s\"", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome);
 			for (j=0; j<30-log10(tempoEspaco[lPrint][i].posicao)-strlen(atletas[tempoEspaco[lPrint][i].id]->nome)-strlen(atletas[tempoEspaco[lPrint][i].id]->sobrenome); j++) {
 				printf(" ");
 			}
