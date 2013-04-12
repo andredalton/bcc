@@ -44,18 +44,33 @@ Atleta *atletas;
 /* Imprime a classificação dos atletas.
  **************************************/
 void imprimeClassificacao(int lPrint, int tempo){
-	int i;
+	int i, j;
 	Tempo t;
 	
 	for( i=0; i<natletas; i++){
 		if(!debug && i>=3) break;
 		if(tempo) {
 			t = converteTempo(tempoEspaco[lPrint][i].ms);
-			printf(" %d) \"%s %s\"\t%dh%dm%06.3fs\n", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome, t->h, t->m, (double)t->ms/1000 );
+			/*
+			printf(" %d) \"%s %s\"\t%dh%dm%06.3fs\n%d\n", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome, t->h, t->m, (double)t->ms/1000, strlen(atletas[tempoEspaco[lPrint][i].id]->sobrenome) );
+			*/
+			printf(" %d) \"%s %s\"", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome);
+			for (j=0; j<22-strlen(atletas[tempoEspaco[lPrint][i].id]->nome)-strlen(atletas[tempoEspaco[lPrint][i].id]->sobrenome); j++) {
+				printf(" ");
+			}
+			printf("%02dh%02dm%06.3fs\n", t->h, t->m, (double)t->ms/1000);
 			free(t);
 		}
-		else
+		else {
+			/*
 			printf(" %d) \"%s %s\"\t%.2fm\n", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome, tempoEspaco[lPrint][i].posicao);
+			*/
+			printf(" %d) \"%s %s\"", (i+1), atletas[tempoEspaco[lPrint][i].id]->nome, atletas[tempoEspaco[lPrint][i].id]->sobrenome);
+			for (j=0; j<30-log10(tempoEspaco[lPrint][i].posicao)-strlen(atletas[tempoEspaco[lPrint][i].id]->nome)-strlen(atletas[tempoEspaco[lPrint][i].id]->sobrenome); j++) {
+				printf(" ");
+			}
+			printf("%.2fm\n", tempoEspaco[lPrint][i].posicao);
+		}
 	}
 }
 
@@ -73,8 +88,12 @@ void *classificacao(void) {
 			if( tempoEspaco[lPrint][i].id==-1) break;
 		if(i==natletas){
 			ordenaPosicaoAtleta( tempoEspaco[lPrint], natletas);
-			if(debug)
+			if(debug) {
+				for(i=0; i<natletas; i++)
+					if( tempoEspaco[lPrint][i].posicao != 100*NATAM + 1000*CITAM + 1000*COTAM) break;
+				if( i==natletas ) vencedores=1;
 				printf("\nClassificacao %dmin:\n", lPrint+1);
+			}
 			else {
 				for(i=0; i<3; i++)
 					if( tempoEspaco[lPrint][i].posicao != 100*NATAM + 1000*CITAM + 1000*COTAM) break;
@@ -202,8 +221,6 @@ int ironMain(int argc, char *argv[]){
 	ListName M = listaNomes("mulheres.txt");
 	ListName S = listaNomes("sobrenomes.txt");
 	
-
-
 	pthread_t *ids_atletas;
 	pthread_t id_classificacao;
 	
@@ -243,7 +260,7 @@ int ironMain(int argc, char *argv[]){
 
 	/* Alocando a quantidade máxima de tics necessária para guardar as informações de tempo dos atletas. */
 	tempoEspaco = (PosicaoAtleta **) mallocX( (29*debug+1)*TMAX*sizeof(PosicaoAtleta*) );
-	for( i=0; i<(59*debug+1)*TMAX; i++)
+	for( i=0; i<(29*debug+1)*TMAX; i++)
 		tempoEspaco[i] = novasPossicoes(natletas);
 
 	TPortalT1Ent = (int*) mallocX( natletas*sizeof(int) );
