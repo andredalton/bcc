@@ -72,3 +72,4 @@ void ordenaPosicaoAtleta( PosicaoAtleta *vet, int tam_vet);
 int tempoTotal (Atleta a);
 ListName listaNomes(char entrada[]);
 char *randomName(ListName L);
+int punicao(int *v, int tam, int tmp, int faixas);
