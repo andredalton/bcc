@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h> /* Para trabalhar com threads */
+#include <semaphore.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -12,15 +13,17 @@
 
 /* Inicialização das variáveis globais.
  **************************************/
-int PortalT1Ent;
-int PortalT2Ent;
-int PortalT1Sai;
-int PortalT2Sai;
-
 int *TPortalT1Ent;
 int *TPortalT2Ent;
 int *TPortalT1Sai;
 int *TPortalT2Sai;
+int **estrada;
+
+sem_t sem_PortalT1Ent;
+sem_t sem_PortalT2Ent;
+sem_t sem_PortalT1Sai;
+sem_t sem_PortalT2Sai;
+sem_t sem_estrada[CITAM];
 
 /* Guarda a posição de cada um dos atletas como uma trinca entre o id, tempo e
  * espaço. Sendo que a primeira linha serve para guardar o tempo total de 
@@ -28,9 +31,7 @@ int *TPortalT2Sai;
  * mostrado.
  *****************************************************************************/
 PosicaoAtleta **tempoEspaco = NULL;
-PosicaoAtleta **estrada = NULL;
 
-int ticMax;
 int natletas;
 int deltaTime;
 int debug;
@@ -117,7 +118,7 @@ void *classificacao(void) {
 				if( i==natletas ) vmp = vfp = vma = vfa = 1;
 
 				if(!vmp){
-					printf("\n\033[%d;%dmClassificacao %dmin:                                                \033[0m\n", BLACK+10, WHITE, 30*(lPrint+1));
+					printf("\n\033[%d;%dmClassificacao %dmin:                                                \033[0m\n", BLACK+10, WHITE, (29*!debug+1)*(lPrint+1));
 					imprimeClassificacao(tempoEspaco[lPrint], 0);
 				}
 				else{
@@ -184,17 +185,17 @@ void *classificacao(void) {
 					vfa=1;
 
 				/* Imprimindo a classificação ou finalização quando necessário pra cada um dos grupos. */
-				printf("\n\033[%d;%dmClassificacao %dmin:                                                \033[0m\n", BLACK+10, WHITE, 30*(lPrint+1));
-				if(!vmp)
+				printf("\n\033[%d;%dmClassificacao %dmin:                                                \033[0m\n", BLACK+10, WHITE, (29*!debug+1)*(lPrint+1));
+				if(!vmp && mp)
 					imprimeClassificacao(grupos[MASCULINO + 2 * PROFISSIONAL], 0);
-				if(!vfp)
+				if(!vfp && fp)
 					imprimeClassificacao(grupos[FEMININO + 2 * PROFISSIONAL], 0);
-				if(!vma)
+				if(!vma && ma)
 					imprimeClassificacao(grupos[MASCULINO + 2 * AMADOR], 0);
-				if(!vfa)
+				if(!vfa && fa)
 					imprimeClassificacao(grupos[FEMININO + 2 * AMADOR], 0);
 				
-				if(vmp==1){
+				if(vmp==1 && mp){
 					printf(
 						"\n\033[%d;%dm*********************************************************************\033[0m\n"
 						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
@@ -207,7 +208,7 @@ void *classificacao(void) {
 					vmp = 2;
 				}
 
-				if(vfp==1){
+				if(vfp==1 && fp){
 					printf(
 						"\n\033[%d;%dm*********************************************************************\033[0m\n"
 						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
@@ -220,7 +221,7 @@ void *classificacao(void) {
 					vfp = 2;
 				}
 
-				if(vma==1){
+				if(vma==1 && ma){
 					printf(
 						"\n\033[%d;%dm*********************************************************************\033[0m\n"
 						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
@@ -233,7 +234,7 @@ void *classificacao(void) {
 					vma = 2;
 				}
 
-				if(vfa==1){
+				if(vfa==1 && fa){
 					printf(
 						"\n\033[%d;%dm*********************************************************************\033[0m\n"
 						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
@@ -269,43 +270,64 @@ void *atleta(Atleta a){
 		t = tempoTotal(a);
 	}
 	
-	/* T1 */
-    /*******************
-    * Sessao critica!!!
-    *******************/
 	t = tempoTotal(a);
+	
+	/* T1 */
+	/* Passando pelo portal de entrada na troca da natação. */
+	printf("T1E1 %d\n", a->id);
+	sem_wait(&sem_PortalT1Ent);
+	printf("T1E2 %d\n", a->id);
+	a->ms[NATACAO] += punicao( TPortalT1Ent, natletas, a->ms[NATACAO], 1);
+	printf("T1E3 %d\n", a->id);
+	sem_post(&sem_PortalT1Ent);
+	printf("T1E4 %d\n", a->id);
+	
+	/* Tirando a sunga. */
 	transicao(a, T1);
+	
+	/* Passando pelo portal de saida na troca da natação. */
+	printf("T2E1 %d\n", a->id);
+	sem_wait(&sem_PortalT1Sai);
+	printf("T2E2 %d\n", a->id);
+	a->ms[T1] += punicao( TPortalT1Sai, natletas, a->ms[T1], 1);
+	printf("T2E3 %d\n", a->id);
+	sem_post(&sem_PortalT1Sai);
+	printf("T2E4 %d\n", a->id);
+	
+	/* Bufferizando o tempo em que o atleta esteve parado na troca 1. */
 	for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++)
 		atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM );
-	t = tempoTotal(a);
-
-
 
 	t = tempoTotal(a);
-	/**********************
-    * Termino S. critica!!!
-    **********************/
-    /*******************
-    * Sessao critica!!!
-    *******************/
-    /* Ciclismo */
+	/* Ciclismo */
 	for(i=0; i<CITAM; i++){
 		ciclismo(a, PLANO);
 		for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++) {
 			p = 100*NATAM + 100.0*i + 100.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
+			
+			sem_wait(&sem_estrada[i]);
+			a->ms[CICLISMO] += punicao( estrada[i], natletas, a->ms[CICLISMO], 3);
+			sem_post(&sem_estrada[i]);
+
 			atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 		}
 		t = tempoTotal(a);
 	}	
-	/**********************
-    * Termino S. critica!!!
-    **********************/
-    /*******************
-    * Sessao critica!!!
-    *******************/
+
 	/* T2 */
 	t = tempoTotal(a);
+	
+	sem_wait(&sem_PortalT2Ent);
+	a->ms[CICLISMO] += punicao( TPortalT2Ent, natletas, a->ms[CICLISMO], 1);
+	sem_post(&sem_PortalT2Ent);
+
+	/* Trocando o sapato. */
 	transicao(a, T2);
+
+	sem_wait(&sem_PortalT2Sai);
+	a->ms[T2] += punicao( TPortalT2Sai, natletas, a->ms[T2], 1);
+	sem_post(&sem_PortalT2Sai);
+
 	for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++)
 		atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM + 1000*CITAM);
 	t = tempoTotal(a);
@@ -326,10 +348,7 @@ void *atleta(Atleta a){
 	for( i=tempoTotal(a)/deltaTime; i<(29*debug+1)*TMAX; i++)
 		atualizaPosicao( &tempoEspaco[i][a->id], a->id, tempoTotal(a), 100*NATAM + 1000*CITAM + 1000*COTAM );
 
-	/* SC */
-	if(ticMax<tempoTotal(a)/deltaTime)
-		ticMax = tempoTotal(a)/deltaTime;
-	/* SC */
+	printf("\n\n\t\tACABEI!!!\n");
 
 	return NULL;
 }
@@ -360,7 +379,6 @@ int ironMain(int argc, char *argv[]){
 	/* Inicializando variáveis globais. */
 	tempoEspaco = NULL;	
 	deltaTime = 1800000;
-	ticMax = 0;
 	debug = 0;
 
 	/* Verificando os parametros de entrada. */
@@ -398,17 +416,27 @@ int ironMain(int argc, char *argv[]){
 	TPortalT2Ent = (int*) mallocX( natletas*sizeof(int) );
 	TPortalT1Sai = (int*) mallocX( natletas*sizeof(int) );
 	TPortalT2Sai = (int*) mallocX( natletas*sizeof(int) );
+	estrada = (int**) mallocX( CITAM*sizeof(int *) );
+
+	sem_init(&sem_PortalT1Ent, 0, 1);
+	sem_init(&sem_PortalT1Sai, 0, 1);
+	sem_init(&sem_PortalT2Ent, 0, 1);
+	sem_init(&sem_PortalT2Sai, 0, 1);
+
+	for( i=0; i<CITAM; i++){
+		estrada[i] = (int*) mallocX( natletas*sizeof(int) );
+		sem_init(&sem_estrada[i], 0, 1);
+		for( j=0; j<natletas; j++){
+			estrada[i][j] = -1;
+			TPortalT1Ent[j] = -1;
+			TPortalT2Ent[j] = -1;
+			TPortalT1Sai[j] = -1;
+			TPortalT2Sai[j] = -1;
+		}
+	}
 
 	ids_atletas = mallocX(natletas*sizeof(pthread_t));
-
 	atletas = (Atleta*) mallocX(natletas*sizeof(Atleta));
-
-	for (i=0; i<natletas; ++i){
-		TPortalT1Ent[i] = -1;
-		TPortalT2Ent[i] = -1;
-		TPortalT1Sai[i] = -1;
-		TPortalT2Sai[i] = -1;
-	}
 
 	pthread_create(&(id_classificacao),NULL,  classificacao, NULL);
 
@@ -452,6 +480,14 @@ int ironMain(int argc, char *argv[]){
 	for(i=0; i<natletas; i++) 
 		pthread_join(ids_atletas[i],NULL); /* Esperara a junção das threads */
 	
+	sem_destroy(&sem_PortalT1Ent);
+	sem_destroy(&sem_PortalT1Sai);
+	sem_destroy(&sem_PortalT2Ent);
+	sem_destroy(&sem_PortalT2Sai);
+	for(i=0; i<natletas; i++) 
+		sem_destroy(&sem_estrada[i]);
+
+
 	pthread_join(id_classificacao,NULL);
 	
 	return 0;
