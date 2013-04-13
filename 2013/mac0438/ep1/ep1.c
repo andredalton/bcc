@@ -44,7 +44,7 @@ Atleta *atletas;
 /* Imprime a classificação dos atletas.
  **************************************/
 void imprimeClassificacao(PosicaoAtleta *lista, int tempo){
-	int i, j, tam;
+	int i, j, tam, cor;
 	Tempo t;
 	char sex, cat;
 	
@@ -55,29 +55,25 @@ void imprimeClassificacao(PosicaoAtleta *lista, int tempo){
 		cat = atletas[lista[i].id]->categoria==PROFISSIONAL ? 'P' : 'A';
 
 		if(tempo) {
+			cor = RED + atletas[lista[i].id]->sexo + 2 * atletas[lista[i].id]->categoria;
 			t = converteTempo(lista[i].ms);
-			/*
-			printf(" %d) \"%s %s\"\t%dh%dm%06.3fs\n%d\n", (i+1), atletas[lista[i].id]->nome, atletas[lista[i].id]->sobrenome, t->h, t->m, (double)t->ms/1000, strlen(atletas[lista[i].id]->sobrenome) );
-			*/
-			printf("%4d) \"%s %s\"", (i+1), atletas[lista[i].id]->nome, atletas[lista[i].id]->sobrenome);
+			printf("\033[%d;%dm%4d) \"%s %s\"", WHITE+10, cor, (i+1), atletas[lista[i].id]->nome, atletas[lista[i].id]->sobrenome);
 			tam = strlen(atletas[lista[i].id]->nome)+strlen(atletas[lista[i].id]->sobrenome);
 			for (j=0; j<22-tam; j++) {
 				printf(" ");
 			}
-			printf("%c   %c   %02dh%02dm%06.3fs\n", sex, cat, t->h, t->m, (double)t->ms/1000);
+			printf("%c   %c   %02dh%02dm%06.3fs                 \033[0m\n", sex, cat, t->h, t->m, (double)t->ms/1000);
 			free(t);
 		}
 		else {
-			/*
-			printf(" %d) \"%s %s\"\t%.2fm\n", (i+1), atletas[lista[i].id]->nome, atletas[lista[i].id]->sobrenome, lista[i].posicao);
-			*/
-			printf("%4d) \"%s %s\"", (i+1), atletas[lista[i].id]->nome, atletas[lista[i].id]->sobrenome);
+			cor = RED + atletas[lista[i].id]->sexo + 2 * atletas[lista[i].id]->categoria;
+			printf("\033[%dm%4d) \"%s %s\"", cor,(i+1), atletas[lista[i].id]->nome, atletas[lista[i].id]->sobrenome);
 			tam = log10(lista[i].posicao) + strlen(atletas[lista[i].id]->nome)+strlen(atletas[lista[i].id]->sobrenome);
 			for (j=0; j<30-tam; j++) {
 				printf(" ");
 			}
 			printf("%c   %c   ", sex, cat);
-			printf("%.2fm\n", lista[i].posicao);
+			printf("%.2fm      \033[0m\n", lista[i].posicao);
 		}
 	}
 }
@@ -119,8 +115,20 @@ void *classificacao(void) {
 				for(i=0; i<natletas; i++)
 					if( tempoEspaco[lPrint][i].posicao != 100*NATAM + 1000*CITAM + 1000*COTAM) break;
 				if( i==natletas ) vmp = vfp = vma = vfa = 1;
-				printf("\nClassificacao %dmin:\n", lPrint+1);
-				imprimeClassificacao(tempoEspaco[lPrint], 0);
+
+				if(!vmp){
+					printf("\n\033[%d;%dmClassificacao %dmin:                                                \033[0m\n", BLACK+10, WHITE, 30*(lPrint+1));
+					imprimeClassificacao(tempoEspaco[lPrint], 0);
+				}
+				else{
+					printf(
+						"\n\033[%d;%dm*********************************************************************\033[0m\n"
+						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
+						"\033[%d;%dm*********************************************************************\033[0m\n",
+						BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10
+					);
+					imprimeClassificacao( tempoEspaco[lPrint], 1);
+				}
 			}
 			else {
 				/* Fragmentando os resultados já ordenados em grupos. */
@@ -155,63 +163,85 @@ void *classificacao(void) {
 				}
 
 				/* Verificando o término de cada um dos grupos em separado. */
-				for(i=0; i<3 && !vmp; i++)
+				for(i=0; i<3 && i<mp && !vmp; i++)
 					if( grupos[MASCULINO + 2 * PROFISSIONAL][i].posicao != 100*NATAM + 1000*CITAM + 1000*COTAM) break;
-				if(i==3 || i==mp)
+				if( (i==3 || i==mp) && !vmp )
 					vmp=1;
 
-				for(i=0; i<3 && !vfp; i++)
+				for(i=0; i<3 && i<fp && !vfp; i++)
 					if( grupos[FEMININO + 2 * PROFISSIONAL][i].posicao != 100*NATAM + 1000*CITAM + 1000*COTAM) break;
-				if(i==3 || i==mp)
+				if( (i==3 || i==fp) && !vfp )
 					vfp=1;
 
-				for(i=0; i<3 && !vma; i++)
+				for(i=0; i<3 && i<ma && !vma; i++)
 					if( grupos[MASCULINO + 2 * AMADOR][i].posicao != 100*NATAM + 1000*CITAM + 1000*COTAM) break;
-				if(i==3 || i==mp)
+				if( (i==3 || i==ma) && !vma )
 					vma=1;
 
-				for(i=0; i<3 && !vfa; i++)
+				for(i=0; i<3 && i<fa && !vfa; i++)
 					if( grupos[FEMININO + 2 * AMADOR][i].posicao != 100*NATAM + 1000*CITAM + 1000*COTAM) break;
-				if(i==3 || i==mp)
+				if( (i==3 || i==fa) && !vfa )
 					vfa=1;
 
 				/* Imprimindo a classificação ou finalização quando necessário pra cada um dos grupos. */
-				if(!vmp){
-					printf("\nClassificacao %dmin:  (Masculino Profissional)\n", 30*(lPrint+1));
+				printf("\n\033[%d;%dmClassificacao %dmin:                                                \033[0m\n", BLACK+10, WHITE, 30*(lPrint+1));
+				if(!vmp)
 					imprimeClassificacao(grupos[MASCULINO + 2 * PROFISSIONAL], 0);
-				}
-				else if(vmp==1){
-					printf("\nClassificacao Final:  (Masculino Profissional)\n");
+				if(!vfp)
+					imprimeClassificacao(grupos[FEMININO + 2 * PROFISSIONAL], 0);
+				if(!vma)
+					imprimeClassificacao(grupos[MASCULINO + 2 * AMADOR], 0);
+				if(!vfa)
+					imprimeClassificacao(grupos[FEMININO + 2 * AMADOR], 0);
+				
+				if(vmp==1){
+					printf(
+						"\n\033[%d;%dm*********************************************************************\033[0m\n"
+						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
+						"\033[%d;%dm**-----------------------------------------------------------------**\033[0m\n"
+						"\033[%d;%dm**                      Masculino Profissional                     **\033[0m\n"
+						"\033[%d;%dm*********************************************************************\033[0m\n",
+						BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10
+					);
 					imprimeClassificacao(grupos[MASCULINO + 2 * PROFISSIONAL], 1);
 					vmp = 2;
 				}
 
-				if(!vfp){
-					printf("\nClassificacao %dmin:  (Feminino Profissional)\n", 30*(lPrint+1));
-					imprimeClassificacao(grupos[FEMININO + 2 * PROFISSIONAL], 0);
-				}
-				else if(vfp==1){
-					printf("\nClassificacao Final:  (Feminino Profissional)\n");
+				if(vfp==1){
+					printf(
+						"\n\033[%d;%dm*********************************************************************\033[0m\n"
+						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
+						"\033[%d;%dm**-----------------------------------------------------------------**\033[0m\n"
+						"\033[%d;%dm**                      Feminino  Profissional                     **\033[0m\n"
+						"\033[%d;%dm*********************************************************************\033[0m\n",
+						BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10
+					);
 					imprimeClassificacao(grupos[FEMININO + 2 * PROFISSIONAL], 1);
 					vfp = 2;
 				}
 
-				if(!vma){
-					printf("\nClassificacao %dmin:  (Masculino Amador)\n", 30*(lPrint+1));
-					imprimeClassificacao(grupos[MASCULINO + 2 * PROFISSIONAL], 0);
-				}
-				else if(vma==1){
-					printf("\nClassificacao Final:  (Masculino Amador)\n");
+				if(vma==1){
+					printf(
+						"\n\033[%d;%dm*********************************************************************\033[0m\n"
+						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
+						"\033[%d;%dm**-----------------------------------------------------------------**\033[0m\n"
+						"\033[%d;%dm**                         Masculino Amador                        **\033[0m\n"
+						"\033[%d;%dm*********************************************************************\033[0m\n",
+						BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10
+					);
 					imprimeClassificacao(grupos[MASCULINO + 2 * AMADOR], 1);
 					vma = 2;
 				}
 
-				if(!vfa){
-					printf("\nClassificacao %dmin:  (Feminino Amador)\n", 30*(lPrint+1));
-					imprimeClassificacao(grupos[FEMININO + 2 * AMADOR], 0);
-				}
-				else if(vfa==1){
-					printf("\nClassificacao Final:  (Feminino Amador)\n");
+				if(vfa==1){
+					printf(
+						"\n\033[%d;%dm*********************************************************************\033[0m\n"
+						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
+						"\033[%d;%dm**-----------------------------------------------------------------**\033[0m\n"
+						"\033[%d;%dm**                          Feminino Amador                        **\033[0m\n"
+						"\033[%d;%dm*********************************************************************\033[0m\n",
+						BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10
+					);
 					imprimeClassificacao(grupos[FEMININO + 2 * AMADOR], 1);
 					vfa = 2;
 				}

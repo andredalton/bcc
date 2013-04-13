@@ -23,6 +23,16 @@
 
 #define MAXNAMES 10000
 
+/* O mundo colorido é muito mais bonito! */
+#define BLACK	30
+#define RED		31
+#define GREEN	32
+#define YELLOW	33
+#define BLUE	34
+#define MAGENTA	35
+#define CYAN	36
+#define WHITE	37
+
 typedef struct tmp{
     unsigned int h;			/* Hora */
 	unsigned int m;			/* Minuto */

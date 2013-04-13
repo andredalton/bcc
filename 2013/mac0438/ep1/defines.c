@@ -130,3 +130,116 @@ char *randomName(ListName L){
 
 	return L->nome[i];
 }
+
+void impreme(int *v, int tam){
+	int i;
+	printf("\n");
+	for ( i=0; i < tam; ++i)
+	{
+		printf("%d ", v[i]);
+	}
+	printf("\n");
+}
+
+int punicao(int *v, int ini, int fim, int tmp, int faixas, int natletas){
+	int
+		uso,
+		i,
+		m = (ini+fim)/2;
+
+	printf("[%d %d]\n", ini, fim);
+
+	if(ini==fim){
+		if (v[ini]<tmp) {
+			printf("H %d\n", ini);
+			memcpy ( v, v+1, (ini-1)*sizeof(int) );
+			v[ini] = tmp;
+		}
+		else if(v[ini]>tmp) {
+			printf("I %d\n", ini);
+			memcpy ( v, v+1, (ini)*sizeof(int) );
+			v[ini-1] = tmp;
+		}
+		else if(v[ini]==tmp) {
+			printf("J %d\n", ini);
+			/* Fazer o baratinho. */
+			memcpy ( v, v+1, ini*sizeof(int) );
+			v[ini] = tmp;
+			return 3;
+		}
+		return 0;
+	}
+	else if (v[m]==tmp){
+		printf("A\n");
+		uso=1;
+
+		for( i=1; i<faixas && faixas+i<natletas; i++, uso++){
+			printf("\tC\n");
+			if(v[m+i]!=tmp) break;
+		}
+		for( i=1; i<faixas && faixas-i>0; i++, uso++) {
+			printf("\tD\n");
+			if(v[m-i]!=tmp) break;
+		}
+
+		/* Caso o atleta esteja tentando ultrapassar alguém sem ter uma via, será punido!!! */
+		if(uso>faixas){
+			printf(" B\n");
+			return 3 + punicao(v, m, fim, tmp+3, faixas, natletas);
+		}
+		else{
+			printf(" E\n");
+			memcpy ( v, v+1, m*sizeof(int) );
+			v[m] = tmp;
+			return 0;
+		}
+	}
+	else if ( v[m]<tmp ){
+		printf("F %d \n", m);
+		return punicao(v, m+1, fim, tmp, faixas, natletas);
+	}
+	else{
+		printf("G %d \n", m);
+		return punicao(v, ini, m-1, tmp, faixas, natletas);
+	}
+}
+
+/*
+int main(){
+	int
+		m,
+		i,
+		v[10];
+
+	for(i=0; i<10; i++)
+		v[i]=-1;
+
+	impreme(v,10);
+	m = 13;
+	printf("Insert - %d \t P = %d\n", m, punicao(v, 0, 9, m, 1, 10) );
+	impreme(v,10);
+	m = 10;
+	printf("Insert - %d \t P = %d\n", m, punicao(v, 0, 9, m, 1, 10) );
+	impreme(v,10);
+	m = 14;
+	printf("Insert - %d \t P = %d\n", m, punicao(v, 0, 9, m, 1, 10) );
+	impreme(v,10);
+	m = 15;
+	printf("Insert - %d \t P = %d\n", m, punicao(v, 0, 9, m, 1, 10) );
+	impreme(v,10);
+	m = 13;
+	printf("Insert - %d \t P = %d\n", m, punicao(v, 0, 9, m, 1, 10) );
+	impreme(v,10);
+	m = 13;
+	printf("Insert - %d \t P = %d\n", m, punicao(v, 0, 9, m, 1, 10) );
+	impreme(v,10);
+	m = 16;
+	printf("Insert - %d \t P = %d\n", m, punicao(v, 0, 9, m, 1, 10) );
+	impreme(v,10);
+	m = 13;
+	printf("Insert - %d \t P = %d\n", m, punicao(v, 0, 9, m, 1, 10) );
+	impreme(v,10);
+
+	return 0;
+}
+*/
