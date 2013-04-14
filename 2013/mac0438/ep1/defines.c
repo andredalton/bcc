@@ -147,7 +147,7 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 	printf("\n");
 
 	if(count==20) {
-		printf("\nERRO AQUI!!! (%d,%d) = %d [%d]\n", ini, fim, tmp, tam );
+		printf("\nRETURNT ERRO!!! (%d,%d) = %d [%d]\n", ini, fim, tmp, tam );
 		return 0;
 	}
 
@@ -167,8 +167,12 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 			}
 			memcpy ( v, v+1, ini*sizeof(int) );
 			v[ini] = tmp;
+			
+			printf("\nRETURNT == A\n");
 			return 3;
 		}
+
+		printf("\nRETURNT == B\n");
 		return 0;
 	}
 	else if (v[m]==tmp){
@@ -185,6 +189,8 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 		else{
 			memcpy ( v, v+1, m*sizeof(int) );
 			v[m] = tmp;
+			
+			printf("\nRETURNT == C\n");
 			return 0;
 		}
 	}
