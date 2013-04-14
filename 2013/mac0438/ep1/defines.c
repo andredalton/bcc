@@ -142,9 +142,10 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 		dir=0,
 		i,
 		m = (ini+fim)/2;
+	char str[5];
 
-	print2Spc(ini, "  I ");
-	print2Spc(fim-ini-1, "  F ");
+	sprintf(str, "%3d ", tmp);
+	print2Spc(m, str );
 	printf("\n");
 
 	if(count==100) {
@@ -152,20 +153,7 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 		return 0;
 	}
 
-	if( ini==fim && v[ini]!=tmp ){
-		if (v[ini]<tmp) {
-			memcpy ( v, v+1, ini*sizeof(int) );
-			v[ini] = tmp;
-		}
-		else if(v[ini]>tmp) {
-			memcpy ( v, v+1, (ini)*sizeof(int) );
-			v[ini-1] = tmp;
-		}
-
-		printf("\nRETURNT == B   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
-		return 0;
-	}
-	else if (v[m]==tmp){
+	if (v[m]==tmp){
 		for( i=1; i<faixas && faixas+i<tam; i++, dir++)
 			if(v[m+i]!=tmp) break;
 		for( i=1; i<faixas && faixas-i>0; i++, esq++)
@@ -174,30 +162,35 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 		/* Caso o atleta esteja tentando ultrapassar alguém sem ter uma via, será punido!!! */
 		if(dir+esq+2>faixas) { /* uso + 1 pois estou tentando 'usar' uma via e já havia encontrado alguém na via que estou*/
 			if(m+dir+1<tam) {
-				printf("\nRETURNT == C   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
 				return 3 + punicaoR(v, m+dir+1, tam-1, tam, tmp+3, faixas, count+1);
 			}
 			else{
 				memcpy ( v, v+1, (tam-1)*sizeof(int) );
 				v[tam-1] = tmp+3;
-				printf("\nRETURNT == D   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
 				return 3;
 			}
 		}
 		else{
 			memcpy ( v, v+1, m*sizeof(int) );
 			v[m] = tmp;
-			
-			printf("\nRETURNT == D   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
 			return 0;
 		}
 	}
+	else if( ini==fim && v[ini]!=tmp ){
+		if (v[ini]<tmp) {
+			memcpy ( v, v+1, ini*sizeof(int) );
+			v[ini] = tmp;
+		}
+		else if(v[ini]>tmp) {
+			memcpy ( v, v+1, (ini)*sizeof(int) );
+			v[ini-1] = tmp;
+		}
+		return 0;
+	}
 	else if ( v[m]<tmp ){
-		printf("\nRETURNT >>   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
 		return punicaoR(v, m+1, fim, tam, tmp, faixas, count+1);
 	}
 	else{
-		printf("\nRETURNT <<   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
 		return punicaoR(v, ini, m, tam, tmp, faixas, count+1);
 	}
 }
@@ -219,7 +212,12 @@ int main(){
 	}
 
 	for( i=0; i<40; ++i){
-		printf("\n\n\n");
+		system("clear");
+
+		printf("\n\nSimulacao %d\n", i);
+		mem = rand()%5;
+		printf("Inserindo %d\n\n", mem);
+
 		for( j=0; j<40; j++)
 			printf("%3d ", j);
 		printf("\n");
@@ -229,8 +227,6 @@ int main(){
 			else
 				printf("%3d ", v[j]);
 		}
-		mem = rand()%5;
-		printf("\nPut %d\n", mem);
 		p = punicao(v, 40, mem, 1);
 		for( j=0; j<40; j++)
 			printf("%3d ", j);
@@ -241,7 +237,9 @@ int main(){
 			else
 				printf("%3d ", v[j]);
 		}
-		printf("\nPun = %d    |     Val = %d\n\n", p, p+mem );
+		printf("\n\nPunicao = %d\nValor inserido = %d\n\nPressione Enter para continuar, ^C para sair.", p, p+mem );
+
+		getchar();
 	}
 
 	return 0;
