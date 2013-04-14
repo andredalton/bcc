@@ -138,7 +138,8 @@ void print2Spc(int tam, char str[]){
 
 int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 	int
-		uso,
+		esq=0,
+		dir=0,
 		i,
 		m = (ini+fim)/2;
 
@@ -146,12 +147,12 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 	print2Spc(fim-ini-1, "  F ");
 	printf("\n");
 
-	if(count==20) {
-		printf("\nRETURNT ERRO!!! (%d,%d) = %d [%d]\n", ini, fim, tmp, tam );
+	if(count==100) {
+		printf("\nRETURNT ERRO!!!   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
 		return 0;
 	}
 
-	if(ini==fim){
+	if( ini==fim && v[ini]!=tmp ){
 		if (v[ini]<tmp) {
 			memcpy ( v, v+1, ini*sizeof(int) );
 			v[ini] = tmp;
@@ -160,44 +161,45 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 			memcpy ( v, v+1, (ini)*sizeof(int) );
 			v[ini-1] = tmp;
 		}
-		else if(v[ini]==tmp) {
-			uso = 1;  /* uso = 1 pois já tem alguem 'usando' uma via */
-			if (uso+1>faixas) { /* uso + 1 pois estou tentando 'usar' uma via */
-				return 3 + punicaoR(v, fim, tam-1, tam, tmp+3, faixas, count+1);
-			}
-			memcpy ( v, v+1, ini*sizeof(int) );
-			v[ini] = tmp;
-			
-			printf("\nRETURNT == A\n");
-			return 3;
-		}
 
-		printf("\nRETURNT == B\n");
+		printf("\nRETURNT == B   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
 		return 0;
 	}
 	else if (v[m]==tmp){
-		uso=1; /* uso = 1 pois já tem alguem 'usando' uma via */
-
-		for( i=1; i<faixas && faixas+i<tam; i++, uso++)
+		for( i=1; i<faixas && faixas+i<tam; i++, dir++)
 			if(v[m+i]!=tmp) break;
-		for( i=1; i<faixas && faixas-i>0; i++, uso++)
+		for( i=1; i<faixas && faixas-i>0; i++, esq++)
 			if(v[m-i]!=tmp) break;
 
 		/* Caso o atleta esteja tentando ultrapassar alguém sem ter uma via, será punido!!! */
-		if(uso+1>faixas) /* uso + 1 pois estou tentando 'usar' uma via */
-			return 3 + punicaoR(v, m, fim, tam, tmp+3, faixas, count+1);
+		if(dir+esq+2>faixas) { /* uso + 1 pois estou tentando 'usar' uma via e já havia encontrado alguém na via que estou*/
+			if(m+dir+1<tam) {
+				printf("\nRETURNT == C   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
+				return 3 + punicaoR(v, m+dir+1, tam-1, tam, tmp+3, faixas, count+1);
+			}
+			else{
+				memcpy ( v, v+1, (tam-1)*sizeof(int) );
+				v[tam-1] = tmp+3;
+				printf("\nRETURNT == D   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
+				return 3;
+			}
+		}
 		else{
 			memcpy ( v, v+1, m*sizeof(int) );
 			v[m] = tmp;
 			
-			printf("\nRETURNT == C\n");
+			printf("\nRETURNT == D   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
 			return 0;
 		}
 	}
-	else if ( v[m]<tmp )
+	else if ( v[m]<tmp ){
+		printf("\nRETURNT >>   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
 		return punicaoR(v, m+1, fim, tam, tmp, faixas, count+1);
-	else
-		return punicaoR(v, ini, m-1, tam, tmp, faixas, count+1);
+	}
+	else{
+		printf("\nRETURNT <<   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
+		return punicaoR(v, ini, m, tam, tmp, faixas, count+1);
+	}
 }
 
 int punicao(int *v, int tam, int tmp, int faixas){
@@ -207,18 +209,21 @@ int punicao(int *v, int tam, int tmp, int faixas){
 
 int main(){
 	int i, j, p, mem;
-	int v[30];
+	int v[40];
 
 	srand( time(NULL) );
 
-	for ( i=0; i<30; ++i)
+	for ( i=0; i<40; ++i)
 	{
 		v[i]=-1;
 	}
 
-	for( i=0; i<30; ++i){
+	for( i=0; i<40; ++i){
 		printf("\n\n\n");
-		for( j=0; j<30; j++){
+		for( j=0; j<40; j++)
+			printf("%3d ", j);
+		printf("\n");
+		for( j=0; j<40; j++){
 			if( v[j]==-1 )
 				printf("  - ");
 			else
@@ -226,8 +231,11 @@ int main(){
 		}
 		mem = rand()%5;
 		printf("\nPut %d\n", mem);
-		p = punicao(v, 30, mem, 1);
-		for( j=0; j<30; j++){
+		p = punicao(v, 40, mem, 1);
+		for( j=0; j<40; j++)
+			printf("%3d ", j);
+		printf("\n");
+		for( j=0; j<40; j++){
 			if( v[j]==-1 )
 				printf("  - ");
 			else
