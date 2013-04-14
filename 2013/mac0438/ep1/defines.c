@@ -8,6 +8,13 @@
 
 #include "defines.h"
 
+#if SIMULA == 1
+	#define simulacao main
+	#define SIMULACAO 1
+#else
+	#define SIMULACAO 0
+#endif
+
 void *mallocX (unsigned int nbytes) 
 {
    void *ptr;
@@ -95,7 +102,7 @@ int comparePosicaoAtleta( const void *p1, const void *p2) {
 }
 
 void ordenaPosicaoAtleta( PosicaoAtleta *vet, int tam_vet) {
-   qsort( vet, tam_vet, sizeof (PosicaoAtleta), (void *) comparePosicaoAtleta);
+   qsort( vet, tam_vet, sizeof (PosicaoAtleta), comparePosicaoAtleta);
 }
 
 ListName listaNomes(char entrada[]){
@@ -136,24 +143,23 @@ void print2Spc(int tam, char str[]){
 	printf("%s", str);
 }
 
-int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
+int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas){
 	int
 		esq=0,
 		dir=0,
 		i,
-		m = (ini+fim)/2;
-	char str[5];
+		m = (ini+fim)/2,
+		mem;
 
-	sprintf(str, "%3d ", tmp);
-	print2Spc(m, str );
-	printf("\n");
-
-	if(count==100) {
-		printf("\nRETURNT ERRO!!!   (%d,%d)   [%d] = ||%d||   tam = %d\n", ini, fim, tmp, v[m], tam );
-		return 0;
+	if(SIMULACAO){
+		char str[5];
+		sprintf(str, "%3d ", tmp);
+		print2Spc(m, str );
+		printf("\n");
 	}
 
 	if (v[m]==tmp){
+		/* Verificando os limites de faixas. */
 		for( i=1; i<faixas && faixas+i<tam; i++, dir++)
 			if(v[m+i]!=tmp) break;
 		for( i=1; i<faixas && faixas-i>0; i++, esq++)
@@ -162,7 +168,9 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 		/* Caso o atleta esteja tentando ultrapassar alguém sem ter uma via, será punido!!! */
 		if(dir+esq+2>faixas) { /* uso + 1 pois estou tentando 'usar' uma via e já havia encontrado alguém na via que estou*/
 			if(m+dir+1<tam) {
-				return 3 + punicaoR(v, m+dir+1, tam-1, tam, tmp+3, faixas, count+1);
+				mem = punicaoR(v, m+dir+1, tam-1, tam, tmp+3, faixas);
+				if(mem==-1) return -1;
+				return 3 + mem;
 			}
 			else{
 				memcpy ( v, v+1, (tam-1)*sizeof(int) );
@@ -182,39 +190,64 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 			v[ini] = tmp;
 		}
 		else if(v[ini]>tmp) {
+			if(ini==0)
+				return -1;
 			memcpy ( v, v+1, (ini)*sizeof(int) );
 			v[ini-1] = tmp;
 		}
 		return 0;
 	}
 	else if ( v[m]<tmp ){
-		return punicaoR(v, m+1, fim, tam, tmp, faixas, count+1);
+		mem = punicaoR(v, m+1, fim, tam, tmp, faixas);
+		if(mem==-1) return -1;
+		return mem;
 	}
 	else{
-		return punicaoR(v, ini, m, tam, tmp, faixas, count+1);
+		mem = punicaoR(v, ini, m, tam, tmp, faixas);
+		if(mem==-1) return -1;
+		return mem;
 	}
 }
 
 int punicao(int *v, int tam, int tmp, int faixas){
-	return punicaoR(v, 0, tam-1, tam, tmp, faixas, 0);
+	return punicaoR(v, 0, tam-1, tam, tmp, faixas);
 }
 
-
-int main(){
-	int i, j, p, mem;
-	int v[40];
+int simulacao(int argc, char *argv[]){
+	int
+		i,
+		j,
+		p,
+		mem,
+		faixas=1,
+		v[40];
+	char c;
 
 	srand( time(NULL) );
+
+	for(i=1; i<argc; i++){
+		if ( !strcmp(argv[i], "-h") ){
+			printf(
+				"Modo de uso:\n"
+				"%s -h <faixas>\n"
+				"-h: para imprimir esta ajuda.\n"
+				"<faixas>: numero de faixas a serem usadas.\n", argv[0]
+			);
+			return 0;
+		}
+		faixas = atoi(argv[i]);
+	}
 
 	for ( i=0; i<40; ++i)
 	{
 		v[i]=-1;
 	}
 
-	for( i=0; i<40; ++i){
+	i=0;
+	while(1){
 		system("clear");
 
-		printf("\n\nSimulacao %d\n", i);
+		printf("\n\nSimulacao %d\n", i+1);
 		mem = rand()%5;
 		printf("Inserindo %d\n\n", mem);
 
@@ -227,7 +260,7 @@ int main(){
 			else
 				printf("%3d ", v[j]);
 		}
-		p = punicao(v, 40, mem, 1);
+		p = punicao(v, 40, mem, faixas);
 		for( j=0; j<40; j++)
 			printf("%3d ", j);
 		printf("\n");
@@ -237,9 +270,13 @@ int main(){
 			else
 				printf("%3d ", v[j]);
 		}
-		printf("\n\nPunicao = %d\nValor inserido = %d\n\nPressione Enter para continuar, ^C para sair.", p, p+mem );
+		printf("\n\nPunicao = %d\nValor inserido = %d\n\nDeseja continuar? [Y/q]: ", p, p+mem );
 
-		getchar();
+		c = getchar();
+
+		if(c=='q')
+			break;
+		i++;
 	}
 
 	return 0;
