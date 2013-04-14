@@ -11,8 +11,9 @@
 
 #define ironMain main
 
-/* Inicialização das variáveis globais.
- **************************************/
+  /****************************************/
+ /* Inicialização das variáveis globais. */
+/****************************************/
 int *TPortalT1Ent;
 int *TPortalT2Ent;
 int *TPortalT1Sai;
@@ -38,22 +39,41 @@ int debug;
 
 Atleta *atletas;
 
-/**********************************************
- * Termino da declaração das variáveis globais.
- **********************************************/
+  /*************************************************/
+ /* Termino da declaração das variáveis globais.  */
+/*************************************************/
 
 /* Imprime a classificação dos atletas.
  **************************************/
-void imprimeClassificacao(PosicaoAtleta *lista, int tempo){
+void imprimeClassificacao(
+	PosicaoAtleta *lista,		/* Lista dos tempos de cada atleta em uma determinada posição. */
+	int tempo 					/* 1 caso queira imprimir os tempos e 0 caso seja a posição. */
+){
 	int i, j, tam, cor;
 	Tempo t;
-	char sex, cat;
-	
+	char
+		sex,
+		cat,
+		local[3];
+
 	for( i=0; i<natletas; i++){
 		if(!debug && i>=3) break;
 
 		sex = atletas[lista[i].id]->sexo==MASCULINO ? 'M' : 'F';
 		cat = atletas[lista[i].id]->categoria==PROFISSIONAL ? 'P' : 'A';
+
+		if (lista[i].posicao < 100*NATAM)
+			sprintf(local, "NA");
+		else if (lista[i].posicao == 100*NATAM)
+			sprintf(local, "TI");
+		else if (lista[i].posicao < 100*NATAM + 1000*CITAM)
+			sprintf(local, "CI");
+		else if (lista[i].posicao == 100*NATAM + 1000*CITAM)
+			sprintf(local, "T2");
+		else if (lista[i].posicao < 100*NATAM + 1000*CITAM + 1000*COTAM)
+			sprintf(local, "CO");
+		else if (lista[i].posicao == 100*NATAM + 1000*CITAM + 1000*COTAM)
+			sprintf(local, "FI");
 
 		if(tempo) {
 			cor = RED + atletas[lista[i].id]->sexo + 2 * atletas[lista[i].id]->categoria;
@@ -63,7 +83,7 @@ void imprimeClassificacao(PosicaoAtleta *lista, int tempo){
 			for (j=0; j<22-tam; j++) {
 				printf(" ");
 			}
-			printf("%c   %c   %02dh%02dm%06.3fs                 \033[0m\n", sex, cat, t->h, t->m, (double)t->ms/1000);
+			printf("%c   %c   %s   %02dh%02dm%06.3fs            \033[0m\n", sex, cat, local, t->h, t->m, (double)t->ms/1000);
 			free(t);
 		}
 		else {
@@ -73,7 +93,7 @@ void imprimeClassificacao(PosicaoAtleta *lista, int tempo){
 			for (j=0; j<30-tam; j++) {
 				printf(" ");
 			}
-			printf("%c   %c   ", sex, cat);
+			printf("%c   %c   %s   ", sex, cat, local);
 			printf("%.2fm      \033[0m\n", lista[i].posicao);
 		}
 	}
@@ -274,25 +294,21 @@ void *atleta(Atleta a){
 	
 	/* T1 */
 	/* Passando pelo portal de entrada na troca da natação. */
-	printf("T1E1 %d\n", a->id);
+	/* Sssão Crítica 1 */
 	sem_wait(&sem_PortalT1Ent);
-	printf("T1E2 %d\n", a->id);
 	a->ms[NATACAO] += punicao( TPortalT1Ent, natletas, a->ms[NATACAO], 1);
-	printf("T1E3 %d\n", a->id);
 	sem_post(&sem_PortalT1Ent);
-	printf("T1E4 %d\n", a->id);
+	/* Término Sssão Crítica 1 */
 	
 	/* Tirando a sunga. */
 	transicao(a, T1);
 	
-	/* Passando pelo portal de saida na troca da natação. *
-	printf("T2E1 %d\n", a->id);
+	/* Passando pelo portal de saida na troca da natação. */
+	/* Sessão Crítica 2 */
 	sem_wait(&sem_PortalT1Sai);
-	printf("T2E2 %d\n", a->id);
 	a->ms[T1] += punicao( TPortalT1Sai, natletas, a->ms[T1], 1);
-	printf("T2E3 %d\n", a->id);
 	sem_post(&sem_PortalT1Sai);
-	printf("T2E4 %d\n", a->id);
+	/* Término Sessão Crítica 2 */
 	
 	/* Bufferizando o tempo em que o atleta esteve parado na troca 1. */
 	for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++)
@@ -304,41 +320,40 @@ void *atleta(Atleta a){
 		ciclismo(a, PLANO);
 		for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++) {
 			p = 100*NATAM + 100.0*i + 100.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
-			
-			/*
+
+			/* Sessão Crítica 3 */
 			sem_wait(&sem_estrada[i]);
 			a->ms[CICLISMO] += punicao( estrada[i], natletas, a->ms[CICLISMO], 3);
 			sem_post(&sem_estrada[i]);
-			*/
+			/* Término Sessão Crítica 3 */
 
 			atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 		}
 		t = tempoTotal(a);
 	}	
 
-	/* T2 *
+	/* T2 */
 	t = tempoTotal(a);
 	
+	/* Sessão Crítica 4 */
 	sem_wait(&sem_PortalT2Ent);
 	a->ms[CICLISMO] += punicao( TPortalT2Ent, natletas, a->ms[CICLISMO], 1);
 	sem_post(&sem_PortalT2Ent);
+	/* Término Sessão Crítica 4 */
 
 	/* Trocando o sapato. */
 	transicao(a, T2);
 
-	/*
+	/* Sessão Crítica 5 */
 	sem_wait(&sem_PortalT2Sai);
 	a->ms[T2] += punicao( TPortalT2Sai, natletas, a->ms[T2], 1);
 	sem_post(&sem_PortalT2Sai);
-	*/
+	/* Término Sessão Crítica 5 */
 	
 	for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++)
 		atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM + 1000*CITAM);
 	t = tempoTotal(a);
 
-	/**********************
-    * Termino S. critica!!!
-    **********************/
 	/* Corrida */
 	for(i=0; i<COTAM; i++){
 		corrida(a);
@@ -351,8 +366,6 @@ void *atleta(Atleta a){
 	/* Guardadndo tempo final na linha correspondente na matriz tempoEspaco. */
 	for( i=tempoTotal(a)/deltaTime; i<(29*debug+1)*TMAX; i++)
 		atualizaPosicao( &tempoEspaco[i][a->id], a->id, tempoTotal(a), 100*NATAM + 1000*CITAM + 1000*COTAM );
-
-	printf("\n\n\t\tACABEI!!!\n");
 
 	return NULL;
 }

@@ -8,13 +8,6 @@
 
 #include "defines.h"
 
-#if SIMULA == 1
-	#define simulacao main
-	#define SIMULACAO 1
-#else
-	#define SIMULACAO 0
-#endif
-
 void *mallocX (unsigned int nbytes) 
 {
    void *ptr;
@@ -39,9 +32,9 @@ void *reallocX (void *ptr, unsigned int nbytes)
 Tempo converteTempo(int ms){
 	Tempo t = (Tempo) mallocX(sizeof(struct tmp));
 	
-	t->ms = ms%60000;
-	t->m = ms%3600000/60000;
-	t->h = ms/3600000;
+	t->ms = ms%(60*PRECISAO);
+	t->m = ms%(3600*PRECISAO)/(60*PRECISAO);
+	t->h = ms/(3600*PRECISAO);
 	
 	return t;
 }
@@ -135,6 +128,7 @@ char *randomName(ListName L){
 	return L->nome[i];
 }
 
+/* Função interna para ajudar a imprimir a simulação do algoritmo. */
 void print2Spc(int tam, char str[]){
 	int i;
 
@@ -143,7 +137,15 @@ void print2Spc(int tam, char str[]){
 	printf("%s", str);
 }
 
-int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas){
+/* Função interna recursiva que calcula o tempo de punição pra cada atleta. (Pode ser simulada). */
+int punicaoR(
+	int *v,			/* Vetor que representa o tempo de um atleta em uma posição. (Deve ser inicializado com -1). */
+	int ini,		/* Início do setor de comparação. */
+	int fim,		/* Fim do setor de comparação. */
+	int tam,		/* Tamanho total do vetor. (Necessário em alguns casos de punição). */
+	int tmp,		/* Tempo que esta tentando inserir na posição definida por v. */
+	int faixas 		/* Número de faixas disponíveis na via. */
+){
 	int
 		esq=0,
 		dir=0,
@@ -151,6 +153,7 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas){
 		m = (ini+fim)/2,
 		mem;
 
+	/* Caso seja simulação, imprimir a recursão adequadamente. */
 	if(SIMULACAO){
 		char str[5];
 		sprintf(str, "%3d ", tmp);
@@ -159,23 +162,25 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas){
 	}
 
 	if (v[m]==tmp){
-		/* Verificando os limites de faixas. */
+		/* Verificando ocupação das vias adjacentes. */
 		for( i=1; i<faixas && faixas+i<tam; i++, dir++)
 			if(v[m+i]!=tmp) break;
 		for( i=1; i<faixas && faixas-i>0; i++, esq++)
 			if(v[m-i]!=tmp) break;
 
 		/* Caso o atleta esteja tentando ultrapassar alguém sem ter uma via, será punido!!! */
-		if(dir+esq+2>faixas) { /* uso + 1 pois estou tentando 'usar' uma via e já havia encontrado alguém na via que estou*/
+		if(dir+esq+2>faixas) { /* uso + 2 pois estou tentando 'usar' uma via a mais do que a que já esta sendo utilizada*/
+			
+			/* Todos os tempos são menores que o do atleta atual. Memória deve ser tratada respeitando os limites alocados. */
 			if(m+dir+1<tam) {
-				mem = punicaoR(v, m+dir+1, tam-1, tam, tmp+3, faixas);
+				mem = punicaoR(v, m+dir+1, tam-1, tam, tmp+TPUNI*PRECISAO, faixas);
 				if(mem==-1) return -1;
-				return 3 + mem;
+				return TPUNI*PRECISAO + mem;
 			}
 			else{
 				memcpy ( v, v+1, (tam-1)*sizeof(int) );
 				v[tam-1] = tmp+3;
-				return 3;
+				return TPUNI*PRECISAO;
 			}
 		}
 		else{

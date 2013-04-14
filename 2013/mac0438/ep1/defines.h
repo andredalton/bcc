@@ -1,5 +1,6 @@
 #include "tmp.h"
 
+/* Definindo as etapas. */
 #define ETAPAS 5
 #define NATACAO 0
 #define T1 1
@@ -7,25 +8,39 @@
 #define T2 3
 #define CORRIDA 4
 
+/* Definindo sexo. */
 #define MASCULINO 0
 #define FEMININO 1
 
+/* Definindo categoria. */
 #define PROFISSIONAL 0
 #define AMADOR 1
 
+/* Definindo comportamento da estrada de ciclismo. */
+#ifndef FAIXAS
+	#define FAIXAS 3
+#endif
 #define SUBIDA 0
 #define PLANO 1
 #define DESCIDA 2
 
+/* Definindo tamanho das provas. */
 #define NATAM 38			/* x100m */ 
 #define CITAM 180			/* x1km  */
 #define COTAM 42 			/* x1km  */
 
-#define TMAX 53				/* Máximo de tempo possível para a prova em intervalos de meia hora. */
+/* Máximo de tempo possível para a prova em intervalos de meia hora. */
+#define TMAX 53
 
+/* Máximo de nomes encontrados nos dicionarios. */
 #define MAXNAMES 10000
 
-/* O mundo colorido é muito mais bonito! */
+/* Definindo se o programa rodará em segundos ou milissegundos (milissegundos por default). */
+#ifndef PRECISAO
+	#define PRECISAO 1000
+#endif
+
+/* Brincando com cores! */
 #define BLACK	30
 #define RED		31
 #define GREEN	32
@@ -34,6 +49,18 @@
 #define MAGENTA	35
 #define CYAN	36
 #define WHITE	37
+
+/* Define para gerar uma simulação do algorítimo da punição. */
+#ifdef SIMULACAO
+	#define simulacao main
+#else
+	#define SIMULACAO 0
+#endif
+
+/* Tempo de punição. */
+#ifndef TPUNI
+	#define TPUNI 3
+#endif
 
 typedef struct tmp{
     unsigned int h;			/* Hora */
