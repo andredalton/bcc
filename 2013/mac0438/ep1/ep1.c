@@ -127,7 +127,7 @@ void *classificacao(void) {
 	}
 
 	while( lPrint<(29*debug+1)*TMAX && ! (vmp && vfp && vma && vfa) ){
-		printf("\r");
+		usleep(100000);
 		for(i=0; i<natletas; i++)
 			if( tempoEspaco[lPrint][i].id==-1) break;
 		if(i==natletas){
@@ -319,7 +319,7 @@ void *atleta(Atleta a){
 	for(i=0; i<CITAM; i++){
 		ciclismo(a, PLANO);
 		for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++) {
-			p = 100*NATAM + 100.0*i + 100.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
+			p = 100*NATAM + 1000.0*i + 1000.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
 
 			/* Sessão Crítica 3 */
 			sem_wait(&sem_estrada[i]);
@@ -358,7 +358,7 @@ void *atleta(Atleta a){
 	for(i=0; i<COTAM; i++){
 		corrida(a);
 		for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++) {
-			p = 100*NATAM + 1000*CITAM + 100.0*i + 100.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
+			p = 100*NATAM + 1000*CITAM + 1000.0*i + 1000.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
 			atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 		}
 		t = tempoTotal(a);
