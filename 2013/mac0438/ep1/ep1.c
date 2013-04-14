@@ -285,7 +285,7 @@ void *atleta(Atleta a){
 	/* Tirando a sunga. */
 	transicao(a, T1);
 	
-	/* Passando pelo portal de saida na troca da natação. */
+	/* Passando pelo portal de saida na troca da natação. *
 	printf("T2E1 %d\n", a->id);
 	sem_wait(&sem_PortalT1Sai);
 	printf("T2E2 %d\n", a->id);
@@ -305,16 +305,18 @@ void *atleta(Atleta a){
 		for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++) {
 			p = 100*NATAM + 100.0*i + 100.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
 			
+			/*
 			sem_wait(&sem_estrada[i]);
 			a->ms[CICLISMO] += punicao( estrada[i], natletas, a->ms[CICLISMO], 3);
 			sem_post(&sem_estrada[i]);
+			*/
 
 			atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), p );
 		}
 		t = tempoTotal(a);
 	}	
 
-	/* T2 */
+	/* T2 *
 	t = tempoTotal(a);
 	
 	sem_wait(&sem_PortalT2Ent);
@@ -324,10 +326,12 @@ void *atleta(Atleta a){
 	/* Trocando o sapato. */
 	transicao(a, T2);
 
+	/*
 	sem_wait(&sem_PortalT2Sai);
 	a->ms[T2] += punicao( TPortalT2Sai, natletas, a->ms[T2], 1);
 	sem_post(&sem_PortalT2Sai);
-
+	*/
+	
 	for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++)
 		atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), 100*NATAM + 1000*CITAM);
 	t = tempoTotal(a);

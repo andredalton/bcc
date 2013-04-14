@@ -128,11 +128,28 @@ char *randomName(ListName L){
 	return L->nome[i];
 }
 
-int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas){
+void print2Spc(int tam, char str[]){
+	int i;
+
+	for(i=0; i<tam; i++)
+		printf("    ");
+	printf("%s", str);
+}
+
+int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas, int count){
 	int
 		uso,
 		i,
 		m = (ini+fim)/2;
+
+	print2Spc(ini, "  I ");
+	print2Spc(fim-ini-1, "  F ");
+	printf("\n");
+
+	if(count==20) {
+		printf("\nERRO AQUI!!! (%d,%d) = %d [%d]\n", ini, fim, tmp, tam );
+		return 0;
+	}
 
 	if(ini==fim){
 		if (v[ini]<tmp) {
@@ -146,7 +163,7 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas){
 		else if(v[ini]==tmp) {
 			uso = 1;  /* uso = 1 pois já tem alguem 'usando' uma via */
 			if (uso+1>faixas) { /* uso + 1 pois estou tentando 'usar' uma via */
-				return 3 + punicaoR(v, fim, tam-1, tam, tmp+3, faixas);
+				return 3 + punicaoR(v, fim, tam-1, tam, tmp+3, faixas, count+1);
 			}
 			memcpy ( v, v+1, ini*sizeof(int) );
 			v[ini] = tmp;
@@ -164,7 +181,7 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas){
 
 		/* Caso o atleta esteja tentando ultrapassar alguém sem ter uma via, será punido!!! */
 		if(uso+1>faixas) /* uso + 1 pois estou tentando 'usar' uma via */
-			return 3 + punicaoR(v, m, fim, tam, tmp+3, faixas);
+			return 3 + punicaoR(v, m, fim, tam, tmp+3, faixas, count+1);
 		else{
 			memcpy ( v, v+1, m*sizeof(int) );
 			v[m] = tmp;
@@ -172,11 +189,46 @@ int punicaoR(int *v, int ini, int fim, int tam, int tmp, int faixas){
 		}
 	}
 	else if ( v[m]<tmp )
-		return punicaoR(v, m+1, fim, tam, tmp, faixas);
+		return punicaoR(v, m+1, fim, tam, tmp, faixas, count+1);
 	else
-		return punicaoR(v, ini, m-1, tam, tmp, faixas);
+		return punicaoR(v, ini, m-1, tam, tmp, faixas, count+1);
 }
 
 int punicao(int *v, int tam, int tmp, int faixas){
-	return punicaoR(v, 0, tam-1, tam, tmp, faixas);
+	return punicaoR(v, 0, tam-1, tam, tmp, faixas, 0);
+}
+
+
+int main(){
+	int i, j, p, mem;
+	int v[30];
+
+	srand( time(NULL) );
+
+	for ( i=0; i<30; ++i)
+	{
+		v[i]=-1;
+	}
+
+	for( i=0; i<30; ++i){
+		printf("\n\n\n");
+		for( j=0; j<30; j++){
+			if( v[j]==-1 )
+				printf("  - ");
+			else
+				printf("%3d ", v[j]);
+		}
+		mem = rand()%5;
+		printf("\nPut %d\n", mem);
+		p = punicao(v, 30, mem, 1);
+		for( j=0; j<30; j++){
+			if( v[j]==-1 )
+				printf("  - ");
+			else
+				printf("%3d ", v[j]);
+		}
+		printf("\nPun = %d    |     Val = %d\n\n", p, p+mem );
+	}
+
+	return 0;
 }
