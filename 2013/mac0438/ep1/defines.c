@@ -299,5 +299,7 @@ int simulacao(int argc, char *argv[]){
 		i++;
 	}
 
+	free(v);
+
 	return 0;
 }
