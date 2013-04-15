@@ -470,26 +470,28 @@ int ironMain(int argc, char *argv[]){
 	for( i=0; i<(29*debug+1)*TMAX; i++)
 		tempoEspaco[i] = novasPosicoes(natletas);
 
-	TPortalT1Ent = (int*) mallocX( natletas*sizeof(int) );
-	TPortalT2Ent = (int*) mallocX( natletas*sizeof(int) );
-	TPortalT1Sai = (int*) mallocX( natletas*sizeof(int) );
-	TPortalT2Sai = (int*) mallocX( natletas*sizeof(int) );
-	estrada = (int**) mallocX( CITAM*sizeof(int *) );
+	if(CONCORRENTE) {
+		TPortalT1Ent = (int*) mallocX( natletas*sizeof(int) );
+		TPortalT2Ent = (int*) mallocX( natletas*sizeof(int) );
+		TPortalT1Sai = (int*) mallocX( natletas*sizeof(int) );
+		TPortalT2Sai = (int*) mallocX( natletas*sizeof(int) );
+		estrada = (int**) mallocX( CITAM*sizeof(int *) );
 
-	sem_init(&sem_PortalT1Ent, 0, 1);
-	sem_init(&sem_PortalT1Sai, 0, 1);
-	sem_init(&sem_PortalT2Ent, 0, 1);
-	sem_init(&sem_PortalT2Sai, 0, 1);
+		sem_init(&sem_PortalT1Ent, 0, 1);
+		sem_init(&sem_PortalT1Sai, 0, 1);
+		sem_init(&sem_PortalT2Ent, 0, 1);
+		sem_init(&sem_PortalT2Sai, 0, 1);
 
-	for( i=0; i<CITAM; i++){
-		estrada[i] = (int*) mallocX( natletas*sizeof(int) );
-		sem_init(&sem_estrada[i], 0, 1);
-		for( j=0; j<natletas; j++){
-			estrada[i][j] = -1;
-			TPortalT1Ent[j] = -1;
-			TPortalT2Ent[j] = -1;
-			TPortalT1Sai[j] = -1;
-			TPortalT2Sai[j] = -1;
+		for( i=0; i<CITAM; i++){
+			estrada[i] = (int*) mallocX( natletas*sizeof(int) );
+			sem_init(&sem_estrada[i], 0, 1);
+			for( j=0; j<natletas; j++){
+				estrada[i][j] = -1;
+				TPortalT1Ent[j] = -1;
+				TPortalT2Ent[j] = -1;
+				TPortalT1Sai[j] = -1;
+				TPortalT2Sai[j] = -1;
+			}
 		}
 	}
 
@@ -542,27 +544,29 @@ int ironMain(int argc, char *argv[]){
 
 	/* Threads terminadas, agora vamos liberar a memória. */
 	
+	if(CONCORRENTE) {
+		sem_destroy(&sem_PortalT1Ent);
+		sem_destroy(&sem_PortalT1Sai);
+		sem_destroy(&sem_PortalT2Ent);
+		sem_destroy(&sem_PortalT2Sai);
+		
+		for(i=0; i<natletas; i++) 
+			sem_destroy(&sem_estrada[i]);
 
-	sem_destroy(&sem_PortalT1Ent);
-	sem_destroy(&sem_PortalT1Sai);
-	sem_destroy(&sem_PortalT2Ent);
-	sem_destroy(&sem_PortalT2Sai);
+		for( i=0; i<CITAM; i++)
+			free(estrada[i]);
 	
-	for(i=0; i<natletas; i++) 
-		sem_destroy(&sem_estrada[i]);
-
+		free(TPortalT1Ent);
+		free(TPortalT2Ent);
+		free(TPortalT1Sai);
+		free(TPortalT2Sai);
+		free(estrada);
+	}
+	
 	for(i=0; i<(29*debug+1)*TMAX; i++)
 		free(tempoEspaco[i]);
 
-	for( i=0; i<CITAM; i++)
-		free(estrada[i]);
-
 	free(tempoEspaco);
-	free(TPortalT1Ent);
-	free(TPortalT2Ent);
-	free(TPortalT1Sai);
-	free(TPortalT2Sai);
-	free(estrada);
 	free(ids_atletas);
 	free(atletas);
 	free(terrenos);
