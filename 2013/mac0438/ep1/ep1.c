@@ -308,9 +308,11 @@ void *atleta( void *param ){
 	/* T1 */
 	/* Passando pelo portal de entrada na troca da natação. */
 	/* Sssão Crítica 1 */
-	sem_wait(&sem_PortalT1Ent);
-	a->ms[NATACAO] += punicao( TPortalT1Ent, natletas, a->ms[NATACAO], 1);
-	sem_post(&sem_PortalT1Ent);
+	if(CONCORRENTE) {
+		sem_wait(&sem_PortalT1Ent);
+		a->ms[NATACAO] += punicao( TPortalT1Ent, natletas, a->ms[NATACAO], 1);
+		sem_post(&sem_PortalT1Ent);
+	}
 	/* Término Sssão Crítica 1 */
 	
 	/* Tirando a sunga. */
@@ -318,9 +320,11 @@ void *atleta( void *param ){
 	
 	/* Passando pelo portal de saida na troca da natação. */
 	/* Sessão Crítica 2 */
-	sem_wait(&sem_PortalT1Sai);
-	a->ms[T1] += punicao( TPortalT1Sai, natletas, a->ms[T1], 1);
-	sem_post(&sem_PortalT1Sai);
+	if(CONCORRENTE) {
+		sem_wait(&sem_PortalT1Sai);
+		a->ms[T1] += punicao( TPortalT1Sai, natletas, a->ms[T1], 1);
+		sem_post(&sem_PortalT1Sai);
+	}
 	/* Término Sessão Crítica 2 */
 	
 	/* Bufferizando o tempo em que o atleta esteve parado na troca 1. */
@@ -335,9 +339,11 @@ void *atleta( void *param ){
 			p = 100*NATAM + 1000.0*i + 1000.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
 
 			/* Sessão Crítica 3 */
-			sem_wait(&sem_estrada[i]);
-			a->ms[CICLISMO] += punicao( estrada[i], natletas, a->ms[CICLISMO], 3);
-			sem_post(&sem_estrada[i]);
+			if(CONCORRENTE) {
+				sem_wait(&sem_estrada[i]);
+				a->ms[CICLISMO] += punicao( estrada[i], natletas, a->ms[CICLISMO], 3);
+				sem_post(&sem_estrada[i]);
+			}
 			/* Término Sessão Crítica 3 */
 
 			atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), p );
@@ -349,18 +355,22 @@ void *atleta( void *param ){
 	t = tempoTotal(a);
 	
 	/* Sessão Crítica 4 */
-	sem_wait(&sem_PortalT2Ent);
-	a->ms[CICLISMO] += punicao( TPortalT2Ent, natletas, a->ms[CICLISMO], 1);
-	sem_post(&sem_PortalT2Ent);
+	if(CONCORRENTE) {
+		sem_wait(&sem_PortalT2Ent);
+		a->ms[CICLISMO] += punicao( TPortalT2Ent, natletas, a->ms[CICLISMO], 1);
+		sem_post(&sem_PortalT2Ent);
+	}
 	/* Término Sessão Crítica 4 */
 
 	/* Trocando o sapato. */
 	transicao(a, T2);
 
 	/* Sessão Crítica 5 */
-	sem_wait(&sem_PortalT2Sai);
-	a->ms[T2] += punicao( TPortalT2Sai, natletas, a->ms[T2], 1);
-	sem_post(&sem_PortalT2Sai);
+	if(CONCORRENTE) {
+		sem_wait(&sem_PortalT2Sai);
+		a->ms[T2] += punicao( TPortalT2Sai, natletas, a->ms[T2], 1);
+		sem_post(&sem_PortalT2Sai);
+	}
 	/* Término Sessão Crítica 5 */
 	
 	for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++)
@@ -532,19 +542,22 @@ int ironMain(int argc, char *argv[]){
 
 	/* Threads terminadas, agora vamos liberar a memória. */
 	
+
 	sem_destroy(&sem_PortalT1Ent);
 	sem_destroy(&sem_PortalT1Sai);
 	sem_destroy(&sem_PortalT2Ent);
 	sem_destroy(&sem_PortalT2Sai);
 	
-	for(i=0; i<natletas; i++) {
+	for(i=0; i<natletas; i++) 
 		sem_destroy(&sem_estrada[i]);
-		freePosicoes(  tempoEspaco, natletas);
-	}
+
+	for(i=0; i<(29*debug+1)*TMAX; i++)
+		free(tempoEspaco[i]);
 
 	for( i=0; i<CITAM; i++)
 		free(estrada[i]);
 
+	free(tempoEspaco);
 	free(TPortalT1Ent);
 	free(TPortalT2Ent);
 	free(TPortalT1Sai);
@@ -552,7 +565,6 @@ int ironMain(int argc, char *argv[]){
 	free(estrada);
 	free(ids_atletas);
 	free(atletas);
-	free(tempoEspaco);
 	free(terrenos);
 	free(H);
 	free(M);

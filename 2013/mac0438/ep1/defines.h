@@ -30,7 +30,8 @@
 #define COTAM 42 			/* x1km  */
 
 /* Máximo de tempo possível para a prova em intervalos de meia hora. */
-#define TMAX 53
+/* Com o uso das punições este valor pode aumentar. */
+#define TMAX 530
 
 
 /* Definindo se o programa rodará em segundos ou milissegundos (milissegundos por default). */
@@ -72,6 +73,14 @@
 	#define TIME 0
 #endif
 
+/* Tempo em microssegundos para atrasar a impressão das linhas. */ 
+#ifdef PARALELO
+	#define CONCORRENTE 0
+#else
+	#define PARALELO 0
+	#define CONCORRENTE 1
+#endif
+
 typedef struct tmp{
     unsigned int h;			/* Hora */
 	unsigned int m;			/* Minuto */
@@ -104,7 +113,6 @@ void *mallocX (unsigned int nbytes);
 void *reallocX (void *ptr, unsigned int nbytes);
 Tempo converteTempo(int ms);
 Atleta novoAtleta(int sexo, int categoria, char *nome, char *sobrenome, int id);
-void freePosicoes(PosicaoAtleta *p, int n);
 PosicaoAtleta *novasPosicoes(int n);
 void atualizaPosicao(PosicaoAtleta *p, int id, int t, double posicao);
 int comparePosicaoAtleta( const void *p1, const void *p2);

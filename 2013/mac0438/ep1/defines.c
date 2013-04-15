@@ -63,15 +63,9 @@ int tempoTotal (Atleta a){
 	return T;
 }
 
-void freePosicoes(PosicaoAtleta *p, int n){
-	int i;
-	for ( i=0; i < n; i++)
-		free(p[i]);
-}
-
 PosicaoAtleta *novasPosicoes(int n){
 	int i;
-	PosicaoAtleta *p = (PosicaoAtleta *) mallocX(n*sizeof(struct posAtleta));
+	PosicaoAtleta *p = (PosicaoAtleta *) mallocX(n*sizeof(PosicaoAtleta));
 
 	for ( i=0; i < n; i++)
 	{
