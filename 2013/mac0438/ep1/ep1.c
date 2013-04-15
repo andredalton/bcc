@@ -84,7 +84,10 @@ void imprimeClassificacao(
 			for (j=0; j<22-tam; j++) {
 				printf(" ");
 			}
-			printf("%c   %c   %s   %02dh%02dm%06.3fs            \033[0m\n", sex, cat, local, t->h, t->m, (double)t->ms/1000);
+			if(PRECISAO==1)
+				printf("%c   %c   %s   %02dh%02dm%02ds                \033[0m\n", sex, cat, local, t->h, t->m, t->ms/1000);
+			else
+				printf("%c   %c   %s   %02dh%02dm%06.3fs            \033[0m\n", sex, cat, local, t->h, t->m, (double)t->ms/1000);
 			free(t);
 		}
 		else {
@@ -124,7 +127,7 @@ void *classificacao( void *param ) {
 	if(!debug){
 		grupos = (PosicaoAtleta **) mallocX(4*sizeof(PosicaoAtleta *));
 		for(i=0; i<4; i++)
-			grupos[i] = novasPossicoes(natletas);
+			grupos[i] = novasPosicoes(natletas);
 	}
 
 	while( lPrint<(29*debug+1)*TMAX && ! (vmp && vfp && vma && vfa) ){
@@ -272,6 +275,12 @@ void *classificacao( void *param ) {
 			}
 			lPrint++;
 		}
+	}
+
+	if(!debug){
+		for(i=0; i<4; i++)
+			free(grupos[i]);
+		free(grupos);
 	}
 
 	return NULL;
@@ -449,7 +458,7 @@ int ironMain(int argc, char *argv[]){
 	/* Alocando a quantidade máxima de tics necessária para guardar as informações de tempo dos atletas. */
 	tempoEspaco = (PosicaoAtleta **) mallocX( (29*debug+1)*TMAX*sizeof(PosicaoAtleta*) );
 	for( i=0; i<(29*debug+1)*TMAX; i++)
-		tempoEspaco[i] = novasPossicoes(natletas);
+		tempoEspaco[i] = novasPosicoes(natletas);
 
 	TPortalT1Ent = (int*) mallocX( natletas*sizeof(int) );
 	TPortalT2Ent = (int*) mallocX( natletas*sizeof(int) );
@@ -519,15 +528,35 @@ int ironMain(int argc, char *argv[]){
 	for(i=0; i<natletas; i++) 
 		pthread_join(ids_atletas[i],NULL); /* Esperara a junção das threads */
 	
+	pthread_join(id_classificacao,NULL);
+
+	/* Threads terminadas, agora vamos liberar a memória. */
+	
 	sem_destroy(&sem_PortalT1Ent);
 	sem_destroy(&sem_PortalT1Sai);
 	sem_destroy(&sem_PortalT2Ent);
 	sem_destroy(&sem_PortalT2Sai);
-	for(i=0; i<natletas; i++) 
+	
+	for(i=0; i<natletas; i++) {
 		sem_destroy(&sem_estrada[i]);
+		freePosicoes(  tempoEspaco, natletas);
+	}
 
+	for( i=0; i<CITAM; i++)
+		free(estrada[i]);
 
-	pthread_join(id_classificacao,NULL);
+	free(TPortalT1Ent);
+	free(TPortalT2Ent);
+	free(TPortalT1Sai);
+	free(TPortalT2Sai);
+	free(estrada);
+	free(ids_atletas);
+	free(atletas);
+	free(tempoEspaco);
+	free(terrenos);
+	free(H);
+	free(M);
+	free(S);
 	
 	return 0;
 }

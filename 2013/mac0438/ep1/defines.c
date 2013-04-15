@@ -63,7 +63,13 @@ int tempoTotal (Atleta a){
 	return T;
 }
 
-PosicaoAtleta *novasPossicoes(int n){
+void freePosicoes(PosicaoAtleta *p, int n){
+	int i;
+	for ( i=0; i < n; i++)
+		free(p[i]);
+}
+
+PosicaoAtleta *novasPosicoes(int n){
 	int i;
 	PosicaoAtleta *p = (PosicaoAtleta *) mallocX(n*sizeof(struct posAtleta));
 
@@ -227,7 +233,8 @@ int simulacao(int argc, char *argv[]){
 		p,
 		mem,
 		faixas=1,
-		v[40];
+		nat=40,
+		*v;
 	char c;
 
 	srand( time(NULL) );
@@ -236,16 +243,22 @@ int simulacao(int argc, char *argv[]){
 		if ( !strcmp(argv[i], "-h") ){
 			printf(
 				"Modo de uso:\n"
-				"%s -h <faixas>\n"
+				"%s -h <faixas> <atletas>\n"
 				"-h: para imprimir esta ajuda.\n"
-				"<faixas>: numero de faixas a serem usadas.\n", argv[0]
+				"<faixas>: numero de faixas disponiveis.\n"
+				"<atletas>: numero de atletas.\n", argv[0]
 			);
 			return 0;
 		}
-		faixas = atoi(argv[i]);
+		if(i==1)
+			faixas = atoi(argv[i]);
+		else if(i==2)
+			nat = atoi(argv[i]);
 	}
 
-	for ( i=0; i<40; ++i)
+	v = (int *) mallocX(nat*sizeof(int));
+
+	for ( i=0; i<nat; ++i)
 	{
 		v[i]=-1;
 	}
@@ -258,20 +271,20 @@ int simulacao(int argc, char *argv[]){
 		mem = rand()%5;
 		printf("Inserindo %d\n\n", mem);
 
-		for( j=0; j<40; j++)
+		for( j=0; j<nat; j++)
 			printf("%3d ", j);
 		printf("\n");
-		for( j=0; j<40; j++){
+		for( j=0; j<nat; j++){
 			if( v[j]==-1 )
 				printf("  - ");
 			else
 				printf("%3d ", v[j]);
 		}
-		p = punicao(v, 40, mem, faixas);
-		for( j=0; j<40; j++)
+		p = punicao(v, nat, mem, faixas);
+		for( j=0; j<nat; j++)
 			printf("%3d ", j);
 		printf("\n");
-		for( j=0; j<40; j++){
+		for( j=0; j<nat; j++){
 			if( v[j]==-1 )
 				printf("  - ");
 			else
