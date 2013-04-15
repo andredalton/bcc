@@ -106,7 +106,7 @@ void imprimeClassificacao(
  * Obs: esta função imprime uma nova linha somente quando todos os atletas
  * finalizam o tic. Não para cada grupo.
  ******************************************************************************/
-void *classificacao(void) {
+void *classificacao( void *param ) {
 	int
 		i,
 		mp,
@@ -119,7 +119,7 @@ void *classificacao(void) {
 		vma = 0,
 		vfa = 0;
 
-	PosicaoAtleta **grupos;
+	PosicaoAtleta **grupos=NULL;
 
 	if(!debug){
 		grupos = (PosicaoAtleta **) mallocX(4*sizeof(PosicaoAtleta *));
@@ -279,10 +279,11 @@ void *classificacao(void) {
 
 /* Função usada na thread atleta.
  ********************************/
-void *atleta(Atleta a){
+void *atleta( void *param ){
 	int i, j;
 	int t=0;
 	double p;
+	Atleta a = (Atleta) param;
 	/* Natação */
 	for(i=0; i<NATAM; i++){
 		natacao(a);

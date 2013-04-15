@@ -17,8 +17,6 @@ int timeRand(int min, int max){
 /* As funções a seguir calculam o tempo gasto em cada etapa para um Atleta a.	*
 *  Dependendo da etapa deve ser passado um parametro extra para a função. 		*/
 void natacao(Atleta a){
-	int i;
-	
 	if( a->sexo == FEMININO && a->categoria == AMADOR )
 		a->ms[NATACAO] += timeRand(150, 300);
 	if( a->sexo == MASCULINO && a->categoria == AMADOR )
@@ -30,8 +28,6 @@ void natacao(Atleta a){
 }
 
 void corrida(Atleta a){
-	int i;
-	
 	if( a->sexo == FEMININO && a->categoria == AMADOR )
 		a->ms[NATACAO] += timeRand(330, 420);
 	if( a->sexo == MASCULINO && a->categoria == AMADOR )

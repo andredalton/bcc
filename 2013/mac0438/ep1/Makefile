@@ -34,12 +34,6 @@ simula: defines.c defines.h
 	echo "\n\n\n"
 	./simula -h
 
-clean:
-	rm -f *.o
-	rm -f *.gch
-	rm -f ep1
-	rm -f ep1-sleep
-	rm -f simula
 
 # Binário para depuração. Espera 0.1s para imprimir a próxima linha da simulação.
 ep1-sleep:
@@ -57,12 +51,27 @@ ep1-mili:
 	rm tmp.h
 
 all:
+	echo "Criando ep1"
 	touch tmp.h
 	$(CC) -c $(OPTS) ep1.c defines.h
 	$(CC) -c $(OPTS) tempos.c defines.h tempos.h
 	$(CC) -c $(OPTS) defines.c defines.h
 	$(CC) ep1.o tempos.o defines.o -o ep1 -lm -lpthread
+	echo "Criando ep1-sleep"
 	echo "#define TIME 100000" > tmp.h
 	$(CC) -c $(OPTS) ep1.c defines.h
 	$(CC) ep1.o tempos.o defines.o -o ep1-sleep -lm -lpthread
+	echo "Criando ep1-mili"
+	echo "#define PRECISAO 1000.0" > tmp.h
+	$(CC) -c $(OPTS) tempos.c defines.h tempos.h
+	$(CC) -c $(OPTS) tempos.c defines.h tempos.h
+	$(CC) -c $(OPTS) ep1.c defines.h
+	$(CC) ep1.o tempos.o defines.o -o ep1-mili -lm -lpthread
 	rm tmp.h
+
+clean:
+	rm -f *.o
+	rm -f *.gch
+	rm -f ep1
+	rm -f ep1-sleep
+	rm -f simula

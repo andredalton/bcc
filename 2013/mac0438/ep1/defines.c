@@ -36,6 +36,8 @@ Tempo converteTempo(int ms){
 	t->m = ms%(3600*(int)PRECISAO)/(60*(int)PRECISAO);
 	t->h = ms/(3600*(int)PRECISAO);
 	
+	if(PRECISAO==1)
+		t->ms *= 1000;
 	return t;
 }
 
