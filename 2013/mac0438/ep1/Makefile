@@ -1,5 +1,5 @@
 CC = gcc
-OPTS = -Wall -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
+OPTS = -Wall -D _BSD_SOURCE -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
 
 # Verifica as dependencias para o binário principal
 ep1: ep1.o tempos.o defines.o

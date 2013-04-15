@@ -104,7 +104,6 @@ void *mallocX (unsigned int nbytes);
 void *reallocX (void *ptr, unsigned int nbytes);
 Tempo converteTempo(int ms);
 Atleta novoAtleta(int sexo, int categoria, char *nome, char *sobrenome, int id);
-void freePosicoes(PosicaoAtleta *p, int n);
 PosicaoAtleta *novasPosicoes(int n);
 void atualizaPosicao(PosicaoAtleta *p, int id, int t, double posicao);
 int comparePosicaoAtleta( const void *p1, const void *p2);

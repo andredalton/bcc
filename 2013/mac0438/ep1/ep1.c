@@ -537,14 +537,17 @@ int ironMain(int argc, char *argv[]){
 	sem_destroy(&sem_PortalT2Ent);
 	sem_destroy(&sem_PortalT2Sai);
 	
+	
 	for(i=0; i<natletas; i++) {
 		sem_destroy(&sem_estrada[i]);
-		freePosicoes(  tempoEspaco, natletas);
+		free(tempoEspaco[i]);
 	}
+
 
 	for( i=0; i<CITAM; i++)
 		free(estrada[i]);
 
+	free(tempoEspaco);
 	free(TPortalT1Ent);
 	free(TPortalT2Ent);
 	free(TPortalT1Sai);
@@ -552,7 +555,6 @@ int ironMain(int argc, char *argv[]){
 	free(estrada);
 	free(ids_atletas);
 	free(atletas);
-	free(tempoEspaco);
 	free(terrenos);
 	free(H);
 	free(M);
