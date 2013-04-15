@@ -11,7 +11,7 @@
 
 /* Função que calcula um tempo aleatório que tem valor minimo de min e máximo de max. */
 int timeRand(int min, int max){
-	return (int)(1000.0*min + 1000.0*rand()/RAND_MAX*(max-min));
+	return (PRECISAO*min + PRECISAO*rand()/RAND_MAX*(max-min));
 }
 
 /* As funções a seguir calculam o tempo gasto em cada etapa para um Atleta a.	*

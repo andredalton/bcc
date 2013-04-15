@@ -32,9 +32,9 @@ void *reallocX (void *ptr, unsigned int nbytes)
 Tempo converteTempo(int ms){
 	Tempo t = (Tempo) mallocX(sizeof(struct tmp));
 	
-	t->ms = ms%(60*PRECISAO);
-	t->m = ms%(3600*PRECISAO)/(60*PRECISAO);
-	t->h = ms/(3600*PRECISAO);
+	t->ms = ms%(60*(int)PRECISAO);
+	t->m = ms%(3600*(int)PRECISAO)/(60*(int)PRECISAO);
+	t->h = ms/(3600*(int)PRECISAO);
 	
 	return t;
 }

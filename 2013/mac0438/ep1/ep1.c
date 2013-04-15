@@ -19,6 +19,7 @@ int *TPortalT2Ent;
 int *TPortalT1Sai;
 int *TPortalT2Sai;
 int **estrada;
+int *terrenos;
 
 sem_t sem_PortalT1Ent;
 sem_t sem_PortalT2Ent;
@@ -127,7 +128,9 @@ void *classificacao(void) {
 	}
 
 	while( lPrint<(29*debug+1)*TMAX && ! (vmp && vfp && vma && vfa) ){
-		usleep(100000);
+		if(TIME)
+			usleep(TIME);
+
 		for(i=0; i<natletas; i++)
 			if( tempoEspaco[lPrint][i].id==-1) break;
 		if(i==natletas){
@@ -146,7 +149,7 @@ void *classificacao(void) {
 						"\n\033[%d;%dm*********************************************************************\033[0m\n"
 						"\033[%d;%dm**                      CLASSIFICACAO FINAL!!!                     **\033[0m\n"
 						"\033[%d;%dm*********************************************************************\033[0m\n",
-						BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10
+						BLACK, WHITE+10, BLACK, WHITE+10, BLACK, WHITE+10
 					);
 					imprimeClassificacao( tempoEspaco[lPrint], 1);
 				}
@@ -317,7 +320,7 @@ void *atleta(Atleta a){
 	t = tempoTotal(a);
 	/* Ciclismo */
 	for(i=0; i<CITAM; i++){
-		ciclismo(a, PLANO);
+		ciclismo(a, terrenos[i]);
 		for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++) {
 			p = 100*NATAM + 1000.0*i + 1000.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
 
@@ -370,23 +373,25 @@ void *atleta(Atleta a){
 	return NULL;
 }
 
-
 /* Função principal.
  *******************/
 int ironMain(int argc, char *argv[]){
-	char *filename = NULL;
+	char
+		*filename = NULL,
+		terreno;
 	FILE *entrada;
 	int
 		i,
 		j,
+		t,
 		hp,
 		mp,
 		ha,
 		ma;
 
-	ListName H = listaNomes("homens.txt");
-	ListName M = listaNomes("mulheres.txt");
-	ListName S = listaNomes("sobrenomes.txt");
+	ListName H = listaNomes(NMASCULINOS);
+	ListName M = listaNomes(NFEMININOS);
+	ListName S = listaNomes(SOBRENOMES);
 	
 	pthread_t *ids_atletas;
 	pthread_t id_classificacao;
@@ -395,18 +400,20 @@ int ironMain(int argc, char *argv[]){
 
 	/* Inicializando variáveis globais. */
 	tempoEspaco = NULL;	
-	deltaTime = 1800000;
+	deltaTime = 1800;
 	debug = 0;
 
 	/* Verificando os parametros de entrada. */
 	for( i=1; i<argc; i++){
 		if( strcmp(argv[i], "-debug")==0 ){
-			deltaTime = 60000;
+			deltaTime = 60;
 			debug=1;
 		}
 		else
 			filename = argv[i];
 	}
+
+	deltaTime *= PRECISAO;
 
 	if(filename==NULL){
 		printf(
@@ -420,6 +427,20 @@ int ironMain(int argc, char *argv[]){
 
 	entrada = fopen(filename, "r");
 	fscanf(entrada, "%d\n%d\n%d\n%d", &hp, &mp, &ha, &ma);
+	terrenos = (int *)mallocX(CITAM*sizeof(int));
+	i=0;
+	while(!feof(entrada)){
+		fscanf(entrada, "%c %d", &terreno, &t);
+		if(terreno=='S')
+			for( j=0; j<t; j++, i++ )
+				terrenos[i] = SUBIDA;
+		if(terreno=='P')
+			for( j=0; j<t; j++, i++ )
+				terrenos[i] = PLANO;
+		if(terreno=='D')
+			for( j=0; j<t; j++, i++ )
+				terrenos[i] = DESCIDA;
+	}
 	fclose(entrada);
 
 	natletas = hp + mp + ha + ma;

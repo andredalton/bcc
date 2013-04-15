@@ -32,12 +32,10 @@
 /* Máximo de tempo possível para a prova em intervalos de meia hora. */
 #define TMAX 53
 
-/* Máximo de nomes encontrados nos dicionarios. */
-#define MAXNAMES 10000
 
 /* Definindo se o programa rodará em segundos ou milissegundos (milissegundos por default). */
 #ifndef PRECISAO
-	#define PRECISAO 1000
+	#define PRECISAO 1
 #endif
 
 /* Brincando com cores! */
@@ -60,6 +58,18 @@
 /* Tempo de punição. */
 #ifndef TPUNI
 	#define TPUNI 3
+#endif
+
+/* Defines para poder gerar nomes aleatórios.   */
+/* Máximo de nomes encontrados nos dicionarios. */
+#define MAXNAMES 10000
+#define NMASCULINOS "nomes/homens.txt"
+#define NFEMININOS "nomes/mulheres.txt"
+#define SOBRENOMES "nomes/sobrenomes.txt"
+
+/* Tempo em microssegundos para atrasar a impressão das linhas. */ 
+#ifndef TIME
+	#define TIME 0
 #endif
 
 typedef struct tmp{
