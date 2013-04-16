@@ -5,6 +5,8 @@ make clean
 echo Gerando todos os binarios.
 make all
 
+mkdir -p relatorios
+
 PROCESSADOR=`cat /proc/cpuinfo|grep "vendor_id" |cut -d ':' -f 2 | tr -d [:blank:] | head -1`
 MODELOPROC=`cat /proc/cpuinfo|grep "model name" |cut -d ':' -f 2 | tr -d [:blank:] | head -1`
 CORES=`cat /proc/cpuinfo|grep "cpu cores" |cut -d ':' -f 2 | tr -d [:blank:] | head -1`
@@ -22,32 +24,23 @@ echo "" > relatorios/myep1.$FILENAME.tex
 
 for f in `ls entradas/*.txt | cut -d '/' -f 2`
 do
-	if [ "$f" != "relatorio.txt" ]; then
-		echo Rodando ep1 para \"$f\"
-		/usr/bin/time -f "\tep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./ep1 entradas/$f > /dev/null && MyPID=$!
-		echo `pid $!`
-		
-		# echo Rodando ep1-mili para \"$f\"
-		# /usr/bin/time -f "\tep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./ep1-mili entradas/$f > /dev/null &
-		
-		# kill $!
-		# echo Rodando pep1 para \"$f\"
-		# /usr/bin/time -f "\tpep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./pep1 entradas/$f > /dev/null &
-		
-		# kill $!
-		# echo Rodando pep1-mili para \"$f\"
-		# /usr/bin/time -f "\tpep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./pep1-mili entradas/$f > /dev/null &
-		
-		# kill $!
-		# echo Rodando gep1 para \"$f\"
-		# /usr/bin/time -f "\tgep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./gep1 entradas/$f > /dev/null &
-		
-		# kill $!
-		# echo Rodando gep1-mili para \"$f\"
-		# /usr/bin/time -f "\tgep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./gep1-mili entradas/$f > /dev/null &
-		
-		# kill $!
-	fi
+	echo Rodando ep1 para \"$f\"
+	/usr/bin/time -f "\tep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./ep1 entradas/$f > /dev/null
+	
+	echo Rodando ep1-mili para \"$f\"
+	/usr/bin/time -f "\tep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./ep1-mili entradas/$f > /dev/null
+	
+	echo Rodando pep1 para \"$f\"
+	/usr/bin/time -f "\tpep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./pep1 entradas/$f > /dev/null
+	
+	echo Rodando pep1-mili para \"$f\"
+	/usr/bin/time -f "\tpep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./pep1-mili entradas/$f > /dev/null
+	
+	echo Rodando gep1 para \"$f\"
+	/usr/bin/time -f "\tgep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./gep1 entradas/$f > /dev/null
+	
+	echo Rodando gep1-mili para \"$f\"
+	/usr/bin/time -f "\tgep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./gep1-mili entradas/$f > /dev/null
 done
 
-sed -e 's:@@:\\\\\n\t\hline:g' relatorios/myep1.$FILENAME.tex
+sed -i 's:@@:\\\\\n\t\\hline:g' relatorios/myep1.$FILENAME.tex

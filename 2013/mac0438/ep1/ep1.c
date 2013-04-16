@@ -708,8 +708,6 @@ int gutsMain(int argc, char *argv[]){
 		atleta(atletas[i]);
 	}
 
-	printf("Aqui\n");
-	
 	classificacao(NULL);
 	
 	for( i=0; i<CITAM; i++)
