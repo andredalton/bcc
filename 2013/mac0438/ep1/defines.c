@@ -173,15 +173,22 @@ int punicaoR(
 		/* Caso o atleta esteja tentando ultrapassar alguém sem ter uma via, será punido!!! */
 		if(dir+esq+2>faixas) { /* uso + 2 pois estou tentando 'usar' uma via a mais do que a que já esta sendo utilizada*/
 			
-			/* Todos os tempos são menores que o do atleta atual. Memória deve ser tratada respeitando os limites alocados. */
+			/* Todos os tempos são menores que o do atleta atual. Memória deve ser tratada no subconjunto onde o valor punido é possível de ser encontrado. */
 			if(m+dir+1<tam) {
-				mem = punicaoR(v, m+dir+1, tam-1, tam, tmp+TPUNI*PRECISAO, faixas);
+				mem = punicaoR(
+					v,
+					m+dir+1, /* Definindo posição inicial do subconjunto */
+					( m+dir+1+TPUNI*PRECISAO*faixas<tam ? m+dir+TPUNI*PRECISAO*faixas : tam-1), /* Definindo posição final do subconjunto. */
+					tam,
+					tmp+TPUNI*PRECISAO,
+					faixas
+				);
 				if(mem==-1) return -1;
 				return TPUNI*PRECISAO + mem;
 			}
 			else{
 				memcpy ( v, v+1, (tam-1)*sizeof(int) );
-				v[tam-1] = tmp+3;
+				v[tam-1] = tmp+TPUNI;
 				return TPUNI*PRECISAO;
 			}
 		}
@@ -214,8 +221,11 @@ int punicaoR(
 		if(mem==-1) return -1;
 		return mem;
 	}
+
+	/* Aqui os bits já estão bem lustrosos. */
 }
 
+/* Definindo o primeiro conjunto de busca. */
 int punicao(int *v, int tam, int tmp, int faixas){
 	return punicaoR(v, 0, tam-1, tam, tmp, faixas);
 }
