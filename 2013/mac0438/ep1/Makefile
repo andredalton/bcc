@@ -34,13 +34,26 @@ pep1: ep1.c defines.c defines.h tempos.c tempos.h
 	$(CC) -c $(OPTS) -DPARALELO=1 tempos.c defines.h tempos.h
 	$(CC) -c $(OPTS) -DPARALELO=1 defines.c defines.h
 	$(CC) -c $(OPTS) -DPARALELO=1 ep1.c defines.h
-	$(CC) ep1.o tempos.o defines.o -o pep1 -lm -lpthread
+	$(CC) ep1.o tempos.o defines.o -o $@ -lm -lpthread
 # em milisegundos.
 pep1-mili: ep1.c defines.c defines.h tempos.c tempos.h
 	$(CC) -c $(OPTS) -DPARALELO=1 -DPRECISAO=1000 tempos.c defines.h tempos.h
 	$(CC) -c $(OPTS) -DPARALELO=1 -DPRECISAO=1000 defines.c defines.h
 	$(CC) -c $(OPTS) -DPARALELO=1 -DPRECISAO=1000 ep1.c defines.h
-	$(CC) ep1.o tempos.o defines.o -o pep1-mili -lm -lpthread
+	$(CC) ep1.o tempos.o defines.o -o $@ -lm -lpthread
+
+# Binário que usa uma função principal sem paralelismo. 
+gep1: ep1.c defines.c defines.h tempos.c tempos.h
+	$(CC) -c $(OPTS) -DITERATIVO=1 tempos.c defines.h tempos.h
+	$(CC) -c $(OPTS) -DITERATIVO=1 defines.c defines.h
+	$(CC) -c $(OPTS) -DITERATIVO=1 ep1.c defines.h
+	$(CC) ep1.o tempos.o defines.o -o $@ -lm -lpthread
+# em milisegundos.
+gep1-mili: ep1.c defines.c defines.h tempos.c tempos.h
+	$(CC) -c $(OPTS) -DITERATIVO=1 -DPRECISAO=1000 tempos.c defines.h tempos.h
+	$(CC) -c $(OPTS) -DITERATIVO=1 -DPRECISAO=1000 defines.c defines.h
+	$(CC) -c $(OPTS) -DITERATIVO=1 -DPRECISAO=1000 ep1.c defines.h
+	$(CC) ep1.o tempos.o defines.o -o $@ -lm -lpthread
 
 # limpa o diretório.
 clean:
@@ -49,8 +62,10 @@ clean:
 	@rm -f *.gch
 	@rm -f ep1
 	@rm -f pep1
+	@rm -f gep1
 	@rm -f ep1-sleep
 	@rm -f ep1-mili
 	@rm -f pep1-mili
+	@rm -f gep1-mili
 	@rm -f simula
 	@rm -f relatorio.txt

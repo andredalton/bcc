@@ -54,6 +54,15 @@
 	#define SIMULACAO 0
 #endif
 
+/* Define para gerar um binário com ou sem threads. */
+#ifndef ITERATIVO
+	#define ITERATIVO 0
+	#define ironMain main
+#else
+	#define ITERATIVO 1
+	#define gutsMain main
+#endif
+
 /* Tempo de punição. */
 #ifndef TPUNI
 	#define TPUNI 3

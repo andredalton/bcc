@@ -9,8 +9,6 @@
 
 #include "tempos.h"
 
-#define ironMain main
-
   /****************************************/
  /* Inicialização das variáveis globais. */
 /****************************************/
@@ -293,6 +291,7 @@ void *atleta( void *param ){
 	int t=0;
 	double p;
 	Atleta a = (Atleta) param;
+
 	/* Natação */
 	for(i=0; i<NATAM; i++){
 		natacao(a);
@@ -308,11 +307,13 @@ void *atleta( void *param ){
 	/* T1 */
 	/* Passando pelo portal de entrada na troca da natação. */
 	/* Sssão Crítica 1 */
-	if(CONCORRENTE) {
+	if(CONCORRENTE && !ITERATIVO) {
 		sem_wait(&sem_PortalT1Ent);
 		a->ms[NATACAO] += punicao( TPortalT1Ent, natletas, a->ms[NATACAO], 1);
 		sem_post(&sem_PortalT1Ent);
 	}
+	else if(ITERATIVO)
+		a->ms[NATACAO] += punicao( TPortalT1Ent, natletas, a->ms[NATACAO], 1);
 	/* Término Sssão Crítica 1 */
 	
 	/* Tirando a sunga. */
@@ -320,11 +321,13 @@ void *atleta( void *param ){
 	
 	/* Passando pelo portal de saida na troca da natação. */
 	/* Sessão Crítica 2 */
-	if(CONCORRENTE) {
+	if(CONCORRENTE && !ITERATIVO) {
 		sem_wait(&sem_PortalT1Sai);
 		a->ms[T1] += punicao( TPortalT1Sai, natletas, a->ms[T1], 1);
 		sem_post(&sem_PortalT1Sai);
 	}
+	else if(ITERATIVO)
+		a->ms[T1] += punicao( TPortalT1Sai, natletas, a->ms[T1], 1);
 	/* Término Sessão Crítica 2 */
 	
 	/* Bufferizando o tempo em que o atleta esteve parado na troca 1. */
@@ -339,11 +342,13 @@ void *atleta( void *param ){
 			p = 100*NATAM + 1000.0*i + 1000.0*( ( j*deltaTime + tempoTotal(a)-tempoTotal(a)%deltaTime)-t)/(tempoTotal(a)-t);
 
 			/* Sessão Crítica 3 */
-			if(CONCORRENTE) {
+			if(CONCORRENTE && !ITERATIVO) {
 				sem_wait(&sem_estrada[i]);
 				a->ms[CICLISMO] += punicao( estrada[i], natletas, a->ms[CICLISMO], 3);
 				sem_post(&sem_estrada[i]);
 			}
+			else if(ITERATIVO)
+				a->ms[CICLISMO] += punicao( estrada[i], natletas, a->ms[CICLISMO], 3);
 			/* Término Sessão Crítica 3 */
 
 			atualizaPosicao( &tempoEspaco[t/deltaTime+j][a->id], a->id, (j*deltaTime+tempoTotal(a)-tempoTotal(a)%deltaTime), p );
@@ -355,22 +360,26 @@ void *atleta( void *param ){
 	t = tempoTotal(a);
 	
 	/* Sessão Crítica 4 */
-	if(CONCORRENTE) {
+	if(CONCORRENTE && !ITERATIVO) {
 		sem_wait(&sem_PortalT2Ent);
 		a->ms[CICLISMO] += punicao( TPortalT2Ent, natletas, a->ms[CICLISMO], 1);
 		sem_post(&sem_PortalT2Ent);
 	}
+	else if(ITERATIVO)
+		a->ms[CICLISMO] += punicao( TPortalT2Ent, natletas, a->ms[CICLISMO], 1);
 	/* Término Sessão Crítica 4 */
 
 	/* Trocando o sapato. */
 	transicao(a, T2);
 
 	/* Sessão Crítica 5 */
-	if(CONCORRENTE) {
+	if(CONCORRENTE && !ITERATIVO) {
 		sem_wait(&sem_PortalT2Sai);
 		a->ms[T2] += punicao( TPortalT2Sai, natletas, a->ms[T2], 1);
 		sem_post(&sem_PortalT2Sai);
 	}
+	else if(ITERATIVO)
+		a->ms[T2] += punicao( TPortalT2Sai, natletas, a->ms[T2], 1);
 	/* Término Sessão Crítica 5 */
 	
 	for( j=0; j<tempoTotal(a)/deltaTime-t/deltaTime; j++)
@@ -499,6 +508,11 @@ int ironMain(int argc, char *argv[]){
 	atletas = (Atleta*) mallocX(natletas*sizeof(Atleta));
 
 	pthread_create(&(id_classificacao),NULL,  classificacao, NULL);
+
+	if(CONCORRENTE)
+		printf("Solucao concorrente.\n");
+	else
+		printf("Solucao paralela.\n");
 
 	printf("Criando atletas: \n");
 	printf("\tMasculino Profissional: %d\n", hp);
@@ -644,6 +658,23 @@ int gutsMain(int argc, char *argv[]){
 
 	natletas = hp + mp + ha + ma;
 
+	TPortalT1Ent = (int*) mallocX( natletas*sizeof(int) );
+	TPortalT2Ent = (int*) mallocX( natletas*sizeof(int) );
+	TPortalT1Sai = (int*) mallocX( natletas*sizeof(int) );
+	TPortalT2Sai = (int*) mallocX( natletas*sizeof(int) );
+	estrada = (int**) mallocX( CITAM*sizeof(int *) );
+
+	for( i=0; i<CITAM; i++){
+		estrada[i] = (int*) mallocX( natletas*sizeof(int) );
+		for( j=0; j<natletas; j++){
+			estrada[i][j] = -1;
+			TPortalT1Ent[j] = -1;
+			TPortalT2Ent[j] = -1;
+			TPortalT1Sai[j] = -1;
+			TPortalT2Sai[j] = -1;
+		}
+	}
+
 	/* Alocando a quantidade máxima de tics necessária para guardar as informações de tempo dos atletas. */
 	tempoEspaco = (PosicaoAtleta **) mallocX( (29*debug+1)*TMAX*sizeof(PosicaoAtleta*) );
 	for( i=0; i<(29*debug+1)*TMAX; i++)
@@ -651,6 +682,7 @@ int gutsMain(int argc, char *argv[]){
 
 	atletas = (Atleta*) mallocX(natletas*sizeof(Atleta));
 
+	printf("Solucao Iterativa.\n");
 	printf("Criando atletas: \n");
 	printf("\tMasculino Profissional: %d\n", hp);
 	for (i=0; i<hp; i++) {
@@ -675,9 +707,20 @@ int gutsMain(int argc, char *argv[]){
 		atletas[i] = novoAtleta(FEMININO, AMADOR, randomName(M), randomName(S), i);
 		atleta(atletas[i]);
 	}
+
+	printf("Aqui\n");
 	
 	classificacao(NULL);
 	
+	for( i=0; i<CITAM; i++)
+		free(estrada[i]);
+
+	free(TPortalT1Ent);
+	free(TPortalT2Ent);
+	free(TPortalT1Sai);
+	free(TPortalT2Sai);
+	free(estrada);
+
 	for(i=0; i<(29*debug+1)*TMAX; i++)
 		free(tempoEspaco[i]);
 
