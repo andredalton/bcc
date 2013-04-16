@@ -2,73 +2,47 @@ CC = gcc
 OPTS = -Wall -D _BSD_SOURCE -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
 
 # Verifica as dependencias para o binário principal
-ep1: ep1.o tempos.o defines.o
-	touch tmp.h
-	$(CC) ep1.o tempos.o defines.o -o $@ -lm -lpthread
-	rm tmp.h
-
-
-ep1.o: ep1.c defines.h tempos.h
-	touch tmp.h
-	$(CC) -c $(OPTS) ep1.c defines.h 
-	rm tmp.h
-
-tempos.o: tempos.c defines.h tempos.h
-	touch tmp.h
-	$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	rm tmp.h
-
-defines.o: defines.c defines.h
-	touch tmp.h
+ep1: ep1.c defines.c defines.h tempos.c tempos.h
 	$(CC) -c $(OPTS) defines.c defines.h
-	rm tmp.h
+	$(CC) -c $(OPTS) tempos.c defines.h tempos.h
+	$(CC) -c $(OPTS) ep1.c defines.h 
+	$(CC) ep1.o tempos.o defines.o -o $@ -lm -lpthread
 
 # Versões extras:
 # Binário que simula o algoritmo da punição. 
 simula: defines.c defines.h
-	@echo "#define SIMULACAO 1" > tmp.h
-	@echo "#define PRECISAO 1" >> tmp.h
-	$(CC) $(OPTS) defines.c -o $@
-	@rm tmp.h
+	$(CC) $(OPTS) -DSIMULACAO=1 -DPRECISAO=1 defines.c -o $@
 	@./simula -h
 
 # Binário para depuração. Espera 0.1s para imprimir a próxima linha da simulação.
-ep1-sleep:
-	@echo "#define TIME 100000" > tmp.h
-	$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	$(CC) -c $(OPTS) defines.c defines.h
-	$(CC) -c $(OPTS) ep1.c defines.h
-	$(CC) ep1.o tempos.o defines.o -o ep1-sleep -lm -lpthread
-	@rm tmp.h
+ep1-sleep: ep1.c defines.c defines.h tempos.c tempos.h
+	$(CC) -c $(OPTS) -DTIME=100000 tempos.c defines.h tempos.h
+	$(CC) -c $(OPTS) -DTIME=100000 defines.c defines.h
+	$(CC) -c $(OPTS) -DTIME=100000 ep1.c defines.h
+	$(CC) ep1.o tempos.o defines.o -o $@ -lm -lpthread
 
 # Binário que usa precisão de milisegundos.
-ep1-mili:
-	@echo "#define PRECISAO 1000" > tmp.h
-	$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	$(CC) -c $(OPTS) defines.c defines.h
-	$(CC) -c $(OPTS) ep1.c defines.h
-	$(CC) ep1.o tempos.o defines.o -o ep1-mili -lm -lpthread
-	@rm tmp.h
+ep1-mili: ep1.c defines.c defines.h tempos.c tempos.h
+	$(CC) -c $(OPTS) -DPRECISAO=1000 tempos.c defines.h tempos.h
+	$(CC) -c $(OPTS) -DPRECISAO=1000 defines.c defines.h
+	$(CC) -c $(OPTS) -DPRECISAO=1000 ep1.c defines.h
+	$(CC) ep1.o tempos.o defines.o -o $@ -lm -lpthread
 
 # Binário que roda sem as sessões criticas. (Sem punições)
 # em segundos:
-pep1:
-	@echo "#define PARALELO 1" >> tmp.h
-	$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	$(CC) -c $(OPTS) defines.c defines.h
-	$(CC) -c $(OPTS) ep1.c defines.h
+pep1: ep1.c defines.c defines.h tempos.c tempos.h
+	$(CC) -c $(OPTS) -DPARALELO=1 tempos.c defines.h tempos.h
+	$(CC) -c $(OPTS) -DPARALELO=1 defines.c defines.h
+	$(CC) -c $(OPTS) -DPARALELO=1 ep1.c defines.h
 	$(CC) ep1.o tempos.o defines.o -o pep1 -lm -lpthread
-	@rm tmp.h
-
-pep1-mili:
-	@echo "#define PRECISAO 1000" > tmp.h
-	@echo "#define PARALELO 1" >> tmp.h
-	$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	$(CC) -c $(OPTS) defines.c defines.h
-	$(CC) -c $(OPTS) ep1.c defines.h
+# em milisegundos.
+pep1-mili: ep1.c defines.c defines.h tempos.c tempos.h
+	$(CC) -c $(OPTS) -DPARALELO=1 -DPRECISAO=1000 tempos.c defines.h tempos.h
+	$(CC) -c $(OPTS) -DPARALELO=1 -DPRECISAO=1000 defines.c defines.h
+	$(CC) -c $(OPTS) -DPARALELO=1 -DPRECISAO=1000 ep1.c defines.h
 	$(CC) ep1.o tempos.o defines.o -o pep1-mili -lm -lpthread
-	@rm tmp.h
 
+# limpa o diretório.
 clean:
 	@echo Limpando diretorio
 	@rm -f *.o
@@ -80,42 +54,3 @@ clean:
 	@rm -f pep1-mili
 	@rm -f simula
 	@rm -f relatorio.txt
-	@rm -f saida-*.txt
-
-all:
-	@echo Gerando todos os binarios.
-	@touch tmp.h
-	@$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	@$(CC) -c $(OPTS) defines.c defines.h
-	@$(CC) -c $(OPTS) ep1.c defines.h
-	@$(CC) ep1.o tempos.o defines.o -o ep1 -lm -lpthread
-	@rm tmp.h	
-	@echo "#define TIME 100000" > tmp.h
-	@$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	@$(CC) -c $(OPTS) defines.c defines.h
-	@$(CC) -c $(OPTS) ep1.c defines.h
-	@$(CC) ep1.o tempos.o defines.o -o ep1-sleep -lm -lpthread
-	@rm tmp.h
-	@echo "#define PRECISAO 1000" > tmp.h
-	@$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	@$(CC) -c $(OPTS) defines.c defines.h
-	@$(CC) -c $(OPTS) ep1.c defines.h
-	@$(CC) ep1.o tempos.o defines.o -o ep1-mili -lm -lpthread
-	@rm tmp.h
-	@echo "#define PARALELO 1" >> tmp.h
-	@$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	@$(CC) -c $(OPTS) defines.c defines.h
-	@$(CC) -c $(OPTS) ep1.c defines.h
-	@$(CC) ep1.o tempos.o defines.o -o pep1 -lm -lpthread
-	@rm tmp.h
-	@echo "#define PRECISAO 1000" > tmp.h
-	@echo "#define PARALELO 1" >> tmp.h
-	@$(CC) -c $(OPTS) tempos.c defines.h tempos.h
-	@$(CC) -c $(OPTS) defines.c defines.h
-	@$(CC) -c $(OPTS) ep1.c defines.h
-	@$(CC) ep1.o tempos.o defines.o -o pep1-mili -lm -lpthread
-	@rm tmp.h
-	@echo "#define SIMULACAO 1" > tmp.h
-	@echo "#define PRECISAO 1" >> tmp.h
-	@$(CC) $(OPTS) defines.c -o simula
-	@rm tmp.h

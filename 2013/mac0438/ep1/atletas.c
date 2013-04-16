@@ -3,46 +3,100 @@
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h> /* Para trabalhar com threads */
-#include <semaphore.h>
 #include <string.h>
 #include <unistd.h>
 
-#include "tempos.h"
+#include "defines.h"
 
-#define ironMain main
 
-  /****************************************/
- /* Inicialização das variáveis globais. */
-/****************************************/
-int *TPortalT1Ent;
-int *TPortalT2Ent;
-int *TPortalT1Sai;
-int *TPortalT2Sai;
-int **estrada;
-int *terrenos;
+/* Função que calcula um tempo aleatório que tem valor minimo de min e máximo de max. */
+int timeRand(int min, int max){
+	return (PRECISAO*min + PRECISAO*rand()/RAND_MAX*(max-min));
+}
 
-sem_t sem_PortalT1Ent;
-sem_t sem_PortalT2Ent;
-sem_t sem_PortalT1Sai;
-sem_t sem_PortalT2Sai;
-sem_t sem_estrada[CITAM];
+/* As funções a seguir calculam o tempo gasto em cada etapa para um Atleta a.	*
+*  Dependendo da etapa deve ser passado um parametro extra para a função. 		*/
+void natacao(Atleta a){
+	if( a->sexo == FEMININO && a->categoria == AMADOR )
+		a->ms[NATACAO] += timeRand(150, 300);
+	if( a->sexo == MASCULINO && a->categoria == AMADOR )
+		a->ms[NATACAO] += timeRand(120, 240);
+	if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
+		a->ms[NATACAO] += timeRand(90, 120);
+	if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
+		a->ms[NATACAO] += timeRand(75, 100);
+}
 
-/* Guarda a posição de cada um dos atletas como uma trinca entre o id, tempo e
- * espaço. Sendo que a primeira linha serve para guardar o tempo total de 
- * percurso e as demais linhas o tempo pra cada um dos tics que deve ser 
- * mostrado.
- *****************************************************************************/
-PosicaoAtleta **tempoEspaco = NULL;
+void corrida(Atleta a){
+	if( a->sexo == FEMININO && a->categoria == AMADOR )
+		a->ms[NATACAO] += timeRand(330, 420);
+	if( a->sexo == MASCULINO && a->categoria == AMADOR )
+		a->ms[NATACAO] += timeRand(300, 420);
+	if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
+		a->ms[NATACAO] += timeRand(260, 290);
+	if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
+		a->ms[NATACAO] += timeRand(240, 260);
+}
 
-int natletas;
-int deltaTime;
-int debug;
+/* Para esta função o tipo de terreno também deve ser passado como parametro de entrada. */
+void ciclismo( Atleta a, int terreno){
+	switch(terreno){
+		case SUBIDA:
+			if( a->sexo == FEMININO && a->categoria == AMADOR )
+				a->ms[CICLISMO] += timeRand(3600/10, 3600/15);
+			if( a->sexo == MASCULINO && a->categoria == AMADOR )
+				a->ms[CICLISMO] += timeRand(3600/12, 3600/20);
+			if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
+				a->ms[CICLISMO] += timeRand(3600/20, 3600/30);
+			if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
+				a->ms[CICLISMO] += timeRand(3600/30, 3600/40);
+			break;
+		case PLANO:
+			if( a->sexo == FEMININO && a->categoria == AMADOR )
+				a->ms[CICLISMO] += timeRand(3600/25, 3600/40);
+			if( a->sexo == MASCULINO && a->categoria == AMADOR )
+				a->ms[CICLISMO] += timeRand(3600/30, 3600/45);
+			if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
+				a->ms[CICLISMO] += timeRand(3600/45, 3600/50);
+			if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
+				a->ms[CICLISMO] += timeRand(3600/50, 3600/55);
+			break;
+		case DESCIDA:
+			if( a->sexo == FEMININO && a->categoria == AMADOR )
+				a->ms[CICLISMO] += timeRand(3600/50, 3600/65);
+			if( a->sexo == MASCULINO && a->categoria == AMADOR )
+				a->ms[CICLISMO] += timeRand(3600/50, 3600/70);
+			if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
+				a->ms[CICLISMO] += timeRand(3600/70, 3600/90);
+			if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
+				a->ms[CICLISMO] += timeRand(3600/100, 3600/100);
+			break;
+	}
+}
 
-Atleta *atletas;
-
-  /*************************************************/
- /* Termino da declaração das variáveis globais.  */
-/*************************************************/
+/* Para esta função é preciso especificar o numero da transicao no segundo parametro. */
+void transicao( Atleta a, int t){
+	if(t==T1){
+		if( a->sexo == FEMININO && a->categoria == AMADOR )
+			a->ms[T1] += timeRand(150, 390);
+		if( a->sexo == MASCULINO && a->categoria == AMADOR )
+			a->ms[T1] += timeRand(150, 330);
+		if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
+			a->ms[T1] += timeRand(90, 150);
+		if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
+			a->ms[T1] += timeRand(90, 150);
+	}
+	else{
+		if( a->sexo == FEMININO && a->categoria == AMADOR )
+			a->ms[T2] += timeRand(270, 720);
+		if( a->sexo == MASCULINO && a->categoria == AMADOR )
+			a->ms[T2] += timeRand(240, 600);
+		if( a->sexo == FEMININO && a->categoria == PROFISSIONAL )
+			a->ms[T2] += timeRand(150, 360);
+		if( a->sexo == MASCULINO && a->categoria == PROFISSIONAL )
+			a->ms[T2] += timeRand(120, 180);
+	}
+}
 
 /* Imprime a classificação dos atletas.
  **************************************/
@@ -391,302 +445,4 @@ void *atleta( void *param ){
 		atualizaPosicao( &tempoEspaco[i][a->id], a->id, tempoTotal(a), 100*NATAM + 1000*CITAM + 1000*COTAM );
 
 	return NULL;
-}
-
-/* Função principal.
- *******************/
-int ironMain(int argc, char *argv[]){
-	char
-		*filename = NULL,
-		terreno;
-	FILE *entrada;
-	int
-		i,
-		j,
-		t,
-		hp,
-		mp,
-		ha,
-		ma;
-
-	ListName H = listaNomes(NMASCULINOS);
-	ListName M = listaNomes(NFEMININOS);
-	ListName S = listaNomes(SOBRENOMES);
-	
-	pthread_t *ids_atletas;
-	pthread_t id_classificacao;
-	
-	srand( time(NULL) );
-
-	/* Inicializando variáveis globais. */
-	tempoEspaco = NULL;	
-	deltaTime = 1800;
-	debug = 0;
-
-	/* Verificando os parametros de entrada. */
-	for( i=1; i<argc; i++){
-		if( strcmp(argv[i], "-debug")==0 ){
-			deltaTime = 60;
-			debug=1;
-		}
-		else
-			filename = argv[i];
-	}
-
-	deltaTime *= PRECISAO;
-
-	if(filename==NULL){
-		printf(
-			"Modo de uso:\n"
-			"%s -debug <filename>\n"
-			"-debug: para rodar em modo de depuracao.\n"
-			"<filename>: nome do arquivo de entrada\n", argv[0]
-		);
-		return 0;
-	}
-
-	entrada = fopen(filename, "r");
-	fscanf(entrada, "%d\n%d\n%d\n%d", &hp, &mp, &ha, &ma);
-	terrenos = (int *)mallocX(CITAM*sizeof(int));
-	i=0;
-	while(!feof(entrada)){
-		fscanf(entrada, "%c %d", &terreno, &t);
-		if(terreno=='S')
-			for( j=0; j<t; j++, i++ )
-				terrenos[i] = SUBIDA;
-		if(terreno=='P')
-			for( j=0; j<t; j++, i++ )
-				terrenos[i] = PLANO;
-		if(terreno=='D')
-			for( j=0; j<t; j++, i++ )
-				terrenos[i] = DESCIDA;
-	}
-	fclose(entrada);
-
-	natletas = hp + mp + ha + ma;
-
-	/* Alocando a quantidade máxima de tics necessária para guardar as informações de tempo dos atletas. */
-	tempoEspaco = (PosicaoAtleta **) mallocX( (29*debug+1)*TMAX*sizeof(PosicaoAtleta*) );
-	for( i=0; i<(29*debug+1)*TMAX; i++)
-		tempoEspaco[i] = novasPosicoes(natletas);
-
-	if(CONCORRENTE) {
-		TPortalT1Ent = (int*) mallocX( natletas*sizeof(int) );
-		TPortalT2Ent = (int*) mallocX( natletas*sizeof(int) );
-		TPortalT1Sai = (int*) mallocX( natletas*sizeof(int) );
-		TPortalT2Sai = (int*) mallocX( natletas*sizeof(int) );
-		estrada = (int**) mallocX( CITAM*sizeof(int *) );
-
-		sem_init(&sem_PortalT1Ent, 0, 1);
-		sem_init(&sem_PortalT1Sai, 0, 1);
-		sem_init(&sem_PortalT2Ent, 0, 1);
-		sem_init(&sem_PortalT2Sai, 0, 1);
-
-		for( i=0; i<CITAM; i++){
-			estrada[i] = (int*) mallocX( natletas*sizeof(int) );
-			sem_init(&sem_estrada[i], 0, 1);
-			for( j=0; j<natletas; j++){
-				estrada[i][j] = -1;
-				TPortalT1Ent[j] = -1;
-				TPortalT2Ent[j] = -1;
-				TPortalT1Sai[j] = -1;
-				TPortalT2Sai[j] = -1;
-			}
-		}
-	}
-
-	ids_atletas = mallocX(natletas*sizeof(pthread_t));
-	atletas = (Atleta*) mallocX(natletas*sizeof(Atleta));
-
-	pthread_create(&(id_classificacao),NULL,  classificacao, NULL);
-
-	printf("Criando atletas: \n");
-	printf("\tMasculino Profissional: %d\n", hp);
-	for (i=0; i<hp; i++) {
-		atletas[i] = novoAtleta(MASCULINO, PROFISSIONAL, randomName(H), randomName(S), i);
-		if (pthread_create(&(ids_atletas[i]),NULL, atleta, (void *) atletas[i] )) {
-			fprintf(stderr,"Erro no pthread_create\n");
-			return(2);
-		}
-	}
-
-	printf("\tFeminino Profissional: %d\n", mp);
-	for (; i<hp+mp; i++) {
-		atletas[i] = novoAtleta(FEMININO, PROFISSIONAL, randomName(M), randomName(S), i);
-		if (pthread_create(&(ids_atletas[i]),NULL, atleta, (void *) atletas[i] )) {
-			fprintf(stderr,"Erro no pthread_create\n");
-			return(2);
-		}
-	}
-
-	printf("\tMasculino Amador: %d\n", ha);
-	for (; i<hp+mp+ha; i++) {
-		atletas[i] = novoAtleta(MASCULINO, AMADOR, randomName(H), randomName(S), i);
-		if (pthread_create(&(ids_atletas[i]),NULL, atleta, (void *) atletas[i] )) {
-			fprintf(stderr,"Erro no pthread_create\n");
-			return(2);
-		}
-	}
-
-	printf("\tFeminino Amador: %d\n", ma);
-	for (; i<hp+mp+ha+ma; i++) {
-		atletas[i] = novoAtleta(FEMININO, AMADOR, randomName(M), randomName(S), i);
-		if (pthread_create(&(ids_atletas[i]),NULL, atleta, (void *) atletas[i] )) {
-			fprintf(stderr,"Erro no pthread_create\n");
-			return(2);
-		}
-	}
-
-	for(i=0; i<natletas; i++) 
-		pthread_join(ids_atletas[i],NULL); /* Esperara a junção das threads */
-	
-	pthread_join(id_classificacao,NULL);
-
-	/* Threads terminadas, agora vamos liberar a memória. */
-	
-	if(CONCORRENTE) {
-		sem_destroy(&sem_PortalT1Ent);
-		sem_destroy(&sem_PortalT1Sai);
-		sem_destroy(&sem_PortalT2Ent);
-		sem_destroy(&sem_PortalT2Sai);
-		
-		for(i=0; i<natletas; i++) 
-			sem_destroy(&sem_estrada[i]);
-
-		for( i=0; i<CITAM; i++)
-			free(estrada[i]);
-	
-		free(TPortalT1Ent);
-		free(TPortalT2Ent);
-		free(TPortalT1Sai);
-		free(TPortalT2Sai);
-		free(estrada);
-	}
-	
-	for(i=0; i<(29*debug+1)*TMAX; i++)
-		free(tempoEspaco[i]);
-
-	free(tempoEspaco);
-	free(ids_atletas);
-	free(atletas);
-	free(terrenos);
-	free(H);
-	free(M);
-	free(S);
-	
-	return 0;
-}
-
-int gutsMain(int argc, char *argv[]){
-	char
-		*filename = NULL,
-		terreno;
-	FILE *entrada;
-	int
-		i,
-		j,
-		t,
-		hp,
-		mp,
-		ha,
-		ma;
-
-	ListName H = listaNomes(NMASCULINOS);
-	ListName M = listaNomes(NFEMININOS);
-	ListName S = listaNomes(SOBRENOMES);
-	
-	srand( time(NULL) );
-
-	/* Inicializando variáveis globais. */
-	tempoEspaco = NULL;	
-	deltaTime = 1800;
-	debug = 0;
-
-	/* Verificando os parametros de entrada. */
-	for( i=1; i<argc; i++){
-		if( strcmp(argv[i], "-debug")==0 ){
-			deltaTime = 60;
-			debug=1;
-		}
-		else
-			filename = argv[i];
-	}
-
-	deltaTime *= PRECISAO;
-
-	if(filename==NULL){
-		printf(
-			"Modo de uso:\n"
-			"%s -debug <filename>\n"
-			"-debug: para rodar em modo de depuracao.\n"
-			"<filename>: nome do arquivo de entrada\n", argv[0]
-		);
-		return 0;
-	}
-
-	entrada = fopen(filename, "r");
-	fscanf(entrada, "%d\n%d\n%d\n%d", &hp, &mp, &ha, &ma);
-	terrenos = (int *)mallocX(CITAM*sizeof(int));
-	i=0;
-	while(!feof(entrada)){
-		fscanf(entrada, "%c %d", &terreno, &t);
-		if(terreno=='S')
-			for( j=0; j<t; j++, i++ )
-				terrenos[i] = SUBIDA;
-		if(terreno=='P')
-			for( j=0; j<t; j++, i++ )
-				terrenos[i] = PLANO;
-		if(terreno=='D')
-			for( j=0; j<t; j++, i++ )
-				terrenos[i] = DESCIDA;
-	}
-	fclose(entrada);
-
-	natletas = hp + mp + ha + ma;
-
-	/* Alocando a quantidade máxima de tics necessária para guardar as informações de tempo dos atletas. */
-	tempoEspaco = (PosicaoAtleta **) mallocX( (29*debug+1)*TMAX*sizeof(PosicaoAtleta*) );
-	for( i=0; i<(29*debug+1)*TMAX; i++)
-		tempoEspaco[i] = novasPosicoes(natletas);
-
-	atletas = (Atleta*) mallocX(natletas*sizeof(Atleta));
-
-	printf("Criando atletas: \n");
-	printf("\tMasculino Profissional: %d\n", hp);
-	for (i=0; i<hp; i++) {
-		atletas[i] = novoAtleta(MASCULINO, PROFISSIONAL, randomName(H), randomName(S), i);
-		atleta(atletas[i]);
-	}
-
-	printf("\tFeminino Profissional: %d\n", mp);
-	for (; i<hp+mp; i++) {
-		atletas[i] = novoAtleta(FEMININO, PROFISSIONAL, randomName(M), randomName(S), i);
-		atleta(atletas[i]);
-	}
-
-	printf("\tMasculino Amador: %d\n", ha);
-	for (; i<hp+mp+ha; i++) {
-		atletas[i] = novoAtleta(MASCULINO, AMADOR, randomName(H), randomName(S), i);
-		atleta(atletas[i]);
-	}
-
-	printf("\tFeminino Amador: %d\n", ma);
-	for (; i<hp+mp+ha+ma; i++) {
-		atletas[i] = novoAtleta(FEMININO, AMADOR, randomName(M), randomName(S), i);
-		atleta(atletas[i]);
-	}
-	
-	classificacao(NULL);
-	
-	for(i=0; i<(29*debug+1)*TMAX; i++)
-		free(tempoEspaco[i]);
-
-	free(tempoEspaco);
-	free(atletas);
-	free(terrenos);
-	free(H);
-	free(M);
-	free(S);
-
-	return 0;
 }

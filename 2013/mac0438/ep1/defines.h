@@ -1,5 +1,3 @@
-#include "tmp.h"
-
 /* Definindo as etapas. */
 #define ETAPAS 5
 #define NATACAO 0
