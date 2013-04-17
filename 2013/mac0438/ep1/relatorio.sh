@@ -44,3 +44,4 @@ do
 done
 
 sed -i 's:@@:\\\\\n\t\\hline:g' relatorios/myep1.$FILENAME.tex
+sed -i '/^Command exited with non-zero status [0-9]/d' relatorios/ep1.zillertal.GenuineIntel.tex
