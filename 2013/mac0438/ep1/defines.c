@@ -109,7 +109,8 @@ ListName listaNomes(char entrada[]){
 	lista->max = 0;
 
 	for( i=0; !feof(fe) && i<MAXNAMES ; i++){
-		fgets( buffer, 100, fe);
+		if ( fgets( buffer, 100, fe)==NULL )
+			break;
 		if( sscanf(buffer, "%s %d", lista->nome[i], &k) != 2 )
 			break;
 		lista->max += k;

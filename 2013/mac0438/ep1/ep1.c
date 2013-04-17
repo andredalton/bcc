@@ -456,13 +456,16 @@ int ironMain(int argc, char *argv[]){
 
 	entrada = fopen(filename, "r");
 	if ( fscanf(entrada, "%d\n%d\n%d\n%d", &hp, &mp, &ha, &ma) != 4 ) {
-		printf("Falha ao carregar o arquivo de entrada.\n");
+		printf("Falha ao carregar o arquivo %s.\n", filename);
 		return 1;
 	}
 	terrenos = (int *)mallocX(CITAM*sizeof(int));
 	i=0;
 	while(!feof(entrada)){
-		fscanf(entrada, "%c %d", &terreno, &t);
+		if ( fscanf(entrada, "%c %d", &terreno, &t) ){
+			printf("Falha ao carregar o arquivo %s.\n", filename);
+			return 1;
+		}
 		if(terreno=='S')
 			for( j=0; j<t; j++, i++ )
 				terrenos[i] = SUBIDA;
@@ -642,11 +645,17 @@ int gutsMain(int argc, char *argv[]){
 	}
 
 	entrada = fopen(filename, "r");
-	fscanf(entrada, "%d\n%d\n%d\n%d", &hp, &mp, &ha, &ma);
+	if( fscanf(entrada, "%d\n%d\n%d\n%d", &hp, &mp, &ha, &ma) != 4 ){
+		printf("Falha ao ler arquivo %s.\n", filename);
+		return 1;
+	}
 	terrenos = (int *)mallocX(CITAM*sizeof(int));
 	i=0;
 	while(!feof(entrada)){
-		fscanf(entrada, "%c %d", &terreno, &t);
+		if( fscanf(entrada, "%c %d", &terreno, &t) ){
+			printf("Falha ao ler arquivo %s.\n", filename);
+			return 1;
+		}
 		if(terreno=='S')
 			for( j=0; j<t; j++, i++ )
 				terrenos[i] = SUBIDA;
