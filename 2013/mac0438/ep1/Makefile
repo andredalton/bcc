@@ -1,3 +1,17 @@
+#/**********
+# * Makefile
+# *********/
+#/******************************************************************************
+# * Alunos: André Meneghelli Vale,      Núm. USP: 4898948
+# *         Marcello Souza de Oliveira, Núm. USP: 6432692
+# * Curso: Bacharelado em Ciências da Computação
+# * EP 01 -- Simulação Concorrente de uma prova de 'Iron Man'
+# * MAC0438 -- 17/04/2013 -- IME/USP, -- Prof. Daniel Macêdo Batista
+# * Compilador: gcc linux 4.6.3
+# * Editor: Sublime Text 2;
+# * Sistema Operacional: Linux
+# *****************************************************************************/
+
 CC = gcc
 OPTS = -Wall -D _BSD_SOURCE -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
 
