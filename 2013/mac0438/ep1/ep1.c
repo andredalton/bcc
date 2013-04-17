@@ -455,7 +455,10 @@ int ironMain(int argc, char *argv[]){
 	}
 
 	entrada = fopen(filename, "r");
-	fscanf(entrada, "%d\n%d\n%d\n%d", &hp, &mp, &ha, &ma);
+	if ( fscanf(entrada, "%d\n%d\n%d\n%d", &hp, &mp, &ha, &ma) != 4 ) {
+		printf("Falha ao carregar o arquivo de entrada.\n");
+		return 1;
+	}
 	terrenos = (int *)mallocX(CITAM*sizeof(int));
 	i=0;
 	while(!feof(entrada)){

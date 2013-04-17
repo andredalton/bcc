@@ -110,7 +110,8 @@ ListName listaNomes(char entrada[]){
 
 	for( i=0; !feof(fe) && i<MAXNAMES ; i++){
 		fgets( buffer, 100, fe);
-		sscanf(buffer, "%s %d", lista->nome[i], &k);
+		if( sscanf(buffer, "%s %d", lista->nome[i], &k) != 2 )
+			break;
 		lista->max += k;
 		lista->prob[i] = lista->max;
 	}
@@ -269,7 +270,9 @@ int simulacao(int argc, char *argv[]){
 
 	i=0;
 	while(1){
-		system("clear");
+		if ( system("clear")==-1 ){
+			printf("Falha ao limpar a tela.\n");
+		}
 
 		printf("\n\nSimulacao %d\n", i+1);
 		mem = rand()%5;
