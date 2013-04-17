@@ -8,6 +8,7 @@
 \usepackage[pdftex]{hyperref}
 \usepackage{enumerate}
 \usepackage{bbm,amsthm,amssymb,amstext,amsmath}
+\usepackage{verbatim}
 
 \author{
     André Meneghelli Vale - 4898948\\
@@ -22,6 +23,42 @@
 \begin{document}
 \maketitle
 
+\section{Descrição do problema, Abordagem, Algorítmo da punição}
+
+\subsection{Descrição do problema}
+
+   O presente Exercício Programa tem por finalidade simular o \emph{Campeonato Mundial 
+de \'Iron Man\'}. Neste, o triatleta deve ser capaz de percorrer 3.8 Km de natação,
+seguido de 180 Km de ciclismo e por fim 42 Km de corrida. Sendo que a estrada do ciclismo possui
+trechos planos, descidas e de subidas. Esses competidores são usualmente
+divididos entre homens profissionais (hp), mulheres profissionais (mp), homens
+amadores (ha) e mulheres amadoras (ma).
+   Este simulador, parte da solução concorrente em \verb+linguagem \'C\'+ e faz uso da
+biblioteca \verb+\'pthread.h\'+, para alocação e gerênciamento de \verb+POSIX threads+ para
+Linux. A idéia básica é criar hp + mp + ha + ma threads atletas e uma thread que
+gerencie a classificação destes e limitar o paralelismo desses processos
+pelas seguintes condições:
+
+\begin{itemize}
+\item Entre a fase de natação e ciclismo, existe um trajeto de transição com um
+portal na entrada e um portal na saída, nos quais não se pode passar em paralelo
+(fila indiana) e denominado transição T1;
+\item Entre a fase de ciclismo e corrida, existe outro trajeto de transição
+similar ao primeiro e denominado T2;
+\item Na fase de ciclismo, não pode haver mais que 3 atletas lado a lado (mesmo
+tempo e posição - trajeto de 3 faixas);
+\item Cada fase possui um intervalo de tempo ou velocidade para conclusão por
+unidade de 100 m na natação e 1 Km nos demais.
+\item A cada 30 min ou 1 min (debug) de corrida o programa deve fornecer
+dados referentes a posição de cada participante e por fim a classificação
+final com os tempos destes atletas.
+\end{itemize}
+
+\subsection{Abordagem}
+
+\subsection{Algorítimo da punição}
+
+\pagebreak
 \section{Compilação, Sistema e Implementação}
 O exercício programa entregue, bem como quaisquer testes, foram realizados em sistemas baseados em Debian com diversos tipos de arquiteruras diferentes e em um servidor instalado com SUSE Linux Enterprise Server 11.
 
@@ -73,11 +110,27 @@ Foram desenvolvidos 3 algorítmos diferentes para solucionar o problema e cada u
 \item \verb+simula+: Executável que simula o \textbf{algoritimo da punição}. Este programa pode receber \verb+-h+ para imprimir uma ajuda ou então dois números naturais que representam a quantidade de faixas disponível e a quantidade de atletas que esta participando do evento.
 \end{itemize}
 
-Além disso, utilizei a reorganização de contas para melhorar a estabilidade numérica \cite{GSM}.
+\pagebreak
+\section{Testes}
+Aqui serão expostos os arquivos de teste utilizados e os resultados finais.
+\subsection{Arquivos de entrada}
 
-\section{Exemplo 1}
-Nesta seção, algumas considerações e respostas sobre o primeiro exemplo.
-\subsection{Distância}
+\begin{itemize}
+\item \verb+arquivo1.txt+: \\*
+\texttt{5 5 20 20 P 50 S 10 D 20 P 100}
+\item \verb+arquivo2.txt+: \\*
+\texttt{20 15 100 65 P 10 S 10 D 10 P 20 S 6 D 10 P 20 S 10 D 10 P 30 S 10 D 10 P 24}
+\item \verb+arquivo3.txt+: \\*
+\texttt{500 500 500 500 P 50 S 10 D 20 P 100}
+\item \verb+arquivo4.txt+: \\*
+\texttt{5000 5000 5000 5000 P 10 S 10 D 10 P 20 S 6 D 10 P 20 S 10 D 10 P 30 S 10 D 10 P 24}
+\item \verb+arquivo5.txt+: Este arquivo teve muitos problemas e não foi executado na maioria dos testes. \\*
+\texttt{25000 25000 25000 25000 P 10 S 10 D 10 P 20 S 6 D 10 P 20 S 10 D 10 P 30 S 10 D 10 P 24}
+\end{itemize}
+
+\subsection{Saida \'arquivo1.txt\'}
+
+
 A distância entre $Ax$ e $b$ é justamente a norma do vetor $b-Ax$ que calculamos com o programa.
 Seu valor é aproximadamente $1.82216$.
 
