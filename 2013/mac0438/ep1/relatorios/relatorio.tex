@@ -60,8 +60,18 @@ O código foi fragmentado em 3 arquivos .c principais e mais dois arquivos de ca
 
 \subsection{Executáveis}
 
-Foram desenvolvidos 3 algorítmos diferentes para solucionar o problema e cada um destes algorítimos foi implementado com precisão de segundos e milisegundos. A seguir segue uma breve descrilção de cada um deles: 
+Foram desenvolvidos 3 algorítmos diferentes para solucionar o problema e cada um destes algorítimos foi implementado com precisão de segundos e milisegundos além de mais dois executáveis extras para auxilio do entendimento do problema. A seguir segue uma breve descrilção de cada um deles: 
 
+\begin{itemize}
+\item \verb+ep1+: Programa principal. Roda a solução \textit{concorrente} com precisão de 1s.
+\item \verb+ep1-mili+: Mesmo algoritmo do \verb+ep1+ porém rodando com precisão de 1ms. Essa precisão diminui consideravelmente o número de colisões.
+\item \verb+pep1+: Roda a solução totalmente em paralelo com precisão de 1s. Portanto não é capaz de calcular as punições. Foi a primeira solução desenvolvida e foi mantida para ser usada como ferramenta de análise dos efeitos da concorrência.
+\item \verb+pep1-mili+: Mesmo algoritmo de \verb+pep1+ porém com precisão de 1ms.
+\item \verb+gep1+: Após o desenvolvimento da função de punição tratar o problema de modo iterativo se tornou possível. Este executável tem o objetivo de testar os efeitos da execução do programa em apenas um núcleo de processamento. Tem precisão de 1s.
+\item \verb+gep1-mili+: Exatamente igual a \verb+gep1+, porém com precisão de 1ms.
+\item \verb+ep1-sleep+: Exatamente igual a \verb+ep1+, no entanto pausa a saída do programa em 1 décimo de segundo após a ultima impressão de resultados.
+\item \verb+simula+: Executável que simula o \textbf{algoritimo da punição}. Este programa pode receber \verb+-h+ para imprimir uma ajuda ou então dois números naturais que representam a quantidade de faixas disponível e a quantidade de atletas que esta participando do evento.
+\end{itemize}
 
 Além disso, utilizei a reorganização de contas para melhorar a estabilidade numérica \cite{GSM}.
 
