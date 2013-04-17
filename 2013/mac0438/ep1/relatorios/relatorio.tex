@@ -1,0 +1,250 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[tmargin=2cm, bmargin=2cm, lmargin=2cm, rmargin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage[pdftex]{hyperref}
+\usepackage{enumerate}
+\usepackage{bbm,amsthm,amssymb,amstext,amsmath}
+
+\author{William Gnann - 6431176}
+\title{Relatório: Fatoração QR}
+
+\begin{document}
+\maketitle
+\section{Compilação, Sistema e Implementação}
+O exercício programa entregue, bem como quaisquer testes, foram realizados num 
+sistema Debian GNU/Linux compatível com a GNU/Linux Pró-Aluno.
+
+\subsection{Compilação}
+Junto com o código, há um \verb+Makefile+. A compilação é feita usando o 
+comando \verb+make+. Caso não houver o make, basta utilizar \verb+gcc main.c qr.c -Wall -ansi -lm -o qr+.
+
+\subsection{Como utilizar}
+Para rodar o programa, após tê-lo compilado, executar:
+\begin{quote}
+\begin{verbatim}
+qr [MODO] < [entrada]
+\end{verbatim}
+\end{quote}
+
+Onde \verb+[MODO]+ é o número referente ao exemplo e \verb+[entrada]+ é o arquivo que com os dados.
+
+Os arquivos estão localizados no diretório \verb+exemplos+.
+
+OBS: os dados são obtidos a partir da entrada padrão. 
+
+\subsection{A fatoração QR}
+Resolvi utilizar a macro \verb+DBL_EPSILON+ que está em \verb+float.h+ para definir a condição de parada. 
+Isso faz mais sentido do que verificar se é igual à zero.
+
+Além disso, utilizei a reorganização de contas para melhorar a estabilidade numérica \cite{GSM}.
+
+\section{Exemplo 1}
+Nesta seção, algumas considerações e respostas sobre o primeiro exemplo.
+\subsection{Distância}
+A distância entre $Ax$ e $b$ é justamente a norma do vetor $b-Ax$ que calculamos com o programa.
+Seu valor é aproximadamente $1.82216$.
+
+\pagebreak
+\section{Exemplo 2}
+Nesta seção, algumas considerações e respostas sobre o segundo exemplo.
+\subsection{Formulação do problema}
+Dado o polinômio cúbico $c_0 + c_1s + c_2s^2 + c_3s^3$, obtemos o sistema:
+
+\[
+\left[
+\begin{array}{cccc}
+    1 & s_1 & s_{1}^{2} & s_{1}^{3} \\
+      & ... \\
+    1 & s_{11} & s_{11}^{2} & s_{11}^{3} \\
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+    c_0 \\
+    c_1 \\
+    c_2 \\
+    c_3 \\
+\end{array}
+\right]
+=
+\left[
+\begin{array}{c}
+    75.995 \\
+    ... \\
+    281.422 \\
+\end{array}
+\right]
+\]
+
+Onde $s_i$ é $(t_i-1950)/50$. Substituindo, temos aproximadamente:
+
+\[
+\left[
+\begin{array}{cccc}
+    1.00 & -1.00 & 1.00 & -1.00 \\
+    1.00 & -0.80 & 0.64 & -0.51 \\
+    1.00 & -0.60 & 0.36 & -0.22 \\
+    1.00 & -0.40 & 0.16 & -0.06 \\
+    1.00 & -0.20 & 0.04 & -0.01 \\
+    1.00 & 0.00 & 0.00 & 0.00 \\
+    1.00 & 0.20 & 0.04 & 0.01 \\
+    1.00 & 0.40 & 0.16 & 0.06 \\
+    1.00 & 0.60 & 0.36 & 0.22 \\
+    1.00 & 0.80 & 0.64 & 0.51 \\
+    1.00 & 1.00 & 1.00 & 1.00 \\
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+    c_0 \\
+    c_1 \\
+    c_2 \\
+    c_3 \\
+\end{array}
+\right]
+=
+\left[
+\begin{array}{c}
+    75.995 \\
+    91.972 \\
+    105.711 \\
+    123.203 \\
+    131.669 \\
+    150.697 \\
+    279.323 \\
+    203.212 \\
+    226.505 \\
+    249.633 \\
+    281.422 \\
+\end{array}
+\right]
+\]
+
+\subsection{Resultado}
+Resolvendo o sistema, obtemos o vetor aproximado:
+\[
+\left[
+\begin{array}{c}
+    155.90427 \\
+    100.36592 \\
+    23.72614 \\
+    1.26294 \\
+\end{array}
+\right]
+\]
+
+Donde, fazendo as devidas substituições, obtemos o valor aproximado $312.691$ 
+para o ano de $2010$. O gráfico abaixo dá uma ideia melhor sobre o ajuste da 
+função aos pontos.
+
+\begin{figure}[H]\centering
+    \includegraphics[scale=0.5]{polinomio.jpg}
+    \caption{Ajuste dos pontos ao polinômio.}
+\end{figure}
+
+\section{Exemplo 3}
+Nesta seção, algumas considerações e respostas sobre o terceiro exemplo.
+\subsection{Formulação do problema}
+Dado $z = 0$ e $f = 1$, obtemos o polinômio de duas variáveis $ax^2 + bxy + cy^2 + dx + ey$ que resulta no sistema:
+
+\[
+\left[
+\begin{array}{ccccc}
+    x_{1}^2 & x_{1}y_{1} & y_{1}^{2} & x_{1} & y_{1} \\
+     & & ... \\
+    x_{10}^2 & x_{10}y_{10} & y_{10}^{2} & x_{10} & y_{10} \\
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+    a \\
+    b \\
+    c \\
+    d \\
+    e \\
+\end{array}
+\right]
+=
+\left[
+\begin{array}{c}
+    -1 \\
+    ... \\
+    -1 \\
+\end{array}
+\right]
+\]
+
+Substituindo, temos aproximadamente:
+
+\[
+\left[
+\begin{array}{ccccc}
+    1.04 & 0.40 & 0.15 & 1.02 & 0.39 \\
+    0.90 & 0.30 & 0.10 & 0.95 & 0.32 \\
+    0.76 & 0.23 & 0.07 & 0.87 & 0.27 \\
+    0.59 & 0.17 & 0.05 & 0.77 & 0.22 \\
+    0.45 & 0.12 & 0.03 & 0.67 & 0.18 \\
+    0.31 & 0.08 & 0.02 & 0.56 & 0.15 \\
+    0.19 & 0.06 & 0.02 & 0.44 & 0.13 \\
+    0.09 & 0.04 & 0.01 & 0.30 & 0.12 \\
+    0.03 & 0.02 & 0.02 & 0.16 & 0.13 \\
+    0.00 & 0.00 & 0.02 & 0.01 & 0.15 \\
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+    a \\
+    b \\
+    c \\
+    d \\
+    e \\
+\end{array}
+\right]
+=
+\left[
+\begin{array}{c}
+    -1 \\
+    -1 \\
+    -1 \\
+    -1 \\
+    -1 \\
+    -1 \\
+    -1 \\
+    -1 \\
+    -1 \\
+    -1 \\
+\end{array}
+\right]
+\]
+
+\subsection{Resultado}
+Resolvendo o sistema, obtemos o vetor aproximado:
+\[
+\left[
+\begin{array}{c}
+    2.25379 \\
+    0.00632 \\
+    5.52218 \\
+    -1.28981 \\
+    -7.37735 \\
+\end{array}
+\right]
+\]
+
+O erro obtido foi de aproximadamente $0.02778$. Isso significa que o ajuste 
+deverá ser razoavelmente bom. A imagem evidencia a qualidade do ajuste.
+
+\begin{figure}[ht]\centering
+    \includegraphics[scale=0.5]{elipse.jpg}
+    \caption{Ajuste da elipse gerada a partir do MMQ}
+\end{figure}
+
+\begin{thebibliography}{9999}
+    \bibitem[GSM]{GSM}Wikipedia, \textsl{Gram-Schmidt process},\\
+        \mbox{}\hfill\texttt{http://en.wikipedia.org/wiki/Gram-Schmidt}
+\end{thebibliography}
+\end{document}

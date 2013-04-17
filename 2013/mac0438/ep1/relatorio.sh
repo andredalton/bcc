@@ -15,8 +15,8 @@ CACHE=`cat /proc/cpuinfo|grep "cache size" |cut -d ':' -f 2 | tr -d [:blank:] | 
 ARQUITETURA=`uname -m`
 FILENAME="$HOSTNAME.$PROCESSADOR"
 
-echo -en "\t$HOSTNAME & $PROCESSADOR & $MODELOPROC & $CORES & $CLOCK & $CACHE & $ARQUITETURA \\" > relatorios/$FILENAME.tex
-echo -e "\\ \n\t\\hline" >> relatorios/$FILENAME.tex
+echo -en "\t$HOSTNAME & $PROCESSADOR & $MODELOPROC & $CORES & $CLOCK & $CACHE & $ARQUITETURA \\" > relatorios/mycpu.$FILENAME.tex
+echo -e "\\ \n\t\\hline" >> relatorios/mycpu.$FILENAME.tex
 
 echo Gerando relatorio.
 
@@ -45,3 +45,6 @@ done
 
 sed -i 's:@@:\\\\\n\t\\hline:g' relatorios/myep1.$FILENAME.tex
 sed -i '/^Command exited with non-zero status [0-9]/d' relatorios/ep1.zillertal.GenuineIntel.tex
+
+cat ep1.*.tex > tempos.tex
+cat cpu.*.tex > maquinas.tex
