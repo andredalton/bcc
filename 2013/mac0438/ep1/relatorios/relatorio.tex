@@ -9,36 +9,59 @@
 \usepackage{enumerate}
 \usepackage{bbm,amsthm,amssymb,amstext,amsmath}
 
-\author{William Gnann - 6431176}
-\title{Relatório: Fatoração QR}
+\author{
+    André Meneghelli Vale - 4898948\\
+    \texttt{andredalton@gmail.com}
+    \and
+    Marcello Souza de Oliveira - 6432692\\
+    \texttt{mcellor210@gmail.com}
+}
+
+\title{Relatório: IronMan}
 
 \begin{document}
 \maketitle
+
 \section{Compilação, Sistema e Implementação}
-O exercício programa entregue, bem como quaisquer testes, foram realizados num 
-sistema Debian GNU/Linux compatível com a GNU/Linux Pró-Aluno.
+O exercício programa entregue, bem como quaisquer testes, foram realizados em sistemas baseados em Debian com diversos tipos de arquiteruras diferentes e em um servidor instalado com SUSE Linux Enterprise Server 11.
 
 \subsection{Compilação}
 Junto com o código, há um \verb+Makefile+. A compilação é feita usando o 
-comando \verb+make+. Caso não houver o make, basta utilizar \verb+gcc main.c qr.c -Wall -ansi -lm -o qr+.
+comando \verb+make+. Por praticidade foram criandas duas targets extras \verb+all+ e \verb+clear+ que compilam todos os executáveis e limpa todo o conteúdo gerado na compilação automaticamente. Também é possível gerar um relatório automático que atualiza este relatório com os valores calculados para o computador do leitor. Para tanto basta executar o \verb+./relatorio.sh+.
 
 \subsection{Como utilizar}
 Para rodar o programa, após tê-lo compilado, executar:
 \begin{quote}
 \begin{verbatim}
-qr [MODO] < [entrada]
+./ep1 -debug [entrada]
 \end{verbatim}
 \end{quote}
 
-Onde \verb+[MODO]+ é o número referente ao exemplo e \verb+[entrada]+ é o arquivo que com os dados.
+Onde:
 
-Os arquivos estão localizados no diretório \verb+exemplos+.
+\verb+-debug+ significa que o programa irá rodar em modo de depuração e imprimirá uma linha com a posição de todos os atletas a cada minuto. Caso contrário irá imprimir os três primeiros colocados de cada categoria a cada 30 minutos.
 
-OBS: os dados são obtidos a partir da entrada padrão. 
+\verb+[entrada]+ um arquivo que contém os dados sobre a quantidade de atletas e a condição do terreno na prova de ciclismo.
 
-\subsection{A fatoração QR}
-Resolvi utilizar a macro \verb+DBL_EPSILON+ que está em \verb+float.h+ para definir a condição de parada. 
-Isso faz mais sentido do que verificar se é igual à zero.
+OBS: Os arquivos estão localizados no diretório \verb+entradas/+. O formato do arquivo de entrada deve seguir a descrição do enunciado do problema em \verb+ep1.pdf+, não foram tratados erros de formatação do arquivo de entrada.
+
+\subsection{Códigos}
+O código foi fragmentado em 3 arquivos .c principais e mais dois arquivos de cabeçalho:
+
+\begin{itemize}
+\item \verb+ep1.c+: Contém as duas funções que definem a classificação e os atletas e mais duas funções principais, as quais são escolhidas em tempo de compilação:
+\begin{itemize}
+\item \verb+ironMain+: É a função principal para a versão \textit{paralela} e para a versão \textit{concorrente} do problema.
+\item \verb+gutsMain+: É a função principal para a versão \textit{iterativa} do problema.
+\end{itemize}
+\item \verb+tempos.c+ e \verb+tempos.h+: Contém a geração aleatória dos tempos de cada atleta, respeitando os limites estipulados no enunciado do problema.
+\item \verb+defines.c+ e \verb+defines.h+:  Contém a maioria dos defines, as estruturas de dados usadas no problema e ainda uma função principal para realizar uma simulação interativa do algorítimo da punição. A utilização deste executável será tratada adiante.
+\end{itemize}
+
+\subsection{Executáveis}
+
+Foram desenvolvidos 3 algorítmos diferentes para solucionar o problema e cada um destes algorítimos foi implementado com precisão de segundos e milisegundos. A seguir segue uma breve descrilção de cada um deles: 
+
 
 Além disso, utilizei a reorganização de contas para melhorar a estabilidade numérica \cite{GSM}.
 
