@@ -83,6 +83,14 @@ clean:
 	@rm -f gep1-mili
 	@rm -f ep1-sleep
 	@rm -f simula
+	@rm -f relatorios/relatorio.aux
+	@rm -f relatorios/relatorio.log
+	@rm -f relatorios/relatorio.pdf
+	@rm -f relatorios/relatorio.out
+	@rm -f relatorios/mycpu.tex
+	@rm -f relatorios/myep1.tex
+	@rm -f relatorios/maquinas.tex
+	@rm -f relatorios/tempos.tex
 
 # Gera todos os arquivos binários.
 all: ep1 pep1 gep1 ep1-mili pep1-mili gep1-mili ep1-sleep simula

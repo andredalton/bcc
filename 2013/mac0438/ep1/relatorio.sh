@@ -29,36 +29,41 @@ CACHE=`cat /proc/cpuinfo|grep "cache size" |cut -d ':' -f 2 | tr -d [:blank:] | 
 ARQUITETURA=`uname -m`
 FILENAME="$HOSTNAME.$PROCESSADOR"
 
-echo -en "\t$HOSTNAME & $PROCESSADOR & $MODELOPROC & $CORES & $CLOCK & $CACHE & $ARQUITETURA \\" > relatorios/mycpu.$FILENAME.tex
-echo -e "\\ \n\t\\hline" >> relatorios/mycpu.$FILENAME.tex
+echo -en "\t$HOSTNAME & $MODELOPROC & $CORES & $CLOCK & $CACHE & $ARQUITETURA \\" > relatorios/mycpu.tex
+echo -e "\\ \n\t\\hline" >> relatorios/mycpu.tex
 
 echo Gerando relatorio.
 
-echo "" > relatorios/myep1.$FILENAME.tex
+echo "" > relatorios/myep1.tex
 
 for f in `ls entradas/*.txt | cut -d '/' -f 2`
 do
 	echo Rodando ep1 para \"$f\"
-	/usr/bin/time -f "\tep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./ep1 entradas/$f > /dev/null
+	/usr/bin/time -f "\t$HOSTNAME & ep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./ep1 entradas/$f > /dev/null
 	
 	echo Rodando ep1-mili para \"$f\"
-	/usr/bin/time -f "\tep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./ep1-mili entradas/$f > /dev/null
+	/usr/bin/time -f "\t$HOSTNAME & ep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./ep1-mili entradas/$f > /dev/null
 	
 	echo Rodando pep1 para \"$f\"
-	/usr/bin/time -f "\tpep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./pep1 entradas/$f > /dev/null
+	/usr/bin/time -f "\t$HOSTNAME & pep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./pep1 entradas/$f > /dev/null
 	
 	echo Rodando pep1-mili para \"$f\"
-	/usr/bin/time -f "\tpep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./pep1-mili entradas/$f > /dev/null
+	/usr/bin/time -f "\t$HOSTNAME & pep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./pep1-mili entradas/$f > /dev/null
 	
 	echo Rodando gep1 para \"$f\"
-	/usr/bin/time -f "\tgep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./gep1 entradas/$f > /dev/null
+	/usr/bin/time -f "\t$HOSTNAME & gep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./gep1 entradas/$f > /dev/null
 	
 	echo Rodando gep1-mili para \"$f\"
-	/usr/bin/time -f "\tgep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.$FILENAME.tex ./gep1-mili entradas/$f > /dev/null
+	/usr/bin/time -f "\t$HOSTNAME & gep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./gep1-mili entradas/$f > /dev/null
 done
 
-sed -i 's:@@:\\\\\n\t\\hline:g' relatorios/myep1.$FILENAME.tex
-sed -i '/^Command exited with non-zero status [0-9]/d' relatorios/ep1.zillertal.GenuineIntel.tex
+sed -i 's:@@:\\\\\n\t\\hline:g' relatorios/myep1.tex
+sed -i 's:_:\\_:g' relatorios/myep1.tex
+sed -i 's:_:\\_:g' relatorios/mycpu.tex
+sed -i '/^Command exited with non-zero status [0-9]/d' relatorios/myep1.tex
 
-cat ep1.*.tex > tempos.tex
-cat cpu.*.tex > maquinas.tex
+cat relatorios/ep1.*.tex > relatorios/tempos.tex
+cat relatorios/cpu.*.tex > relatorios/maquinas.tex
+
+cd relatorios/
+pdflatex relatorio.tex
