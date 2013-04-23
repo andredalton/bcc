@@ -1,0 +1,142 @@
+#include <windows.h>
+#include "Main.h"
+
+AppIcon ICON PiHex.ico
+BlackIcon ICON Black.ico
+
+AppMenu MENU
+BEGIN
+    POPUP "&PiHex"
+    BEGIN
+        MENUITEM "&Start Calculating", MENU_START
+        MENUITEM "S&top Calculating", MENU_STOP
+        MENUITEM SEPARATOR
+        MENUITEM "&Communicate Now", MENU_COMMUNICATE
+        MENUITEM "Stop Communicating", MENU_COMMSTOP
+        MENUITEM SEPARATOR
+        MENUITEM "&Edit Computer Info ...",MENU_CPUINFO
+        MENUITEM SEPARATOR
+        MENUITEM "Join PiHex", MENU_JOIN
+        MENUITEM "Quit PiHex", MENU_QUIT
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit PiHex", MENU_EXIT
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "&Tray Icon",MENU_TRAY
+        MENUITEM "&No Icon",MENU_NOTRAY
+        MENUITEM "&Auto-continue",MENU_AUTOCONT
+        MENUITEM "&Windows 9x service",MENU_SERVICE
+        MENUITEM SEPARATOR
+        MENUITEM "&Priority ...",MENU_PRIORITY
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About PiHex ...",MENU_ABOUT
+    END
+END
+
+AboutBox DIALOG FIXED IMPURE  87, 58, 125, 65
+STYLE DS_MODALFRAME | WS_POPUPWINDOW | WS_DLGFRAME | DS_3DLOOK
+CAPTION "About PiHex"
+FONT 8, "MS Sans Serif"
+BEGIN
+        CONTROL "PiHex for Windows 95/NT\nVersion 6.00\nCopyright 1997-1999 by Colin Percival\ne-mail: cperciva@sfu.ca", -1, "STATIC", SS_CENTER | SS_NOPREFIX | WS_CHILD | WS_VISIBLE | WS_GROUP, 3, 2, 119, 45
+        CONTROL "OK", IDOK, "BUTTON", BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP, 47, 49, 32, 14
+END
+
+PriorityBox DIALOG FIXED IMPURE  50, 20, 235, 105
+STYLE DS_MODALFRAME | WS_POPUPWINDOW | WS_DLGFRAME | DS_3DLOOK
+CAPTION "Set Priority"
+FONT 8, "MS Sans Serif"
+BEGIN
+        CONTROL "Select the priority that you wish PiHex to run at.  It is recommended that you leave PiHex on the 'Auto' setting, as this allows it to vary its priority to match any screen savers or other idle-priority programs which might otherwise 'steal' its cycles.", -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 5, 5, 180, 45
+        CONTROL "There is no benefit to increasing the priority level unless other programs are stealing PiHex's CPU cycles", -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 5, 50, 220, 20
+        CONTROL "Priority level 1", PR_1, "BUTTON", BS_AUTORADIOBUTTON | BS_LEFT | WS_CHILD | WS_VISIBLE, 25, 70, 60, 10
+        CONTROL "Priority level 2", PR_2, "BUTTON", BS_AUTORADIOBUTTON | BS_LEFT | WS_CHILD | WS_VISIBLE, 25, 80, 60, 10
+        CONTROL "Priority level 3", PR_3, "BUTTON", BS_AUTORADIOBUTTON | BS_LEFT | WS_CHILD | WS_VISIBLE, 25, 90, 60, 10
+        CONTROL "Priority level 4 (screen saver)", PR_4, "BUTTON", BS_AUTORADIOBUTTON | BS_LEFT | WS_CHILD | WS_VISIBLE, 115, 70, 110, 10
+        CONTROL "Priority level 5", PR_5, "BUTTON", BS_AUTORADIOBUTTON | BS_LEFT | WS_CHILD | WS_VISIBLE, 115, 80, 60, 10
+        CONTROL "Auto", PR_AUTO, "BUTTON", BS_AUTORADIOBUTTON | BS_LEFT | WS_CHILD | WS_VISIBLE, 115, 90, 40, 10
+        CONTROL "&OK", IDOK, "BUTTON", BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP, 190, 5, 40, 15
+        CONTROL "&Cancel", IDCANCEL, "BUTTON", BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP, 190, 25, 40, 15
+END
+
+CPUINFOBOX DIALOG DISCARDABLE  100, 60, 340, 225
+STYLE DS_MODALFRAME | WS_POPUPWINDOW | WS_DLGFRAME | DS_3DLOOK
+CAPTION "PiHex Computer Info"
+FONT 8, "MS Sans Serif"
+BEGIN
+        CONTROL "User Name",                 -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 10, 10, 45, 10
+        CONTROL "",                          UNAME_Edit, "EDIT", ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 10, 20, 155, 12
+        CONTROL "E-mail address",            -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 175, 10, 90, 10
+        CONTROL "",                          EMAIL_Edit, "EDIT", ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 175, 20, 155, 12
+        CONTROL "CPU information",           -1, "BUTTON", BS_GROUPBOX | BS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 10, 40, 320, 80
+        CONTROL "CPU type",                  -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 20, 55, 45, 10
+        CONTROL "486",                       CT_I4, "BUTTON", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP, 20, 65, 55, 10
+        CONTROL "Pentium /MMX",              CT_I5, "BUTTON", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE, 20, 80, 70, 10
+        CONTROL "Pentium Pro/II/III",        CT_I6, "BUTTON", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE, 120, 65, 80, 10
+        CONTROL "Cyrix 6x86/MII",            CT_C6, "BUTTON", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE, 120, 80, 90, 10
+        CONTROL "AMD K5",                    CT_A5, "BUTTON", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE, 220, 65, 70, 10
+        CONTROL "AMD K6/K6-2/K6-3",          CT_A6, "BUTTON", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE, 220, 80, 85, 10
+        CONTROL "CPU speed:",                -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 20, 100, 50, 10
+        CONTROL "",                          CSPEED_Edit, "EDIT", ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 70, 100, 40, 12
+        CONTROL "Number of CPUs:",           -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 175, 100, 65, 10
+        CONTROL "",                          CNUM_Edit, "EDIT", ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 240, 100, 40, 12
+        CONTROL "Network connection",        CM_NET, "BUTTON", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP, 20, 130, 90, 10
+        CONTROL "Dial-up connection",        CM_DIAL, "BUTTON", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE, 20, 145, 90, 10
+        CONTROL "Sneakernet",                CM_SNEAK, "BUTTON", BS_AUTORADIOBUTTON | WS_CHILD | WS_VISIBLE, 20, 160, 60, 10
+        CONTROL "Use HTTP proxy",            PROXY_Check, "BUTTON", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 175, 130, 75, 10
+        CONTROL "Configure...",              PROXY_Config, "BUTTON", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 250, 128, 60, 14
+        CONTROL "Communicate automatically", AUTOCOM_Check, "BUTTON", BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 175, 160, 110, 10
+        CONTROL "CPU hours/day",             -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 20, 180, 55, 10
+        CONTROL "",                          CHOURS_Edit, "EDIT", ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 75, 180, 40, 12
+        CONTROL "Days of work to get",       -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 175, 180, 70, 10
+        CONTROL "",                          CDAYS_Edit, "EDIT", ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 245, 180, 40, 12
+        CONTROL "OK",                        IDOK, "BUTTON", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 70, 200, 40, 14
+        CONTROL "Cancel",                    IDCANCEL, "BUTTON", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 230, 200, 40, 14
+END
+
+PROXYINFOBOX DIALOG DISCARDABLE 40, 20, 240, 60
+STYLE DS_MODALFRAME | WS_OVERLAPPED | WS_DLGFRAME | DS_3DLOOK
+CAPTION "HTTP Proxy Configuration"
+FONT 8, "MS Sans Serif"
+BEGIN
+        CONTROL "Proxy address", -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 5, 5, 50, 10
+        CONTROL "",              PROXY_Edit, "EDIT", ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 60, 5, 175, 12
+        CONTROL "Port",          -1, "STATIC", SS_LEFT | WS_CHILD | WS_VISIBLE, 5, 20, 50, 10
+        CONTROL "",              PORT_Edit, "EDIT", ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 60, 20, 175, 12
+        CONTROL "OK",            IDOK, "BUTTON", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 60, 40, 40, 14
+        CONTROL "Cancel",        IDCANCEL, "BUTTON", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 140, 40, 40, 14
+END
+
+
+#include "winver.h"
+
+1 VERSIONINFO
+ FILEVERSION 0,6,0,0
+ PRODUCTVERSION 0,6,0,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS VOS__WINDOWS32
+ FILETYPE VFT_APP
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "Colin Percival\0"
+            VALUE "FileDescription", "PiHex\0"
+            VALUE "FileVersion", "Version 6.00\0"
+            VALUE "InternalName", "PiHex\0"
+            VALUE "LegalCopyright", "Copyright \251 Colin Percival 1997-1999\0"
+            VALUE "OriginalFilename", "PiHex.exe\0"
+            VALUE "ProductName", "PiHex for Win32\0"
+            VALUE "ProductVersion", "Version 6.00\0"
+        END
+    END
+END
+
+
+
