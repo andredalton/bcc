@@ -1,0 +1,200 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[tmargin=2cm, bmargin=2cm, lmargin=2cm, rmargin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage[pdftex]{hyperref}
+\usepackage{enumerate}
+\usepackage{bbm,amsthm,amssymb,amstext,amsmath}
+\usepackage{verbatim}
+
+\author{
+    André Meneghelli Vale - 4898948\\
+    \texttt{andredalton@gmail.com}
+    \and
+    Marcello Souza de Oliveira - 6432692\\
+    \texttt{mcellor210@gmail.com}
+}
+
+\title{Relatório: IronMan}
+
+\begin{document}
+\maketitle
+
+\section{Descrição do problema, Abordagem, Algorítmo da punição}
+
+\subsection{Descrição do problema}
+
+   O presente Exercício Programa tem por finalidade simular o \emph{Campeonato Mundial 
+de \'Iron Man\'}. Neste, o triatleta deve ser capaz de percorrer 3.8 Km de natação,
+seguido de 180 Km de ciclismo e por fim 42 Km de corrida. Sendo que a estrada do ciclismo possui
+trechos planos, descidas e de subidas. Esses competidores são usualmente
+divididos entre homens profissionais (hp), mulheres profissionais (mp), homens
+amadores (ha) e mulheres amadoras (ma). \\
+Este simulador, parte da solução concorrente em \verb+linguagem \'C\'+ e faz uso da
+biblioteca \verb+\'pthread.h\'+, para alocação e gerênciamento de \verb+POSIX threads+ para
+Linux. A idéia básica é criar hp + mp + ha + ma threads atletas e uma thread que
+gerencie a classificação destes e limitar o paralelismo desses processos
+pelas seguintes condições:
+
+\begin{itemize}
+\item Entre a fase de natação e ciclismo, existe um trajeto de transição com um
+portal na entrada e um portal na saída, nos quais não se pode passar em paralelo
+(fila indiana) e denominado transição T1;
+\item Entre a fase de ciclismo e corrida, existe outro trajeto de transição
+similar ao primeiro e denominado T2;
+\item Na fase de ciclismo, não pode haver mais que 3 atletas lado a lado (mesmo
+tempo e posição - trajeto de 3 faixas);
+\item Cada fase possui um intervalo de tempo ou velocidade para conclusão por
+unidade de 100 m na natação e 1 Km nos demais.
+\item A cada 30 min ou 1 min (debug) de corrida o programa deve fornecer
+dados referentes a posição de cada participante e por fim a classificação
+final com os tempos destes atletas.
+\end{itemize}
+
+\subsection{Abordagem}
+
+A intenção do programa é a paralelização do código, que não é totalmente 
+possível devido as seções críticas geradas pelas restrições e modelagem do 
+problema (forma como o problema é tratado: pode levar a mais seções críticas 
+que o necessário, muito embora não seja um problema trivial de se analizar). Isso
+nos leva a um problema de concorrência em tais seções. Para enfatizar tais 
+diferênças, criamos executáveis sem as restrições ("totalmente" paralelo), sem 
+paralelismo (versão iterativa) e com o problema da concorrência. \\
+Claramente o problema principal de concorrência se dá na fase do ciclismo,
+onde tem-se a restrição de ultrapassagem, e a punição devido ao número máximo de
+faixas possível para os atletas usarem). \\
+Durante o processo de modelagem do problema das seções críticas, chegamos a 
+uma solução que nos pareceu (mediante testes) satisfatoriamente eficiente.
+A solução adotada foi a alocação de grande quantidade de memória RAM a fim de
+criar \verb+buffers+ de acesso ordenados. Deste modo a maioria dos cálculos encolvendo
+os atletas se dá em variáveis alocadas previamente para cada uma das \verb+threads+
+específicas. \\
+A outra medida adotada foi a criação de um algoritmo de busca e inserção
+chamado de \verb+punição+ que será tratado a seguir. Com isso, o problema inicialmente
+complexo da punição, torna-se uma recursão de buscas binárias e inserções em vetor
+ordenado (gerenciado por um semáforo que permite a escrita).
+
+\subsection{Algorítimo da punição}
+
+A punicaoR(), busca recursivamente um tempo igual ao parâmetro de entrada, em um vetor
+com a posição de atletas (inicializado com -1), como o vetor está ordenado por
+construção, a busca é rápida. Porém a cada punição que precisa ser realizada, uma nova
+busca deve ser feita. No entanto esta busca pode ser feita em um subconjunto bem menor
+que o original. \\
+Como os valores que interessam ao programa após uma punição estão todos à direita
+e não podem ter tamanho superior ao número de faixas vezes o tamanho da punição então
+basta restringir o subconjunto a um conjunto de tamanho \verb+NFAIXAS * PUNICAO+ deslocado
+para direita até a primeira posição cujo valor é maior que o tempo atual do atleta. \\ 
+Estas restrições na busca, bem como ela já estar ordenada de início fazem com que a complexidade
+do algoritmo seja, em média, pouco maior que logN.\\
+
+\pagebreak
+\section{Compilação, Sistema e Implementação}
+O exercício programa entregue, bem como quaisquer testes, foram realizados em sistemas baseados em Debian com diversos tipos de arquiteruras diferentes e em um servidor instalado com SUSE Linux Enterprise Server 11.
+
+\subsection{Compilação}
+Junto com o código, há um \verb+Makefile+. A compilação é feita usando o 
+comando \verb+make+. Por praticidade foram criandas duas targets extras \verb+all+ e \verb+clear+ que compilam todos os executáveis e limpa todo o conteúdo gerado na compilação automaticamente. Também é possível gerar um relatório automático que atualiza este relatório com os valores calculados para o computador do leitor. Para tanto basta executar o \verb+./relatorio.sh+.
+
+\subsection{Como utilizar}
+Para rodar o programa, após tê-lo compilado, executar:
+\begin{quote}
+\begin{verbatim}
+./ep1 -debug [entrada]
+\end{verbatim}
+\end{quote}
+
+Onde:
+
+\verb+-debug+ significa que o programa irá rodar em modo de depuração e imprimirá uma linha com a posição de todos os atletas a cada minuto. Caso contrário irá imprimir os três primeiros colocados de cada categoria a cada 30 minutos.
+
+\verb+[entrada]+ um arquivo que contém os dados sobre a quantidade de atletas e a condição do terreno na prova de ciclismo.
+
+OBS: Os arquivos estão localizados no diretório \verb+entradas/+. O formato do arquivo de entrada deve seguir a descrição do enunciado do problema em \verb+ep1.pdf+, não foram tratados erros de formatação do arquivo de entrada.
+
+\subsection{Códigos}
+O código foi fragmentado em 3 arquivos .c principais e mais dois arquivos de cabeçalho:
+
+\begin{itemize}
+\item \verb+ep1.c+: Contém as duas funções que definem a classificação e os atletas e mais duas funções principais, as quais são escolhidas em tempo de compilação:
+\begin{itemize}
+\item \verb+ironMain+: É a função principal para a versão \textit{paralela} e para a versão \textit{concorrente} do problema.
+\item \verb+gutsMain+: É a função principal para a versão \textit{iterativa} do problema.
+\end{itemize}
+\item \verb+tempos.c+ e \verb+tempos.h+: Contém a geração aleatória dos tempos de cada atleta, respeitando os limites estipulados no enunciado do problema.
+\item \verb+defines.c+ e \verb+defines.h+:  Contém a maioria dos defines, as estruturas de dados usadas no problema e ainda uma função principal para realizar uma simulação interativa do algorítimo da punição. A utilização deste executável será tratada adiante.
+\end{itemize}
+
+\subsection{Executáveis}
+
+Foram desenvolvidos 3 algorítmos diferentes para solucionar o problema e cada um destes algorítimos foi implementado com precisão de segundos e milisegundos além de mais dois executáveis extras para auxilio do entendimento do problema. A seguir segue uma breve descrilção de cada um deles: 
+
+\begin{itemize}
+\item \verb+ep1+: Programa principal. Roda a solução \textit{concorrente} com precisão de 1s.
+\item \verb+ep1-mili+: Mesmo algoritmo do \verb+ep1+ porém rodando com precisão de 1ms. Essa precisão diminui consideravelmente o número de colisões.
+\item \verb+pep1+: Roda a solução totalmente em paralelo com precisão de 1s. Portanto não é capaz de calcular as punições. Foi a primeira solução desenvolvida e foi mantida para ser usada como ferramenta de análise dos efeitos da concorrência.
+\item \verb+pep1-mili+: Mesmo algoritmo de \verb+pep1+ porém com precisão de 1ms.
+\item \verb+gep1+: Após o desenvolvimento da função de punição tratar o problema de modo iterativo se tornou possível. Este executável tem o objetivo de testar os efeitos da execução do programa em apenas um núcleo de processamento. Tem precisão de 1s.
+\item \verb+gep1-mili+: Exatamente igual a \verb+gep1+, porém com precisão de 1ms.
+\item \verb+ep1-sleep+: Exatamente igual a \verb+ep1+, no entanto pausa a saída do programa em 1 décimo de segundo após a ultima impressão de resultados.
+\item \verb+simula+: Executável que simula o \textbf{algoritimo da punição}. Este programa pode receber \verb+-h+ para imprimir uma ajuda ou então dois números naturais que representam a quantidade de faixas disponível e a quantidade de atletas que esta participando do evento.
+\end{itemize}
+
+\section{Testes}
+Aqui serão expostos os arquivos de teste utilizados e os resultados finais.
+\subsection{Arquivos de entrada}
+
+\begin{itemize}
+\item \verb+arquivo1.txt+: \href{run:./re1.txt}{Saida 1} \\*
+\texttt{5 5 20 20 P 50 S 10 D 20 P 100}
+\item \verb+arquivo2.txt+: \href{run:./re2.txt}{Saida 2} \\*
+\texttt{20 15 100 65 P 10 S 10 D 10 P 20 S 6 D 10 P 20 S 10 D 10 P 30 S 10 D 10 P 24}
+\item \verb+arquivo3.txt+: \href{run:./re3.txt}{Saida 3} \\*
+\texttt{500 500 500 500 P 50 S 10 D 20 P 100}
+\item \verb+arquivo4.txt+: \href{run:./re4.txt}{Saida 4} \\*
+\texttt{5000 5000 5000 5000 P 10 S 10 D 10 P 20 S 6 D 10 P 20 S 10 D 10 P 30 S 10 D 10 P 24}
+\item \verb+arquivo5.txt+: Este arquivo teve muitos problemas e não foi executado na maioria dos testes. \\*
+\texttt{25000 25000 25000 25000 P 10 S 10 D 10 P 20 S 6 D 10 P 20 S 10 D 10 P 30 S 10 D 10 P 24}
+\end{itemize}
+
+\subsection{Arquiteturas}
+
+\begin{table}
+\begin{tabular}{|l|l|l|l|l|l|}
+  \hline
+  \textbf{Nome} & \textbf{Processador} & \textbf{Núcleos} & \textbf{Clock} & \textbf{RAM} & \textbf{Arquitetura} \\
+  \hline
+  \input{maquinas.tex}
+  \input{mycpu.tex}
+\end{tabular}
+\end{table}
+
+\pagebreak
+
+\begin{table}
+\begin{tabular}{|l|l|l|l|l|l|}
+  \hline
+  \textbf{Nome} & \textbf{Programa} & \textbf{Arquivo} & \textbf{Tempo} & \textbf{RAM} & \textbf{Saída} \\
+  \hline
+  \input{tempos.tex}
+  \input{myep1.tex}
+\end{tabular}
+\end{table}
+
+\section{Conclusão}
+Um programa paralelizado, quando da posse de uma máquina multi-thread,
+é muito mais eficiente que um interativo. Permitindo assim que todo o potencial
+destas máquinas seja usado. Provavelmente o futuro da programação está no processamento
+paralelo. No entanto uma pequena parte de problemas tem um caráter paralelizável,
+foi o que pode ser constatado neste exercício. \\
+Nestes casos o objetivo do programa passa a ser reduzir ao máximo o número de seções 
+críticas, permitindo assim que os processos não fiquem ociosos. Porém essa tarefa não é
+fácil e temos que tomar os devidos cuidados para que nenhuma restrição seja mal projetada.\\
+A idéia de minimizar a sessão crítica para pontos teve um alto custo em memória RAM. Deixando
+claro que soluções paralelas são soluções de grande potencial mas que para gerar bons resultados
+envolvem um alto investimento em hardware.
+
+\end{document}

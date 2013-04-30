@@ -1,0 +1,408 @@
+Solucao concorrente.
+Criando atletas: 
+	Masculino Profissional: 5000
+	Feminino Profissional: 5000
+	Masculino Amador: 5000
+	Feminino Amador: 5000
+
+[40;37mClassificacao 30min:                                                [0m
+[31m   1) "Jose Manning"                M   P   NA   2400.00m      [0m
+[31m   2) "Noe Bishop"                  M   P   NA   2400.00m      [0m
+[31m   3) "Jaxon Williams"              M   P   NA   2400.00m      [0m
+[32m   1) "Janie Warren"                F   P   NA   2000.00m      [0m
+[32m   2) "Valerie Huff"                F   P   NA   2000.00m      [0m
+[32m   3) "Gissell Ramirez"             F   P   NA   2000.00m      [0m
+[33m   1) "Tyler Mills"                 M   A   NA   1500.00m      [0m
+[33m   2) "Jared Dalton"                M   A   NA   1500.00m      [0m
+[33m   3) "Jairo Patterson"             M   A   NA   1500.00m      [0m
+[34m   1) "Samantha Levine"             F   A   NA   1200.00m      [0m
+[34m   2) "Jessica Hunter"              F   A   NA   1200.00m      [0m
+[34m   3) "Erin Goff"                   F   A   NA   1200.00m      [0m
+
+[40;37mClassificacao 60min:                                                [0m
+[31m   1) "Jose Manning"               M   P   CI   12966.67m      [0m
+[31m   2) "Noe Bishop"                 M   P   CI   12883.33m      [0m
+[31m   3) "Diego Jones"                M   P   CI   12800.00m      [0m
+[32m   1) "Dorothy Mcdowell"            F   P   TI   3800.00m      [0m
+[32m   2) "Ava Shaw"                    F   P   TI   3800.00m      [0m
+[32m   3) "Nina Tate"                   F   P   TI   3800.00m      [0m
+[33m   1) "Tyler Mills"                 M   A   NA   3000.00m      [0m
+[33m   2) "Jared Dalton"                M   A   NA   3000.00m      [0m
+[33m   3) "Jairo Patterson"             M   A   NA   3000.00m      [0m
+[34m   1) "Samantha Levine"             F   A   NA   2400.00m      [0m
+[34m   2) "Jessica Hunter"              F   A   NA   2400.00m      [0m
+[34m   3) "Erin Goff"                   F   A   NA   2400.00m      [0m
+
+[40;37mClassificacao 90min:                                                [0m
+[31m   1) "Jose Manning"               M   P   CI   36300.00m      [0m
+[31m   2) "Noe Bishop"                 M   P   CI   36216.67m      [0m
+[31m   3) "Diego Jones"                M   P   CI   36133.33m      [0m
+[32m   1) "Dorothy Mcdowell"            F   P   TI   3800.00m      [0m
+[32m   2) "Ava Shaw"                    F   P   TI   3800.00m      [0m
+[32m   3) "Nina Tate"                   F   P   TI   3800.00m      [0m
+[33m   1) "Daniel Chavez"               M   A   TI   3800.00m      [0m
+[33m   2) "Christian Smith"             M   A   TI   3800.00m      [0m
+[33m   3) "Shimshon Hamilton"           M   A   TI   3800.00m      [0m
+[34m   1) "Samantha Levine"             F   A   NA   3600.00m      [0m
+[34m   2) "Jessica Hunter"              F   A   NA   3600.00m      [0m
+[34m   3) "Erin Goff"                   F   A   NA   3600.00m      [0m
+
+[40;37mClassificacao 120min:                                                [0m
+[31m   1) "Jose Manning"               M   P   CI   58300.00m      [0m
+[31m   2) "Noe Bishop"                 M   P   CI   58250.00m      [0m
+[31m   3) "Diego Jones"                M   P   CI   58200.00m      [0m
+[32m   1) "Dorothy Mcdowell"            F   P   TI   3800.00m      [0m
+[32m   2) "Ava Shaw"                    F   P   TI   3800.00m      [0m
+[32m   3) "Nina Tate"                   F   P   TI   3800.00m      [0m
+[33m   1) "Daniel Chavez"               M   A   TI   3800.00m      [0m
+[33m   2) "Christian Smith"             M   A   TI   3800.00m      [0m
+[33m   3) "Shimshon Hamilton"           M   A   TI   3800.00m      [0m
+[34m   1) "Samiyah Garcia"              F   A   TI   3800.00m      [0m
+[34m   2) "Emma Myers"                  F   A   TI   3800.00m      [0m
+[34m   3) "Breyona Hood"                F   A   TI   3800.00m      [0m
+
+[40;37mClassificacao 150min:                                                [0m
+[31m   1) "Jose Manning"               M   P   CI   87300.00m      [0m
+[31m   2) "Noe Bishop"                 M   P   CI   87216.67m      [0m
+[31m   3) "Diego Jones"                M   P   CI   87133.33m      [0m
+[32m   1) "Dorothy Mcdowell"           F   P   CI   19138.89m      [0m
+[32m   2) "Ava Shaw"                   F   P   CI   19022.22m      [0m
+[32m   3) "Nina Tate"                  F   P   CI   18905.56m      [0m
+[33m   1) "Daniel Chavez"               M   A   TI   3800.00m      [0m
+[33m   2) "Christian Smith"             M   A   TI   3800.00m      [0m
+[33m   3) "Shimshon Hamilton"           M   A   TI   3800.00m      [0m
+[34m   1) "Samiyah Garcia"              F   A   TI   3800.00m      [0m
+[34m   2) "Emma Myers"                  F   A   TI   3800.00m      [0m
+[34m   3) "Breyona Hood"                F   A   TI   3800.00m      [0m
+
+[40;37mClassificacao 180min:                                                [0m
+[31m   1) "Jose Manning"              M   P   CI   110633.33m      [0m
+[31m   2) "Noe Bishop"                M   P   CI   110550.00m      [0m
+[31m   3) "Diego Jones"               M   P   CI   110466.67m      [0m
+[32m   1) "Dorothy Mcdowell"           F   P   CI   39437.50m      [0m
+[32m   2) "Ava Shaw"                   F   P   CI   39137.50m      [0m
+[32m   3) "Nina Tate"                  F   P   CI   38912.50m      [0m
+[33m   1) "Daniel Chavez"               M   A   CI   6500.00m      [0m
+[33m   2) "Christian Smith"             M   A   CI   6200.00m      [0m
+[33m   3) "Shimshon Hamilton"           M   A   CI   6100.00m      [0m
+[34m   1) "Samiyah Garcia"              F   A   TI   3800.00m      [0m
+[34m   2) "Emma Myers"                  F   A   TI   3800.00m      [0m
+[34m   3) "Breyona Hood"                F   A   TI   3800.00m      [0m
+
+[40;37mClassificacao 210min:                                                [0m
+[31m   1) "Jose Manning"              M   P   CI   135633.33m      [0m
+[31m   2) "Noe Bishop"                M   P   CI   135550.00m      [0m
+[31m   3) "Diego Jones"               M   P   CI   135466.67m      [0m
+[32m   1) "Dorothy Mcdowell"           F   P   CI   57416.67m      [0m
+[32m   2) "Ava Shaw"                   F   P   CI   57283.33m      [0m
+[32m   3) "Nina Tate"                  F   P   CI   57183.33m      [0m
+[33m   1) "Daniel Chavez"              M   A   CI   16880.00m      [0m
+[33m   2) "Christian Smith"            M   A   CI   16760.00m      [0m
+[33m   3) "Shimshon Hamilton"          M   A   CI   16720.00m      [0m
+[34m   1) "Samiyah Garcia"              F   A   TI   3800.00m      [0m
+[34m   2) "Emma Myers"                  F   A   TI   3800.00m      [0m
+[34m   3) "Breyona Hood"                F   A   TI   3800.00m      [0m
+
+[40;37mClassificacao 240min:                                                [0m
+[31m   1) "Jose Manning"              M   P   CI   158133.33m      [0m
+[31m   2) "Noe Bishop"                M   P   CI   157966.67m      [0m
+[31m   3) "Diego Jones"               M   P   CI   157800.00m      [0m
+[32m   1) "Dorothy Mcdowell"           F   P   CI   80562.50m      [0m
+[32m   2) "Ava Shaw"                   F   P   CI   80262.50m      [0m
+[32m   3) "Nina Tate"                  F   P   CI   80037.50m      [0m
+[33m   1) "Daniel Chavez"              M   A   CI   22880.00m      [0m
+[33m   2) "Christian Smith"            M   A   CI   22760.00m      [0m
+[33m   3) "Shimshon Hamilton"          M   A   CI   22720.00m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   11758.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   11675.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   11550.00m      [0m
+
+[40;37mClassificacao 270min:                                                [0m
+[31m   1) "Jose Manning"              M   P   T2   183800.00m      [0m
+[31m   2) "Noe Bishop"                M   P   T2   183800.00m      [0m
+[31m   3) "Diego Jones"               M   P   T2   183800.00m      [0m
+[32m   1) "Dorothy Mcdowell"           F   P   CI   95694.44m      [0m
+[32m   2) "Ava Shaw"                   F   P   CI   95561.11m      [0m
+[32m   3) "Nina Tate"                  F   P   CI   95461.11m      [0m
+[33m   1) "Daniel Chavez"              M   A   CI   40500.00m      [0m
+[33m   2) "Christian Smith"            M   A   CI   40200.00m      [0m
+[33m   3) "Shimshon Hamilton"          M   A   CI   40100.00m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   17983.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   17950.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   17900.00m      [0m
+
+[40;37mClassificacao 300min:                                                [0m
+[31m   1) "Jose Manning"              M   P   CO   190850.00m      [0m
+[31m   2) "Noe Bishop"                M   P   CO   190800.00m      [0m
+[31m   3) "Diego Jones"               M   P   CO   190750.00m      [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CI   116687.50m      [0m
+[32m   2) "Ava Shaw"                  F   P   CI   116387.50m      [0m
+[32m   3) "Nina Tate"                 F   P   CI   116162.50m      [0m
+[33m   1) "Daniel Chavez"              M   A   CI   54480.00m      [0m
+[33m   2) "Christian Smith"            M   A   CI   54360.00m      [0m
+[33m   3) "Shimshon Hamilton"          M   A   CI   54320.00m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   22983.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   22950.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   22900.00m      [0m
+
+[40;37mClassificacao 330min:                                                [0m
+[31m   1) "Jose Manning"              M   P   CO   198350.00m      [0m
+[31m   2) "Noe Bishop"                M   P   CO   198300.00m      [0m
+[31m   3) "Diego Jones"               M   P   CO   198250.00m      [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CI   139187.50m      [0m
+[32m   2) "Ava Shaw"                  F   P   CI   138887.50m      [0m
+[32m   3) "Nina Tate"                 F   P   CI   138662.50m      [0m
+[33m   1) "Daniel Chavez"              M   A   CI   62633.33m      [0m
+[33m   2) "Christian Smith"            M   A   CI   62133.33m      [0m
+[33m   3) "Shimshon Hamilton"          M   A   CI   61966.67m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   39258.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   39175.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   39050.00m      [0m
+
+[40;37mClassificacao 360min:                                                [0m
+[31m   1) "Jose Manning"              M   P   CO   205850.00m      [0m
+[31m   2) "Noe Bishop"                M   P   CO   205800.00m      [0m
+[31m   3) "Diego Jones"               M   P   CO   205750.00m      [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CI   149527.78m      [0m
+[32m   2) "Ava Shaw"                  F   P   CI   149394.44m      [0m
+[32m   3) "Nina Tate"                 F   P   CI   149294.44m      [0m
+[33m   1) "Daniel Chavez"              M   A   CI   80500.00m      [0m
+[33m   2) "Christian Smith"            M   A   CI   80200.00m      [0m
+[33m   3) "Shimshon Hamilton"          M   A   CI   80100.00m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   51758.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   51675.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   51550.00m      [0m
+
+[40;37mClassificacao 390min:                                                [0m
+[31m   1) "Jose Manning"              M   P   CO   213350.00m      [0m
+[31m   2) "Noe Bishop"                M   P   CO   213300.00m      [0m
+[31m   3) "Diego Jones"               M   P   CO   213250.00m      [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CI   175312.50m      [0m
+[32m   2) "Ava Shaw"                  F   P   CI   175012.50m      [0m
+[32m   3) "Nina Tate"                 F   P   CI   174787.50m      [0m
+[33m   1) "Daniel Chavez"              M   A   CI   92080.00m      [0m
+[33m   2) "Christian Smith"            M   A   CI   91960.00m      [0m
+[33m   3) "Shimshon Hamilton"          M   A   CI   91920.00m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   57983.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   57950.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   57900.00m      [0m
+
+[40;37mClassificacao 420min:                                                [0m
+[31m   1) "Jose Manning"              M   P   CO   220850.00m      [0m
+[31m   2) "Noe Bishop"                M   P   CO   220800.00m      [0m
+[31m   3) "Diego Jones"               M   P   CO   220750.00m      [0m
+[32m   1) "Dorothy Mcdowell"          F   P   T2   183800.00m      [0m
+[32m   2) "Ava Shaw"                  F   P   T2   183800.00m      [0m
+[32m   3) "Nina Tate"                 F   P   T2   183800.00m      [0m
+[33m   1) "Daniel Chavez"              M   A   CI   98080.00m      [0m
+[33m   2) "Christian Smith"            M   A   CI   97960.00m      [0m
+[33m   3) "Shimshon Hamilton"          M   A   CI   97920.00m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   72758.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   72675.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   72550.00m      [0m
+
+[40;37mClassificacao 450min:                                                [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CO   186300.00m      [0m
+[32m   2) "Ava Shaw"                  F   P   CO   186092.31m      [0m
+[32m   3) "Nina Tate"                 F   P   CO   186069.23m      [0m
+[33m   1) "Daniel Chavez"             M   A   CI   114500.00m      [0m
+[33m   2) "Christian Smith"           M   A   CI   114200.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CI   114100.00m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   85258.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   85175.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   85050.00m      [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                      Masculino Profissional                     **[0m
+[30;47m*********************************************************************[0m
+[47;31m   1) "Jose Manning"           M   P   FI   07h19m48s                [0m
+[47;31m   2) "Noe Bishop"             M   P   FI   07h20m00s                [0m
+[47;31m   3) "Diego Jones"            M   P   FI   07h20m12s                [0m
+
+[40;37mClassificacao 480min:                                                [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CO   193223.08m      [0m
+[32m   2) "Ava Shaw"                  F   P   CO   193015.38m      [0m
+[32m   3) "Nina Tate"                 F   P   CO   192992.31m      [0m
+[33m   1) "Daniel Chavez"             M   A   CI   129500.00m      [0m
+[33m   2) "Christian Smith"           M   A   CI   129200.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CI   129100.00m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   92983.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   92950.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   92900.00m      [0m
+
+[40;37mClassificacao 510min:                                                [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CO   200146.15m      [0m
+[32m   2) "Ava Shaw"                  F   P   CO   199938.46m      [0m
+[32m   3) "Nina Tate"                 F   P   CO   199915.38m      [0m
+[33m   1) "Daniel Chavez"             M   A   CI   141680.00m      [0m
+[33m   2) "Christian Smith"           M   A   CI   141560.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CI   141520.00m      [0m
+[34m   1) "Samiyah Garcia"             F   A   CI   97983.33m      [0m
+[34m   2) "Emma Myers"                 F   A   CI   97950.00m      [0m
+[34m   3) "Breyona Hood"               F   A   CI   97900.00m      [0m
+
+[40;37mClassificacao 540min:                                                [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CO   207069.23m      [0m
+[32m   2) "Ava Shaw"                  F   P   CO   206861.54m      [0m
+[32m   3) "Nina Tate"                 F   P   CO   206838.46m      [0m
+[33m   1) "Daniel Chavez"             M   A   CI   147680.00m      [0m
+[33m   2) "Christian Smith"           M   A   CI   147560.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CI   147520.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   CI   112758.33m      [0m
+[34m   2) "Emma Myers"                F   A   CI   112675.00m      [0m
+[34m   3) "Breyona Hood"              F   A   CI   112550.00m      [0m
+
+[40;37mClassificacao 570min:                                                [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CO   213992.31m      [0m
+[32m   2) "Ava Shaw"                  F   P   CO   213784.62m      [0m
+[32m   3) "Nina Tate"                 F   P   CO   213761.54m      [0m
+[33m   1) "Daniel Chavez"             M   A   CI   163500.00m      [0m
+[33m   2) "Christian Smith"           M   A   CI   163200.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CI   163100.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   CI   125258.33m      [0m
+[34m   2) "Emma Myers"                F   A   CI   125175.00m      [0m
+[34m   3) "Breyona Hood"              F   A   CI   125050.00m      [0m
+
+[40;37mClassificacao 600min:                                                [0m
+[32m   1) "Dorothy Mcdowell"          F   P   CO   220915.38m      [0m
+[32m   2) "Ava Shaw"                  F   P   CO   220707.69m      [0m
+[32m   3) "Nina Tate"                 F   P   CO   220684.62m      [0m
+[33m   1) "Daniel Chavez"             M   A   CI   178500.00m      [0m
+[33m   2) "Christian Smith"           M   A   CI   178200.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CI   178100.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   CI   137758.33m      [0m
+[34m   2) "Emma Myers"                F   A   CI   137675.00m      [0m
+[34m   3) "Breyona Hood"              F   A   CI   137550.00m      [0m
+
+[40;37mClassificacao 630min:                                                [0m
+[33m   1) "Daniel Chavez"             M   A   T2   183800.00m      [0m
+[33m   2) "Christian Smith"           M   A   T2   183800.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   T2   183800.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   CI   143983.33m      [0m
+[34m   2) "Emma Myers"                F   A   CI   143950.00m      [0m
+[34m   3) "Breyona Hood"              F   A   CI   143900.00m      [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                      Feminino  Profissional                     **[0m
+[30;47m*********************************************************************[0m
+[47;32m   1) "Dorothy Mcdowell"       F   P   FI   10h21m10s                [0m
+[47;32m   2) "Ava Shaw"               F   P   FI   10h22m04s                [0m
+[47;32m   3) "Nina Tate"              F   P   FI   10h22m10s                [0m
+
+[40;37mClassificacao 660min:                                                [0m
+[33m   1) "Daniel Chavez"             M   A   T2   183800.00m      [0m
+[33m   2) "Christian Smith"           M   A   T2   183800.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   T2   183800.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   CI   148983.33m      [0m
+[34m   2) "Emma Myers"                F   A   CI   148950.00m      [0m
+[34m   3) "Breyona Hood"              F   A   CI   148900.00m      [0m
+
+[40;37mClassificacao 690min:                                                [0m
+[33m   1) "Daniel Chavez"             M   A   CO   186700.00m      [0m
+[33m   2) "Christian Smith"           M   A   CO   186520.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CO   186450.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   CI   165258.33m      [0m
+[34m   2) "Emma Myers"                F   A   CI   165175.00m      [0m
+[34m   3) "Breyona Hood"              F   A   CI   165050.00m      [0m
+
+[40;37mClassificacao 720min:                                                [0m
+[33m   1) "Daniel Chavez"             M   A   CO   192700.00m      [0m
+[33m   2) "Christian Smith"           M   A   CO   192520.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CO   192450.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   CI   177758.33m      [0m
+[34m   2) "Emma Myers"                F   A   CI   177675.00m      [0m
+[34m   3) "Breyona Hood"              F   A   CI   177550.00m      [0m
+
+[40;37mClassificacao 750min:                                                [0m
+[33m   1) "Daniel Chavez"             M   A   CO   198700.00m      [0m
+[33m   2) "Christian Smith"           M   A   CO   198520.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CO   198450.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   T2   183800.00m      [0m
+[34m   2) "Emma Myers"                F   A   T2   183800.00m      [0m
+[34m   3) "Breyona Hood"              F   A   T2   183800.00m      [0m
+
+[40;37mClassificacao 780min:                                                [0m
+[33m   1) "Daniel Chavez"             M   A   CO   204700.00m      [0m
+[33m   2) "Christian Smith"           M   A   CO   204520.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CO   204450.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   T2   183800.00m      [0m
+[34m   2) "Emma Myers"                F   A   T2   183800.00m      [0m
+[34m   3) "Breyona Hood"              F   A   T2   183800.00m      [0m
+
+[40;37mClassificacao 810min:                                                [0m
+[33m   1) "Daniel Chavez"             M   A   CO   210700.00m      [0m
+[33m   2) "Christian Smith"           M   A   CO   210520.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CO   210450.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   T2   183800.00m      [0m
+[34m   2) "Emma Myers"                F   A   T2   183800.00m      [0m
+[34m   3) "Breyona Hood"              F   A   T2   183800.00m      [0m
+
+[40;37mClassificacao 840min:                                                [0m
+[33m   1) "Daniel Chavez"             M   A   CO   216700.00m      [0m
+[33m   2) "Christian Smith"           M   A   CO   216520.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CO   216450.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   CO   186990.91m      [0m
+[34m   2) "Emma Myers"                F   A   CO   186927.27m      [0m
+[34m   3) "Breyona Hood"              F   A   CO   186827.27m      [0m
+
+[40;37mClassificacao 870min:                                                [0m
+[33m   1) "Daniel Chavez"             M   A   CO   222700.00m      [0m
+[33m   2) "Christian Smith"           M   A   CO   222520.00m      [0m
+[33m   3) "Shimshon Hamilton"         M   A   CO   222450.00m      [0m
+[34m   1) "Samiyah Garcia"            F   A   CO   192445.45m      [0m
+[34m   2) "Emma Myers"                F   A   CO   192381.82m      [0m
+[34m   3) "Breyona Hood"              F   A   CO   192281.82m      [0m
+
+[40;37mClassificacao 900min:                                                [0m
+[34m   1) "Samiyah Garcia"            F   A   CO   197900.00m      [0m
+[34m   2) "Emma Myers"                F   A   CO   197836.36m      [0m
+[34m   3) "Breyona Hood"              F   A   CO   197736.36m      [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                         Masculino Amador                        **[0m
+[30;47m*********************************************************************[0m
+[47;33m   1) "Daniel Chavez"          M   A   FI   14h45m30s                [0m
+[47;33m   2) "Christian Smith"        M   A   FI   14h46m24s                [0m
+[47;33m   3) "Shimshon Hamilton"      M   A   FI   14h46m45s                [0m
+
+[40;37mClassificacao 930min:                                                [0m
+[34m   1) "Samiyah Garcia"            F   A   CO   203354.55m      [0m
+[34m   2) "Emma Myers"                F   A   CO   203290.91m      [0m
+[34m   3) "Breyona Hood"              F   A   CO   203190.91m      [0m
+
+[40;37mClassificacao 960min:                                                [0m
+[34m   1) "Samiyah Garcia"            F   A   CO   208809.09m      [0m
+[34m   2) "Emma Myers"                F   A   CO   208745.45m      [0m
+[34m   3) "Breyona Hood"              F   A   CO   208645.45m      [0m
+
+[40;37mClassificacao 990min:                                                [0m
+[34m   1) "Samiyah Garcia"            F   A   CO   214263.64m      [0m
+[34m   2) "Emma Myers"                F   A   CO   214200.00m      [0m
+[34m   3) "Breyona Hood"              F   A   CO   214100.00m      [0m
+
+[40;37mClassificacao 1020min:                                                [0m
+[34m   1) "Samiyah Garcia"            F   A   CO   219718.18m      [0m
+[34m   2) "Emma Myers"                F   A   CO   219654.55m      [0m
+[34m   3) "Breyona Hood"              F   A   CO   219554.55m      [0m
+
+[40;37mClassificacao 1050min:                                                [0m
+[34m   1) "Samiyah Garcia"            F   A   CO   225172.73m      [0m
+[34m   2) "Emma Myers"                F   A   CO   225109.09m      [0m
+[34m   3) "Breyona Hood"              F   A   CO   225009.09m      [0m
+
+[40;37mClassificacao 1080min:                                                [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                          Feminino Amador                        **[0m
+[30;47m*********************************************************************[0m
+[47;34m   1) "Samiyah Garcia"         F   A   FI   17h33m27s                [0m
+[47;34m   2) "Emma Myers"             F   A   FI   17h33m48s                [0m
+[47;34m   3) "Breyona Hood"           F   A   FI   17h34m21s                [0m

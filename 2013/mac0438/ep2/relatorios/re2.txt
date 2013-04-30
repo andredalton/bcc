@@ -1,0 +1,349 @@
+Solucao concorrente.
+Criando atletas: 
+	Masculino Profissional: 20
+	Feminino Profissional: 15
+	Masculino Amador: 100
+	Feminino Amador: 65
+
+[40;37mClassificacao 30min:                                                [0m
+[31m   1) "Jaxson Palmer"               M   P   NA   2400.00m      [0m
+[31m   2) "Landen Wooten"               M   P   NA   2400.00m      [0m
+[31m   3) "Joel Franklin"               M   P   NA   2400.00m      [0m
+[32m   1) "Hanna Wade"                  F   P   NA   2000.00m      [0m
+[32m   2) "Addison Herman"              F   P   NA   2000.00m      [0m
+[32m   3) "Giani Rogers"                F   P   NA   2000.00m      [0m
+[33m   1) "Sean Carroll"                M   A   NA   1500.00m      [0m
+[33m   2) "Matthew Thomas"              M   A   NA   1500.00m      [0m
+[33m   3) "Brody Roberts"               M   A   NA   1500.00m      [0m
+[34m   1) "Jimena Ward"                 F   A   NA   1200.00m      [0m
+[34m   2) "Riley Hicks"                 F   A   NA   1200.00m      [0m
+[34m   3) "Bianca Howard"               F   A   NA   1200.00m      [0m
+
+[40;37mClassificacao 60min:                                                [0m
+[31m   1) "Jaxson Palmer"              M   P   CI   12966.67m      [0m
+[31m   2) "Jeremy Harrington"          M   P   CI   12883.33m      [0m
+[31m   3) "Landen Wooten"              M   P   CI   12800.00m      [0m
+[32m   1) "Breanna Gibson"              F   P   CI   4625.00m      [0m
+[32m   2) "Addison Herman"              F   P   CI   4475.00m      [0m
+[32m   3) "Julia Thornton"              F   P   CI   4325.00m      [0m
+[33m   1) "Sean Carroll"                M   A   NA   3000.00m      [0m
+[33m   2) "Matthew Thomas"              M   A   NA   3000.00m      [0m
+[33m   3) "Brody Roberts"               M   A   NA   3000.00m      [0m
+[34m   1) "Jimena Ward"                 F   A   NA   2400.00m      [0m
+[34m   2) "Riley Hicks"                 F   A   NA   2400.00m      [0m
+[34m   3) "Bianca Howard"               F   A   NA   2400.00m      [0m
+
+[40;37mClassificacao 90min:                                                [0m
+[31m   1) "Jaxson Palmer"              M   P   CI   36300.00m      [0m
+[31m   2) "Jeremy Harrington"          M   P   CI   36216.67m      [0m
+[31m   3) "Landen Wooten"              M   P   CI   36133.33m      [0m
+[32m   1) "Breanna Gibson"             F   P   CI   19722.22m      [0m
+[32m   2) "Addison Herman"             F   P   CI   19655.56m      [0m
+[32m   3) "Julia Thornton"             F   P   CI   19588.89m      [0m
+[33m   1) "Sean Carroll"                M   A   CI   9550.00m      [0m
+[33m   2) "Orlando Nolan"               M   A   CI   9500.00m      [0m
+[33m   3) "Ethan Williams"              M   A   CI   9450.00m      [0m
+[34m   1) "Jimena Ward"                 F   A   NA   3600.00m      [0m
+[34m   2) "Riley Hicks"                 F   A   NA   3600.00m      [0m
+[34m   3) "Bianca Howard"               F   A   NA   3600.00m      [0m
+
+[40;37mClassificacao 120min:                                                [0m
+[31m   1) "Jaxson Palmer"              M   P   CI   58300.00m      [0m
+[31m   2) "Jeremy Harrington"          M   P   CI   58250.00m      [0m
+[31m   3) "Landen Wooten"              M   P   CI   58200.00m      [0m
+[32m   1) "Breanna Gibson"             F   P   CI   40750.00m      [0m
+[32m   2) "Addison Herman"             F   P   CI   40600.00m      [0m
+[32m   3) "Julia Thornton"             F   P   CI   40450.00m      [0m
+[33m   1) "Sean Carroll"               M   A   CI   18100.00m      [0m
+[33m   2) "Orlando Nolan"              M   A   CI   18080.00m      [0m
+[33m   3) "Ethan Williams"             M   A   CI   18060.00m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   11508.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   11320.83m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   10904.17m      [0m
+
+[40;37mClassificacao 150min:                                                [0m
+[31m   1) "Jaxson Palmer"              M   P   CI   87300.00m      [0m
+[31m   2) "Jeremy Harrington"          M   P   CI   87216.67m      [0m
+[31m   3) "Landen Wooten"              M   P   CI   87133.33m      [0m
+[32m   1) "Breanna Gibson"             F   P   CI   58000.00m      [0m
+[32m   2) "Addison Herman"             F   P   CI   57933.33m      [0m
+[32m   3) "Julia Thornton"             F   P   CI   57866.67m      [0m
+[33m   1) "Sean Carroll"               M   A   CI   25050.00m      [0m
+[33m   2) "Orlando Nolan"              M   A   CI   24966.67m      [0m
+[33m   3) "Ethan Williams"             M   A   CI   24883.33m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   17883.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   17808.33m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   17641.67m      [0m
+
+[40;37mClassificacao 180min:                                                [0m
+[31m   1) "Jaxson Palmer"             M   P   CI   110633.33m      [0m
+[31m   2) "Jeremy Harrington"         M   P   CI   110550.00m      [0m
+[31m   3) "Landen Wooten"             M   P   CI   110466.67m      [0m
+[32m   1) "Breanna Gibson"             F   P   CI   81875.00m      [0m
+[32m   2) "Addison Herman"             F   P   CI   81725.00m      [0m
+[32m   3) "Julia Thornton"             F   P   CI   81575.00m      [0m
+[33m   1) "Sean Carroll"               M   A   CI   43550.00m      [0m
+[33m   2) "Orlando Nolan"              M   A   CI   43500.00m      [0m
+[33m   3) "Ethan Williams"             M   A   CI   43450.00m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   22883.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   22808.33m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   22641.67m      [0m
+
+[40;37mClassificacao 210min:                                                [0m
+[31m   1) "Jaxson Palmer"             M   P   CI   135633.33m      [0m
+[31m   2) "Jeremy Harrington"         M   P   CI   135550.00m      [0m
+[31m   3) "Landen Wooten"             M   P   CI   135466.67m      [0m
+[32m   1) "Breanna Gibson"             F   P   CI   96277.78m      [0m
+[32m   2) "Addison Herman"             F   P   CI   96211.11m      [0m
+[32m   3) "Julia Thornton"             F   P   CI   96144.44m      [0m
+[33m   1) "Sean Carroll"               M   A   CI   55700.00m      [0m
+[33m   2) "Orlando Nolan"              M   A   CI   55680.00m      [0m
+[33m   3) "Ethan Williams"             M   A   CI   55660.00m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   39008.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   38820.83m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   38404.17m      [0m
+
+[40;37mClassificacao 240min:                                                [0m
+[31m   1) "Jaxson Palmer"             M   P   CI   158133.33m      [0m
+[31m   2) "Jeremy Harrington"         M   P   CI   157966.67m      [0m
+[31m   3) "Landen Wooten"             M   P   CI   157800.00m      [0m
+[32m   1) "Breanna Gibson"            F   P   CI   118000.00m      [0m
+[32m   2) "Addison Herman"            F   P   CI   117850.00m      [0m
+[32m   3) "Julia Thornton"            F   P   CI   117700.00m      [0m
+[33m   1) "Sean Carroll"               M   A   CI   67716.67m      [0m
+[33m   2) "Orlando Nolan"              M   A   CI   67633.33m      [0m
+[33m   3) "Ethan Williams"             M   A   CI   67550.00m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   51508.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   51320.83m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   50904.17m      [0m
+
+[40;37mClassificacao 270min:                                                [0m
+[31m   1) "Jaxson Palmer"             M   P   T2   183800.00m      [0m
+[31m   2) "Landen Wooten"             M   P   T2   183800.00m      [0m
+[31m   3) "Jeremy Harrington"         M   P   T2   183800.00m      [0m
+[32m   1) "Breanna Gibson"            F   P   CI   140111.11m      [0m
+[32m   2) "Addison Herman"            F   P   CI   140044.44m      [0m
+[32m   3) "Julia Thornton"            F   P   CI   139977.78m      [0m
+[33m   1) "Sean Carroll"               M   A   CI   83550.00m      [0m
+[33m   2) "Orlando Nolan"              M   A   CI   83500.00m      [0m
+[33m   3) "Ethan Williams"             M   A   CI   83450.00m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   57883.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   57808.33m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   57641.67m      [0m
+
+[40;37mClassificacao 300min:                                                [0m
+[31m   1) "Jaxson Palmer"             M   P   CO   190850.00m      [0m
+[31m   2) "Landen Wooten"             M   P   CO   190775.00m      [0m
+[31m   3) "Jeremy Harrington"         M   P   CO   190775.00m      [0m
+[32m   1) "Breanna Gibson"            F   P   CI   150898.04m      [0m
+[32m   2) "Addison Herman"            F   P   CI   150662.75m      [0m
+[32m   3) "Julia Thornton"            F   P   CI   150427.45m      [0m
+[33m   1) "Sean Carroll"               M   A   CI   93300.00m      [0m
+[33m   2) "Orlando Nolan"              M   A   CI   93280.00m      [0m
+[33m   3) "Ethan Williams"             M   A   CI   93260.00m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   72508.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   72320.83m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   71904.17m      [0m
+
+[40;37mClassificacao 330min:                                                [0m
+[31m   1) "Jaxson Palmer"             M   P   CO   198350.00m      [0m
+[31m   2) "Landen Wooten"             M   P   CO   198275.00m      [0m
+[31m   3) "Jeremy Harrington"         M   P   CO   198275.00m      [0m
+[32m   1) "Breanna Gibson"            F   P   CI   176625.00m      [0m
+[32m   2) "Addison Herman"            F   P   CI   176475.00m      [0m
+[32m   3) "Julia Thornton"            F   P   CI   176325.00m      [0m
+[33m   1) "Sean Carroll"               M   A   CI   99300.00m      [0m
+[33m   2) "Orlando Nolan"              M   A   CI   99280.00m      [0m
+[33m   3) "Ethan Williams"             M   A   CI   99260.00m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   85008.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   84820.83m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   84404.17m      [0m
+
+[40;37mClassificacao 360min:                                                [0m
+[31m   1) "Jaxson Palmer"             M   P   CO   205850.00m      [0m
+[31m   2) "Landen Wooten"             M   P   CO   205775.00m      [0m
+[31m   3) "Jeremy Harrington"         M   P   CO   205775.00m      [0m
+[32m   1) "Breanna Gibson"            F   P   CO   187938.46m      [0m
+[32m   2) "Addison Herman"            F   P   CO   187869.23m      [0m
+[32m   3) "Mary Jones"                F   P   CO   187707.69m      [0m
+[33m   1) "Sean Carroll"              M   A   CI   117550.00m      [0m
+[33m   2) "Orlando Nolan"             M   A   CI   117500.00m      [0m
+[33m   3) "Ethan Williams"            M   A   CI   117450.00m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   92883.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   92808.33m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   92641.67m      [0m
+
+[40;37mClassificacao 390min:                                                [0m
+[31m   1) "Jaxson Palmer"             M   P   CO   213350.00m      [0m
+[31m   2) "Landen Wooten"             M   P   CO   213275.00m      [0m
+[31m   3) "Jeremy Harrington"         M   P   CO   213275.00m      [0m
+[32m   1) "Breanna Gibson"            F   P   CO   194861.54m      [0m
+[32m   2) "Addison Herman"            F   P   CO   194792.31m      [0m
+[32m   3) "Mary Jones"                F   P   CO   194630.77m      [0m
+[33m   1) "Sean Carroll"              M   A   CI   132550.00m      [0m
+[33m   2) "Orlando Nolan"             M   A   CI   132500.00m      [0m
+[33m   3) "Ethan Williams"            M   A   CI   132450.00m      [0m
+[34m   1) "Natalia Adams"              F   A   CI   97883.33m      [0m
+[34m   2) "Olyvia Ellis"               F   A   CI   97808.33m      [0m
+[34m   3) "Lauren Cardenas"            F   A   CI   97641.67m      [0m
+
+[40;37mClassificacao 420min:                                                [0m
+[31m   1) "Jaxson Palmer"             M   P   CO   220850.00m      [0m
+[31m   2) "Landen Wooten"             M   P   CO   220775.00m      [0m
+[31m   3) "Jeremy Harrington"         M   P   CO   220775.00m      [0m
+[32m   1) "Breanna Gibson"            F   P   CO   201784.62m      [0m
+[32m   2) "Addison Herman"            F   P   CO   201715.38m      [0m
+[32m   3) "Mary Jones"                F   P   CO   201553.85m      [0m
+[33m   1) "Sean Carroll"              M   A   CI   142900.00m      [0m
+[33m   2) "Orlando Nolan"             M   A   CI   142880.00m      [0m
+[33m   3) "Ethan Williams"            M   A   CI   142860.00m      [0m
+[34m   1) "Natalia Adams"             F   A   CI   112508.33m      [0m
+[34m   2) "Olyvia Ellis"              F   A   CI   112320.83m      [0m
+[34m   3) "Lauren Cardenas"           F   A   CI   111904.17m      [0m
+
+[40;37mClassificacao 450min:                                                [0m
+[32m   1) "Breanna Gibson"            F   P   CO   208707.69m      [0m
+[32m   2) "Addison Herman"            F   P   CO   208638.46m      [0m
+[32m   3) "Mary Jones"                F   P   CO   208476.92m      [0m
+[33m   1) "Sean Carroll"              M   A   CI   148900.00m      [0m
+[33m   2) "Orlando Nolan"             M   A   CI   148880.00m      [0m
+[33m   3) "Ethan Williams"            M   A   CI   148860.00m      [0m
+[34m   1) "Natalia Adams"             F   A   CI   125008.33m      [0m
+[34m   2) "Olyvia Ellis"              F   A   CI   124820.83m      [0m
+[34m   3) "Lauren Cardenas"           F   A   CI   124404.17m      [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                      Masculino Profissional                     **[0m
+[30;47m*********************************************************************[0m
+[47;31m   1) "Jaxson Palmer"          M   P   FI   07h19m48s                [0m
+[47;31m   2) "Landen Wooten"          M   P   FI   07h20m06s                [0m
+[47;31m   3) "Jeremy Harrington"      M   P   FI   07h20m06s                [0m
+
+[40;37mClassificacao 480min:                                                [0m
+[32m   1) "Breanna Gibson"            F   P   CO   215630.77m      [0m
+[32m   2) "Addison Herman"            F   P   CO   215561.54m      [0m
+[32m   3) "Mary Jones"                F   P   CO   215400.00m      [0m
+[33m   1) "Sean Carroll"              M   A   CI   166550.00m      [0m
+[33m   2) "Orlando Nolan"             M   A   CI   166500.00m      [0m
+[33m   3) "Ethan Williams"            M   A   CI   166450.00m      [0m
+[34m   1) "Natalia Adams"             F   A   CI   137508.33m      [0m
+[34m   2) "Olyvia Ellis"              F   A   CI   137320.83m      [0m
+[34m   3) "Lauren Cardenas"           F   A   CI   136904.17m      [0m
+
+[40;37mClassificacao 510min:                                                [0m
+[32m   1) "Breanna Gibson"            F   P   CO   222553.85m      [0m
+[32m   2) "Addison Herman"            F   P   CO   222484.62m      [0m
+[32m   3) "Mary Jones"                F   P   CO   222323.08m      [0m
+[33m   1) "Sean Carroll"              M   A   CI   181550.00m      [0m
+[33m   2) "Orlando Nolan"             M   A   CI   181500.00m      [0m
+[33m   3) "Ethan Williams"            M   A   CI   181450.00m      [0m
+[34m   1) "Natalia Adams"             F   A   CI   143883.33m      [0m
+[34m   2) "Olyvia Ellis"              F   A   CI   143808.33m      [0m
+[34m   3) "Lauren Cardenas"           F   A   CI   143641.67m      [0m
+
+[40;37mClassificacao 540min:                                                [0m
+[33m   1) "Sean Carroll"              M   A   CO   188100.00m      [0m
+[33m   2) "Ethan Williams"            M   A   CO   188020.00m      [0m
+[33m   3) "Jered Sharp"               M   A   CO   188010.00m      [0m
+[34m   1) "Natalia Adams"             F   A   CI   148883.33m      [0m
+[34m   2) "Olyvia Ellis"              F   A   CI   148808.33m      [0m
+[34m   3) "Lauren Cardenas"           F   A   CI   148641.67m      [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                      Feminino  Profissional                     **[0m
+[30;47m*********************************************************************[0m
+[47;32m   1) "Breanna Gibson"         F   P   FI   08h44m04s                [0m
+[47;32m   2) "Addison Herman"         F   P   FI   08h44m22s                [0m
+[47;32m   3) "Mary Jones"             F   P   FI   08h45m04s                [0m
+
+[40;37mClassificacao 570min:                                                [0m
+[33m   1) "Sean Carroll"              M   A   CO   194100.00m      [0m
+[33m   2) "Ethan Williams"            M   A   CO   194020.00m      [0m
+[33m   3) "Jered Sharp"               M   A   CO   194010.00m      [0m
+[34m   1) "Natalia Adams"             F   A   CI   165008.33m      [0m
+[34m   2) "Olyvia Ellis"              F   A   CI   164820.83m      [0m
+[34m   3) "Lauren Cardenas"           F   A   CI   164404.17m      [0m
+
+[40;37mClassificacao 600min:                                                [0m
+[33m   1) "Sean Carroll"              M   A   CO   200100.00m      [0m
+[33m   2) "Ethan Williams"            M   A   CO   200020.00m      [0m
+[33m   3) "Jered Sharp"               M   A   CO   200010.00m      [0m
+[34m   1) "Natalia Adams"             F   A   CI   177508.33m      [0m
+[34m   2) "Olyvia Ellis"              F   A   CI   177320.83m      [0m
+[34m   3) "Lauren Cardenas"           F   A   CI   176904.17m      [0m
+
+[40;37mClassificacao 630min:                                                [0m
+[33m   1) "Sean Carroll"              M   A   CO   206100.00m      [0m
+[33m   2) "Ethan Williams"            M   A   CO   206020.00m      [0m
+[33m   3) "Jered Sharp"               M   A   CO   206010.00m      [0m
+[34m   1) "Alydia Jones"              F   A   CO   184781.82m      [0m
+[34m   2) "Jimena Ward"               F   A   CO   184709.09m      [0m
+[34m   3) "Kathia Dixon"              F   A   CO   184700.00m      [0m
+
+[40;37mClassificacao 660min:                                                [0m
+[33m   1) "Sean Carroll"              M   A   CO   212100.00m      [0m
+[33m   2) "Ethan Williams"            M   A   CO   212020.00m      [0m
+[33m   3) "Jered Sharp"               M   A   CO   212010.00m      [0m
+[34m   1) "Alydia Jones"              F   A   CO   190236.36m      [0m
+[34m   2) "Jimena Ward"               F   A   CO   190163.64m      [0m
+[34m   3) "Kathia Dixon"              F   A   CO   190154.55m      [0m
+
+[40;37mClassificacao 690min:                                                [0m
+[33m   1) "Sean Carroll"              M   A   CO   218100.00m      [0m
+[33m   2) "Ethan Williams"            M   A   CO   218020.00m      [0m
+[33m   3) "Jered Sharp"               M   A   CO   218010.00m      [0m
+[34m   1) "Alydia Jones"              F   A   CO   195690.91m      [0m
+[34m   2) "Jimena Ward"               F   A   CO   195618.18m      [0m
+[34m   3) "Kathia Dixon"              F   A   CO   195609.09m      [0m
+
+[40;37mClassificacao 720min:                                                [0m
+[33m   1) "Sean Carroll"              M   A   CO   224100.00m      [0m
+[33m   2) "Ethan Williams"            M   A   CO   224020.00m      [0m
+[33m   3) "Jered Sharp"               M   A   CO   224010.00m      [0m
+[34m   1) "Alydia Jones"              F   A   CO   201145.45m      [0m
+[34m   2) "Jimena Ward"               F   A   CO   201072.73m      [0m
+[34m   3) "Kathia Dixon"              F   A   CO   201063.64m      [0m
+
+[40;37mClassificacao 750min:                                                [0m
+[34m   1) "Alydia Jones"              F   A   CO   206600.00m      [0m
+[34m   2) "Jimena Ward"               F   A   CO   206527.27m      [0m
+[34m   3) "Kathia Dixon"              F   A   CO   206518.18m      [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                         Masculino Amador                        **[0m
+[30;47m*********************************************************************[0m
+[47;33m   1) "Sean Carroll"           M   A   FI   12h08m30s                [0m
+[47;33m   2) "Ethan Williams"         M   A   FI   12h08m54s                [0m
+[47;33m   3) "Jered Sharp"            M   A   FI   12h08m57s                [0m
+
+[40;37mClassificacao 780min:                                                [0m
+[34m   1) "Alydia Jones"              F   A   CO   212054.55m      [0m
+[34m   2) "Jimena Ward"               F   A   CO   211981.82m      [0m
+[34m   3) "Kathia Dixon"              F   A   CO   211972.73m      [0m
+
+[40;37mClassificacao 810min:                                                [0m
+[34m   1) "Alydia Jones"              F   A   CO   217509.09m      [0m
+[34m   2) "Jimena Ward"               F   A   CO   217436.36m      [0m
+[34m   3) "Kathia Dixon"              F   A   CO   217427.27m      [0m
+
+[40;37mClassificacao 840min:                                                [0m
+[34m   1) "Alydia Jones"              F   A   CO   222963.64m      [0m
+[34m   2) "Jimena Ward"               F   A   CO   222890.91m      [0m
+[34m   3) "Kathia Dixon"              F   A   CO   222881.82m      [0m
+
+[40;37mClassificacao 870min:                                                [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                          Feminino Amador                        **[0m
+[30;47m*********************************************************************[0m
+[47;34m   1) "Alydia Jones"           F   A   FI   14h15m36s                [0m
+[47;34m   2) "Jimena Ward"            F   A   FI   14h16m00s                [0m
+[47;34m   3) "Kathia Dixon"           F   A   FI   14h16m03s                [0m
