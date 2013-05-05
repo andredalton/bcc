@@ -1,0 +1,94 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[tmargin=2cm, bmargin=2cm, lmargin=2cm, rmargin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage[pdftex]{hyperref}
+\usepackage{enumerate}
+\usepackage{amsthm,amssymb,amstext,amsmath}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{eucal}
+\usepackage{mathrsfs}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{fancyvrb}
+\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small}
+\DefineVerbatimEnvironment{example}{Verbatim}{fontsize=\small}
+
+\title{Título\\MAC0438 - Programação Concorrente}
+\author{
+    André Meneghelli Vale - 4898948\\
+    \texttt{andredalton@gmail.com}
+    \and
+    Marcello Souza de Oliveira - 6432692\\
+    \texttt{mcellor210@gmail.com}
+}
+\date{}
+
+\pdfinfo{%
+  /Title    ()
+  /Author   ()
+  /Creator  ()
+  /Producer ()
+  /Subject  ()
+  /Keywords ()
+}
+
+\begin{document}
+\maketitle
+
+\newpage
+
+\section{Cálculo por série infinita de \pi}
+
+\subsection{Fórmula:}
+A fórmula escolhida foi a \emph{Fórmula de Bellard}. Esta escolha se deve ao fato de poder ser calculado um enésimo dígito de pi na base 2 sem a necessidade de se calcular qualquer um dos termos anteriores, o que torna o programa possível de ser totalmente paralelizável.
+Esta fórmula foi desenvolvida a partir da fórmula Bailey–Borwein–Plouffe (\verb+BBP+) que por sua vez foi inspirada na série infinita para o cálculo de uma aproximação da inversa da arcotangente.
+
+\begin{align}
+\pi = \frac1{2^6} \sum_{n=0}^\infty \frac{(-1)^n}{2^{10n}} \, \left(-\frac{2^5}{4n+1} \right. & {} - \frac1{4n+3} + \frac{2^8}{10n+1} - \frac{2^6}{10n+3} \left. {} - \frac{2^2}{10n+5} - \frac{2^2}{10n+7} + \frac1{10n+9} \right)
+\end{align}
+\begin{align}
+\pi = \sum_{i = 0}^{\infty}\left[ \frac{1}{16^i} \left( \frac{4}{8i + 1} - \frac{2}{8i + 4} - \frac{1}{8i + 5} - \frac{1}{8i + 6} \right) \right]. 
+\end{align}
+
+\subsection{Vetor:}
+
+Para o cálculo foi definida uma estrutura de \verb+N long int+ chamada de \verb+SuperLong+, cujo vetor principal estará no elemento \verb+data+:
+
+\begin{code}
+typedef struct superLong{
+       union dt{
+               unsigned long int *l;
+               unsigned char *c;
+       } data;
+       unsigned char bin;
+       unsigned long int n;
+} SuperLong;
+\end{code}
+
+\subsection{Thread:}
+
+O objetivo é poder armazenar os dados para o cálculo em binário e cada uma das threads irá tratar de um pedaço do vetor \verb+data.c[n]+ que representa o enésimo grupo de 8 bits do vetor de dados. Assim o acesso desta thread a um endereço de memória é único.
+O elemento \verb+bin+ indica se esta estrutura representa um número em base binária ou decimal. Para tratar a base decimal devem ser tomados alguns cuidados extras.
+O elemento \verb+n+ contém o número de elementos \verb+data.l+ (lembrando que o número de algarismos é proporcional a base escolhida para representação):
+
+\begin{itemize}
+\item \verb+data.l * 32+: se a representação for binária;
+\item \verb+data.l * 8+: se a representação for hexadecimal;
+\item \verb+data.l * 9+: se a representação for decimal.
+\end{itemize}
+
+\begin{thebibliography}{99}
+\bibitem{wiki_pi}
+\url{http://en.wikipedia.org/wiki/Pi}
+\bibitem{wiki_bellard}
+\url{http://en.wikipedia.org/wiki/Bellard%27s_formula}
+\bibitem{wiki_bailey}
+\url{http://en.wikipedia.org/wiki/Bailey-Borwein-Plouffe\_formula}
+\end{thebibliography}
+
+\end{document}

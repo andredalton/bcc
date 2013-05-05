@@ -17,7 +17,7 @@ typedef struct superLong{
 		unsigned long int *l;
 		unsigned char *c;
 	} data;
-	unsigned int bin:1;
+	unsigned char bin;
 	unsigned long int n;
 } SuperLong;
 

@@ -42,8 +42,34 @@ sem_t sem_estrada[CITAM];
 /* Função principal.
  *******************/
 int main(int argc, char *argv[]){
-	int i;
+	int
+		i,
+		n,
+		numCPU = sysconf( _SC_NPROCESSORS_ONLN );
+	double d, s=0;
 	SuperLong precisao;
+	unsigned char c = 37;
+
+	for(i=0; i<8; i++) {
+		if(c%2)
+			printf("1");
+		else
+			printf("0");
+		c = c>>1;
+	}
+
+	printf("\n");
+	return 0;
+
+
+	for (i = 0; i < 40; ++i){
+		d = ( 4.0/(8*i+1) - 2.0/(8*i+4) - 1.0/(8*i+5) - 1.0/(8*i+6) )/pow(16, i);
+		s += d;
+		printf("%d:\t %.160lf\n", i, d);
+	}
+	printf("FIM:\t %.160lf\n\n\n", i, s);
+
+	return 0;
 
 	/* Inicializando variaveis globais. */
 	param = 0;
@@ -65,11 +91,10 @@ int main(int argc, char *argv[]){
 				param = 2;
 			readSuperLong(&precisao, argv[i], 10);
 		}
+		printf("\n");
+		printSuperLong(precisao);
+		printf("\n");
 	}
-
-	printSuperLong(precisao);
-	printf("\n");
-
 
 	return 0;
 }

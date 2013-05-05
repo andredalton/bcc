@@ -52,16 +52,21 @@ void freeSuperLong(SuperLong *SL) {
 }
 
 void readSuperLong(SuperLong *SL, char *str, char b){
-   int tam = (int)log10(ULONG_MAX)*sizeof(char);
-   char *buffer = (char*)mallocX( tam+1 );
+   int tam;
+   char *buffer;
    long int aux;
 
    startSuperLong(SL, 0);
 
+   /* Lendo uma string com o número binário expresso em letras. */
    if(b=='b' || b==2){
+      
       SL->bin = 1;
    }
-   else{
+   /* Lendo um decimal com o número escrito em letras */
+   else if(b=='d' || b==10){
+      tam = (int)log10(LONG_MAX);
+      buffer = (char*)mallocX( tam+1 );
       SL->bin = 0;
       for(SL->n=0; SL->n*tam<strlen(str); SL->n++) {
          SL->data.l = (unsigned long int*) reallocX( SL->data.l, (SL->n+1)*sizeof(unsigned long int) );
@@ -71,7 +76,33 @@ void readSuperLong(SuperLong *SL, char *str, char b){
          SL->data.l[SL->n] = aux;
       }
    }
+   /* Lendo um binário. */
+   else{
+      tam = sizeof(unsigned long int);
+      SL->bin = 1;
+      for(SL->n=0; SL->n*sizeof(unsigned long int)<strlen(str); SL->n++) 
+         memcpy ( SL->data.l[SL->n], &str[SL->n*sizeof(unsigned long int)], sizeof(unsigned long int) );
+   }
 }
+
+/*
+void SuperLongSomaInt(SuperLong SL, int k){
+   int i, mem;
+
+   if(k>0) {
+      i=0;
+      mem=k;
+      do{
+         SL->data.l[i] += mem;
+         i++;
+         mem = SL->data.l[(int)log10(LONG_MAX)+1];
+      } while (i<ULONG_MAX && mem!=0);
+   }
+   else{
+
+   }
+}
+*/
 
 void printSuperLong(SuperLong SL) {
 	int i, j;
