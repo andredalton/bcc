@@ -42,15 +42,16 @@
 
 \newpage
 
-\section{Cálculo por série infinita de \pi}
+\section{Cálculo por série infinita de $\pi$}
 
 \subsection{Fórmula:}
-A fórmula escolhida foi a \emph{Fórmula de Bellard}. Esta escolha se deve ao fato de poder ser calculado um enésimo dígito de pi na base 2 sem a necessidade de se calcular qualquer um dos termos anteriores, o que torna o programa possível de ser totalmente paralelizável.
-Esta fórmula foi desenvolvida a partir da fórmula Bailey–Borwein–Plouffe (\verb+BBP+) que por sua vez foi inspirada na série infinita para o cálculo de uma aproximação da inversa da arcotangente.
+A fórmula escolhida foi a \emph{Fórmula de Bellard}\textsuperscript{[1]}. Esta escolha se deve ao fato de poder ser calculado um enésimo dígito de pi na base 2 sem a necessidade de se calcular qualquer um dos termos anteriores, o que torna o programa possível de ser totalmente paralelizável.
+Esta fórmula foi desenvolvida a partir da fórmula \emph{Bailey–Borwein–Plouffe}\textsuperscript{[2]} (\verb+BBP+) que por sua vez foi inspirada na série infinita para o cálculo de uma aproximação da inversa da arcotangente.
 
 \begin{align}
 \pi = \frac1{2^6} \sum_{n=0}^\infty \frac{(-1)^n}{2^{10n}} \, \left(-\frac{2^5}{4n+1} \right. & {} - \frac1{4n+3} + \frac{2^8}{10n+1} - \frac{2^6}{10n+3} \left. {} - \frac{2^2}{10n+5} - \frac{2^2}{10n+7} + \frac1{10n+9} \right)
 \end{align}
+
 \begin{align}
 \pi = \sum_{i = 0}^{\infty}\left[ \frac{1}{16^i} \left( \frac{4}{8i + 1} - \frac{2}{8i + 4} - \frac{1}{8i + 5} - \frac{1}{8i + 6} \right) \right]. 
 \end{align}
@@ -61,26 +62,32 @@ Para o cálculo foi definida uma estrutura de \verb+N long int+ chamada de \verb
 
 \begin{code}
 typedef struct superLong{
-       union dt{
-               unsigned long int *l;
-               unsigned char *c;
-       } data;
-       unsigned char bin;
+       unsigned long int *data;
        unsigned long int n;
 } SuperLong;
 \end{code}
 
 \subsection{Thread:}
 
-O objetivo é poder armazenar os dados para o cálculo em binário e cada uma das threads irá tratar de um pedaço do vetor \verb+data.c[n]+ que representa o enésimo grupo de 8 bits do vetor de dados. Assim o acesso desta thread a um endereço de memória é único.
-O elemento \verb+bin+ indica se esta estrutura representa um número em base binária ou decimal. Para tratar a base decimal devem ser tomados alguns cuidados extras.
-O elemento \verb+n+ contém o número de elementos \verb+data.l+ (lembrando que o número de algarismos é proporcional a base escolhida para representação):
+O objetivo é poder armazenar os dados calculados por cada uma das threads em uma estrutura de dados que não faz arredondamentos. As threads irão incrementar um buffer em variável \verb+long double+. Desta maneira não é necessário realizar uma conversão de base depois de terminado o cálculo, o que irá economizar uma quantidade considerável de tempo.
+
+Cada vez que um limite de precisão que o vetor esta trabalhando é alcançado as threads ficam paradas em uma barreira enquanto a primeira thread faz a sincronização dos resultados e atualiza algumas variáveis calculadas durante a execução do programa. Essas variáveis serão explicadas na próxima sessão.
+
+\subsection{Reaproveitando os termos da série:}
+
+Podemos observar que o algorítimo escolhido repete muitas vezes algumas multiplicações e o cálculo da potência inicial. Desta maneira decidimos utilizar 5 variáveis globais que irão manter parte dos valores calculados a cada sincronização:
 
 \begin{itemize}
-\item \verb+data.l * 32+: se a representação for binária;
-\item \verb+data.l * 8+: se a representação for hexadecimal;
-\item \verb+data.l * 9+: se a representação for decimal.
+
+\item \verb+N+: Número do ultimo termo a ser calculado no momento da sincronização;
+\item \verb+N0+: Número do ultimo termo a ser calculado no momento da sincronização anterior. Inicializada com \emph{0};
+\item \verb+m4+: Inicializada com \emph{0} e incrementada a cada sincronização com \emph{(N-N0)*4}. Desta forma os denominadores terão o formato \emph{m4+4*(n-N)+k}, onde \verb+n+ é o termo que a thread esta calculando e \verb+k+ é a constante presente em cada um dos denominadores;
+\item \verb+m10+: Inicializada com \emph{0} e incrementada a cada sincronização com \emph{(N-N0)*10}. Desta forma os denominadores terão o formato \emph{m10+10*(n-N)+k}, seguindo a mesma representação do ítem anterior;
+\item \verb+p2+: Inicializada com \emph{$2^6$} e multuplicada a cada sincronização por \emph{$2^{(N-N0)*10}$}. Então no final do cálculo o termo, até agora contendo a soma das parcelas, será dividido por \emph{$(p2*2^{10(n-N)})$};
+
 \end{itemize}
+
+Outro cálculo que é desnecessário é o de $(-1)^n$, esta parte será substituida por um \verb+if+ para definir a parcela negativa em caso de \verb+n+ ímpar e positiva caso contrário.
 
 \begin{thebibliography}{99}
 \bibitem{wiki_pi}

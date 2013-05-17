@@ -44,11 +44,51 @@ sem_t sem_estrada[CITAM];
 int main(int argc, char *argv[]){
 	int
 		i,
+		j,
 		n,
 		numCPU = sysconf( _SC_NPROCESSORS_ONLN );
-	double d, s=0;
+	double d, s=0, d2;
 	SuperLong precisao;
 	unsigned char c = 37;
+
+
+
+	for (i = 0; i < 32; ++i){
+		d  = 1000000000 * ( 4.0/(8*i+1) - 2.0/(8*i+4) - 1.0/(8*i+5) - 1.0/(8*i+6) )/pow(16, i);
+		
+		d2  = ( 4.0/(16*i+1) - 2.0/(16*i+4)  - 1.0/(16*i+5)  - 1.0/(16*i+6 ) );
+		d2 += ( 4.0/(16*i+9) - 2.0/(16*i+12) - 1.0/(16*i+13) - 1.0/(16*i+14) )/16;
+		
+		d2 *= 256;
+
+		/*
+		d2 = 63/d2;
+		d2 *= pow(256, i+1);
+		*/
+		c = (char) d2;
+
+		printf("\n\t%d\t||\t %.15lf\n", c, d2);
+
+		for(j=0; j<8; j++) {
+			if(c%2)
+				printf("1");
+			else
+				printf("0");
+			c = c>>1;
+		}
+		printf("\t%.15lf\n", d2);
+
+
+		s += d;
+		/*
+		printf("%.160lf\n", d);
+
+		printf("%d:\t %.160lf\n", i, d);
+		*/
+	}
+	printf("FIM:\t %.160lf\n\n\n", i, s);
+
+	return 0;
 
 	for(i=0; i<8; i++) {
 		if(c%2)
@@ -59,16 +99,6 @@ int main(int argc, char *argv[]){
 	}
 
 	printf("\n");
-	return 0;
-
-
-	for (i = 0; i < 40; ++i){
-		d = ( 4.0/(8*i+1) - 2.0/(8*i+4) - 1.0/(8*i+5) - 1.0/(8*i+6) )/pow(16, i);
-		s += d;
-		printf("%d:\t %.160lf\n", i, d);
-	}
-	printf("FIM:\t %.160lf\n\n\n", i, s);
-
 	return 0;
 
 	/* Inicializando variaveis globais. */

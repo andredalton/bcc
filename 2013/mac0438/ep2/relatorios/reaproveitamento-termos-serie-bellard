@@ -1,0 +1,12 @@
+Reaproveitamento dos termos da série
+
+Os denominadores da série de Bellard não precisam ser recalculados para cada n (iteração), basta que guardemos os resultados (denominadores) 4*n+1 e 10*n+1 e n. Assim se uma thread precisar calcular o denominador 10*(n+k)+9 (último denominador da fórmula), basta ela olhar para o valor guardado (10*n+1), e somar 10*k+8. Se outra thread precisar calcular 4*(n+x)+3 (segundo denominador da fórmula), olhar para o valor guardado (4*n+1) e somar 4*x+2. Seja i o denominador a ser calculado, den4 a variável que guarda 4*n+1, den10 a variável que guarda 10*n+1 e N a variável que guarda o n, assim, temos a relação:
+
+i = {0, 1,... , 6} = denominadores da fórmula de Bellard
+if (i < 2) then
+   den = den4 + 4*(N-n) + 2*i
+else
+   den = den10 + 10*(N-n) + 2*(i-2)
+endif
+
+que calcula o i-ésimo denominador para a n-ésima iteração, reaproveitando os cálculos da N-ésima iteração, bastando agora efetuar as divisões, conforme fórmula.

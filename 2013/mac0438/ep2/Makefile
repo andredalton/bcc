@@ -31,6 +31,7 @@ clean:
 	@echo Limpando diretorio
 	@rm -f *.o
 	@rm -f *.gch
+	@rm -f *.out
 	@rm -f ep2
 	@rm -f relatorios/relatorio.aux
 	@rm -f relatorios/relatorio.log
