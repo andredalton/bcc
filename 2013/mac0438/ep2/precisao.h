@@ -13,17 +13,14 @@
  ******************************************************************************/
 
 typedef struct superLong{
-	union dt{
-		unsigned long int *l;
-		unsigned char *c;
-	} data;
-	unsigned char bin;
+	unsigned long int *data;
 	unsigned long int n;
 } SuperLong;
 
 void *mallocX (unsigned int nbytes);
 void *reallocX (void *ptr, unsigned int nbytes);
+void SuperLongSomaInt(SuperLong SL, unsigned long int k);
 void startSuperLong(SuperLong *SL, long int p);
-void readSuperLong(SuperLong *SL, char *str, char b);
+void readSuperLong(SuperLong *SL, char *str);
 void freeSuperLong(SuperLong *SL);
 void printSuperLong(SuperLong SL);
