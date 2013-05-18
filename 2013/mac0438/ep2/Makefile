@@ -14,6 +14,8 @@
 
 CC = gcc
 OPTS = -Wall -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
+#CC = c99
+#OPTS = -Wall -pedantic -O2 -U_FORTFY_SOURCE -g
 
 # Verifica as dependencias para o binário principal
 ep2: ep2.c precisao.c precisao.h
