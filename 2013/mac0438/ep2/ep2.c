@@ -141,18 +141,23 @@ int main(int argc, char *argv[]){
 			termos = (long double*) mallocX(sizeof(long double));
 			n = 0;
 			do{
-				termos[0] = bellard(0);
+				termos[0] = bellard(n);
 				pi += termos[0];
-				printf("%.20Lf\n", pi);
+				printf("%.20Lf\t%.20Lf\n", pi, termos[0]);
 				n++;
 				N0++;
 				m4 += 4;
 				m10 += 10;
 				p2 *= 1024;
-			} while(termos[0]>precisao);
-			
 
-			printf("%Lf\n", termos[0]);
+				if(n==10) break;
+			} while( fabs(termos[0])>precisao );
+
+			printf(
+				"\nOs resultados obtidos de maneira sequencial foram:\n"
+				"pi: %.20Lf\n"
+				"termos: %d\n", pi, n
+			);
 			break;
 		default:
 			/* NORMAL */
