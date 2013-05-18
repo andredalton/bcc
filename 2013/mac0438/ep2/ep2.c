@@ -21,22 +21,11 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "precisao.h"
-
   /****************************************/
  /* Inicialização das variáveis globais. */
 /****************************************/
 
 short int param;                /* Variável que guarda se roda no modo normal, sequencial ou debug.                     */
-
-/*short int N;                    / Diferença entre o termo atual e maior termo no momento de sincronização.             */
-/*long double buffer;             / Buffer utilizado para a conversão dos dados fracionários para a estrutura SuperLong. */
-/*SuperLong N0;                   / Número do maior termo no momento da sincronização.                                   */
-/*SuperLong m4;                   / Variável que acumula parte do cálculo que contém multiplos de 4.                     */
-/*SuperLong m10;                  / Variável que acumula parte do cálculo que contém multiplos de 10.                    */
-/*SuperLong p2;                   / Variável que acumula parte do cálculo que contém potências de 2.                     */
-/*SuperLong pi;                   / Variável para guardar o valor de pi em longa precisão.                               */
-/*SuperLong precisao;             / Pecisão do cálculo.                                                                  */
 
 /*
 sem_t sem_estrada[CITAM];
@@ -45,40 +34,45 @@ sem_t sem_estrada[CITAM];
  /* Termino da declaração das variáveis globais.  */
 /*************************************************/
 
+long double pi;                              /* Variável para guardar o valor de pi para a máxima precisão da linguagem.             */
+long double precisao;                        /* Pecisão do cálculo.                                                                  */
+long double *termos;                         /* Vetor para guardar o resultado das parcelas de cada termo do algoritmo de bellard.   */
+long int N0;                                 /* Número do maior termo no momento da sincronização.                                   */
+long int m4;                                 /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
+long int m10;                                /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
+long int p2;                                 /* Variável que acumula parte do cálculo que contém potências de 2.                     */
 
-long double pi;                /* Variável para guardar o valor de pi para a máxima precisão da linguagem.             */
-long double precisao;          /* Pecisão do cálculo.                                                                  */
-long int N0;                   /* Número do maior termo no momento da sincronização.                                   */
-long int m4;                   /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
-long int m10;                  /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
-long int p2;                   /* Variável que acumula parte do cálculo que contém potências de 2.                     */
+void *mallocX (unsigned int nbytes) {
+   void *ptr;
+   ptr = malloc (nbytes);
+   if (ptr == NULL) {
+      printf ("Socorro! malloc devolveu NULL! (%d)\n", nbytes);
+      exit (EXIT_FAILURE);
+   }
+   return ptr;
+}
 
-long double bellard( int n) {
+long double bellard( int n ) {
 	long double termo = 0;
 
-	termo += -32. / (m4+1);				printf("\t[%.100Lf]\n", termo);
-	termo += -1.  / (m4+3);				printf("\t[%.100Lf]\n", termo);
-	termo += 256. / (m10+1);			printf("\t[%.100Lf]\n", termo);
-	termo += -64. / (m10+3);			printf("\t[%.100Lf]\n", termo);
-	termo += -4.  / (m10+5);			printf("\t[%.100Lf]\n", termo);
-	termo += -4.  / (m10+7);			printf("\t[%.100Lf]\n", termo);
-	termo += 1.   / (m10+9);			printf("\t[%.100Lf]\n", termo);
-	termo /= p2;						printf("\t[%.100Lf]\n", termo);
+	termo += -32. / (m4+1 + 4*(n-N0));				printf("\t[%.100Lf]\n", termo);
+	termo += -1.  / (m4+3 + 4*(n-N0));				printf("\t[%.100Lf]\n", termo);
+	termo += 256. / (m10+1 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
+	termo += -64. / (m10+3 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
+	termo += -4.  / (m10+5 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
+	termo += -4.  / (m10+7 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
+	termo += 1.   / (m10+9 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
+	termo /= p2;						  			printf("\t[%.100Lf]\n", termo);
 
 	return (n%2) ? -termo : termo;
 }
 
-long double bellardinho( int n, int k) {
-	switch (k) {
-		case 0: return (n%2) ?   32 /  (m4 + 1 + 4 * (n - N0)) : -32 /  (m4 + 1 + 4 * (n - N0));
-		case 1: return (n%2) ?    1 /  (m4 + 3 + 4 * (n - N0)) :  -1 /  (m4 + 3 + 4 * (n - N0));
-		case 2: return (n%2) ? -256 / (m10 + 3 + 4 * (n - N0)) : 256 / (m10 + 3 + 4 * (n - N0));
-		case 3: return (n%2) ?   64 / (m10 + 3 + 4 * (n - N0)) : -64 / (m10 + 3 + 4 * (n - N0));
-		case 4: return (n%2) ?    4 / (m10 + 3 + 4 * (n - N0)) :  -4 / (m10 + 3 + 4 * (n - N0));
-		case 5: return (n%2) ?    4 / (m10 + 3 + 4 * (n - N0)) :  -4 / (m10 + 3 + 4 * (n - N0));
-		case 6: return (n%2) ?   -1 / (m10 + 3 + 4 * (n - N0)) :   1 / (m10 + 3 + 4 * (n - N0));
+void *calculaTermo( void *param ){
+	int p = (int) param;
+	while(1){
+
+		/* Espera caso não tenha nenhuma nova parcela a ser calculada. */
 	}
-	return precisao;
 }
 
 /* Função principal.
@@ -92,6 +86,8 @@ int main(int argc, char *argv[]){
 	double d, s=0, d2;
 	long double mem;
 	
+	termos = 
+
 	/* Inicializando variaveis globais.
 	 *********************************/
 	param = 0;
@@ -124,21 +120,16 @@ int main(int argc, char *argv[]){
 		);
 	}
 	else {
-		/*
+		
 		for(i=1; i<argc; i++) {
 			if( strcmp(argv[i], "DEBUG")==0 )
 				param = 1;
 			else if (strcmp(argv[i], "SEQUENCIAL")==0 )
 				param = 2;
-			readSuperLong(&precisao, argv[i]);
+			sscanf(argv[i], "%Lf", &precisao);
 		}
+		printf("\n%Lf", precisao);
 		printf("\n");
-		printSuperLong(precisao);
-		printf("\n");
-		SuperLongSomaInt(precisao, 1);
-		printSuperLong(precisao);		
-		printf("\n");
-		*/
 	}
 
 	return 0;
