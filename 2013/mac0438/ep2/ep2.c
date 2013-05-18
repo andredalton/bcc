@@ -55,14 +55,14 @@ void *mallocX (unsigned int nbytes) {
 long double bellard( int n ) {
 	long double termo = 0;
 
-	termo += -32. / (m4+1 + 4*(n-N0));				printf("\t[%.100Lf]\n", termo);
-	termo += -1.  / (m4+3 + 4*(n-N0));				printf("\t[%.100Lf]\n", termo);
-	termo += 256. / (m10+1 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
-	termo += -64. / (m10+3 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
-	termo += -4.  / (m10+5 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
-	termo += -4.  / (m10+7 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
-	termo += 1.   / (m10+9 + 10*(n-N0));			printf("\t[%.100Lf]\n", termo);
-	termo /= p2;						  			printf("\t[%.100Lf]\n", termo);
+	termo += -32. / (m4+1 + 4*(n-N0));
+	termo += -1.  / (m4+3 + 4*(n-N0));
+	termo += 256. / (m10+1 + 10*(n-N0));
+	termo += -64. / (m10+3 + 10*(n-N0));
+	termo += -4.  / (m10+5 + 10*(n-N0));
+	termo += -4.  / (m10+7 + 10*(n-N0));
+	termo += 1.   / (m10+9 + 10*(n-N0));
+	termo /= p2;						  
 
 	return (n%2) ? -termo : termo;
 }
@@ -130,8 +130,33 @@ int main(int argc, char *argv[]){
 				param = 2;
 			sscanf(argv[i], "%Lf", &precisao);
 		}
-		printf("\n%Lf", precisao);
-		printf("\n");
+	}
+
+	switch(param){
+		case 1:
+			/* DEBUG */
+			break;
+		case 2:
+			/* SEQUENCIAL */
+			termos = (long double*) mallocX(sizeof(long double));
+			n = 0;
+			do{
+				termos[0] = bellard(0);
+				pi += termos[0];
+				printf("%.20Lf\n", pi);
+				n++;
+				N0++;
+				m4 += 4;
+				m10 += 10;
+				p2 *= 1024;
+			} while(termos[0]>precisao);
+			
+
+			printf("%Lf\n", termos[0]);
+			break;
+		default:
+			/* NORMAL */
+			break;
 	}
 
 	return 0;
