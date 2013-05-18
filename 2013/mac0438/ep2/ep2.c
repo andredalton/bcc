@@ -97,6 +97,7 @@ int main(int argc, char *argv[]){
 	m10 = 0;
 	p2 = 64;
 
+	/*
 	for( i=0; i<10; i++){
 		mem = bellard(i);
 		printf("%.100Lf\n", mem);
@@ -109,6 +110,7 @@ int main(int argc, char *argv[]){
 	printf("\n\n%.100Lf\n", pi);
 
 	return 0;
+	*/
 
 	if(argc<2) {
 		printf(

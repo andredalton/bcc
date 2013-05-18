@@ -18,7 +18,7 @@ OPTS = -lm -lpthread -Wall -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
 #OPTS = -Wall -pedantic -O2 -U_FORTFY_SOURCE -g
 
 # Verifica as dependencias para o binário principal
-ep2: ep2.c precisao.c precisao.h
+ep2: ep2.c
 	# @$(CC) -c $(OPTS) defines.c defines.h
 	@$(CC) ep2.c -o $@
 
