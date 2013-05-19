@@ -15,12 +15,9 @@
 CC = gcc
 CCOPTS = -Wall -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
 LDOPTS = -lm -lpthread
-#CC = c99
-#OPTS = -Wall -pedantic -O2 -U_FORTFY_SOURCE -g
 
 # Verifica as dependencias para o binário principal
 ep2: ep2.c
-	# @$(CC) -c $(OPTS) defines.c defines.h
 	@$(CC) -c $(CCOPTS) ep2.c
 	@$(CC) ep2.o -o $@ $(LDOPTS)
 

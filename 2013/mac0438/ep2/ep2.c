@@ -16,7 +16,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
-#include <pthread.h> /* Para trabalhar com threads */
+#include <pthread.h>
 #include <semaphore.h>
 #include <string.h>
 #include <unistd.h>
@@ -29,25 +29,27 @@
  /* Inicialização das variáveis globais. */
 /****************************************/
 
-short int param;                /* Variável que guarda se roda no modo normal, sequencial ou debug.                     */
-
-/*
-sem_t sem_estrada[CITAM];
-*/
-  /*************************************************/
- /* Termino da declaração das variáveis globais.  */
-/*************************************************/
+short int param;                             /* Variável que guarda qual dos modos de cálculo será utilizado.                        */
+long int impreciso;                          /* Variável usada para indicar que a precisão foi ou não atingida.                      */
 
 long double pi;                              /* Variável para guardar o valor de pi para a máxima precisão da linguagem.             */
 long double precisao;                        /* Pecisão do cálculo.                                                                  */
 long double *termos;                         /* Vetor para guardar o resultado das parcelas de cada termo do algoritmo de bellard.   */
 long double p2;                              /* Variável que acumula parte do cálculo que contém potências de 2.                     */
-long double m4;                                 /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
-long double m10;                                /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
-long int n;												/* Número do maior termo no momento da sincronização.
+long double m4;                              /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
+long double m10;                             /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
+long int n;                                  /* Número do termo atual a ser calculado.                                               */
+long int iteracoes;                          /* Número de vezes que as threads se encontraram na barreira.                           */
+
+sem_t sem_writeread;                         /* Semaforo para proteger a leitura e a escrita dos termos précalculados.               */
+
+
+  /*************************************************/
+ /* Termino da declaração das variáveis globais.  */
+/*************************************************/
+
 
 /*pthread_mutex_t meu_mutex = PTHREAD_MUTEX_INITIALIZER;*/
-sem_t sem_writeread;
 
 void *mallocX (unsigned int nbytes) {
    void *ptr;
@@ -77,16 +79,20 @@ long double bellard(
 	termo += (long double)   1 / (lm10+9);
 	termo /= lp2;
 
-	return termo;
+	return (ln%2) ? -termo : termo;
 }
 
-void *calculaTermo( void *t) {
+/* Calcula o enésimo termo acumulando os resultados diretamente
+ * em pi e sem a necessidade de uso de barreuras.
+ *********************************************/
+void *calculaTermo_nl( void *t) {
 	int p = *(int *) t;
-	long int ln, lm4, lm10, lp2;
-	long double termthread;
+	long int ln;
+	long double lm4, lm10, lp2;
+	long double termo;
 
-	/* Enquanto a diferenca entre duas iteracoes consecutivas for maior que f
-	 * (parametro de entrada) continua.
+	/* Continua calculando enquanto a precisão não tenha sido atingida anteriormente
+	 * por nenhuma thread de um termo menor que a atual.
 	 ***********************************************************************/
 	do {
 		sem_wait( &sem_writeread);
@@ -95,12 +101,14 @@ void *calculaTermo( void *t) {
 		lm10 = m10; m10 += 10;
 		lp2 = p2; p2 *= 1024;
 		sem_post( &sem_writeread);
-		termthread = bellard( ln, lm4, lm10, lp2);
-		sem_wait( &sem_writeread);
-		(ln % 2) ? (pi -= termthread) : (pi += termthread);
-		sem_post( &sem_writeread);
-		printf( "thread: %d - it: %ld\ttermo=%.20Lf\tpi=%.20Lf\n", p, ln, termthread, pi);
-	} while (fabs( termthread) > precisao && fabs( termthread) > LDBL_EPSILON);
+
+		if(ln>impreciso && !impreciso) break;
+
+		termo = bellard( ln, lm4, lm10, lp2);
+		pi += termo;
+		printf( "thread: %d - it: %ld\tpi: %.20Lf\ttermo: %g\n", p, ln, pi, (double)termo );
+	} while ( fabs(termo)>precisao && !impreciso);
+	if(impreciso==0) impreciso = n;
 	return NULL;
 }
 
@@ -108,17 +116,17 @@ void *calculaTermo( void *t) {
  *******************/
 int main(int argc, char *argv[]){
 	int
-		i, j, t,
+		i, t,
 		n,
 		numCPU = sysconf( _SC_NPROCESSORS_ONLN );
-	double d, s=0, d2;
-	long double mem;
 	pthread_t *threads = (pthread_t *) mallocX( numCPU * sizeof (pthread_t));
 	printf( "Utilizando %d nucleos.\n\n", numCPU);
 
 	/* Inicializando variaveis globais.
 	 *********************************/
 	param = 0;
+	iteracoes = 0;
+	impreciso = 0;
 	pi = 0;
 	n = 0;
 	m4 = 0;
@@ -130,9 +138,10 @@ int main(int argc, char *argv[]){
 	if(argc<2) {
 		printf(
 			"Modo de uso:\n"
-			"%s [DEBUG] [SEQUENCIAL] <f>\n"
+			"%s [DEBUG] [SEQUENCIAL] [UNLIMITED] <f>\n"
 			"\tDEBUG: para rodar em modo de depuracao;\n"
 			"\tSEQUENCIAL: rodar sem o uso de threads;\n"
+			"\tUNLIMITED: rodar sem ter que parar na barreira;\n"
 			"\t<f>: precisao do calculo.\n", argv[0]
 		);
 	}
@@ -142,6 +151,8 @@ int main(int argc, char *argv[]){
 				param = 1;
 			else if (strcmp(argv[i], "SEQUENCIAL")==0 )
 				param = 2;
+			else if (strcmp(argv[i], "UNLIMITED")==0 )
+				param = 3;
 			sscanf(argv[i], "%Lf", &precisao);
 		}
 	}
@@ -162,9 +173,6 @@ int main(int argc, char *argv[]){
 	*/
 
 	switch(param){
-		case 1:
-			/* DEBUG */
-			break;
 		case 2:
 			/* SEQUENCIAL */
 			termos = (long double*) mallocX(sizeof(long double));
@@ -179,19 +187,25 @@ int main(int argc, char *argv[]){
 				p2 *= 1024;
 			} while( fabs(*termos)>precisao && p2 != 0 );
 
-			printf(
-				"\nOs resultados obtidos de maneira sequencial foram:\n"
-				"pi: %.30Lf\n"
-				"termos: %d\n", pi, n
-			);
+			printf("\nO resultado de pi obtido com %d termos calculados de maneira sequencial foi:\n%.40Lf\n", n, pi);
+			break;
+		case 3:
+			/* UNLIMITED */
+			sem_init( &sem_writeread, 0, 1);
+			for (t = 0; t < numCPU; ++t)
+				pthread_create( &threads[t], NULL, calculaTermo_nl, (void *) &t);
+			for (t = 0; t < numCPU; ++t)
+				pthread_join( threads[t], NULL);
+			sem_destroy( &sem_writeread);
 			break;
 		default:
+			/* DEBUG */
 			/* NORMAL */
 			termos = (long double*) mallocX( MAX_TERMOS*sizeof(long double) );
 
 			sem_init( &sem_writeread, 0, 1);
 			for (t = 0; t < numCPU; ++t)
-				pthread_create( &threads[t], NULL, calculaTermo, (void *) &t);
+				pthread_create( &threads[t], NULL, calculaTermo_nl, (void *) &t);
 			for (t = 0; t < numCPU; ++t)
 				pthread_join( threads[t], NULL);
 			sem_destroy( &sem_writeread);
