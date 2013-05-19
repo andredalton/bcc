@@ -78,17 +78,6 @@ long double bellard(
 	termo += (long double)   1 / (lm10+9);
 	termo /= lp2;
 	
-	printf("\t%.20Lf\n", (long double) -32. / (lm4+1) );
-	printf("\t%.20Lf\n", (long double) -1.  / (lm4+3) );
-	printf("\t%.20Lf\n", (long double) 256. / (lm10+1) );
-	printf("\t%.20Lf\n", (long double) -64. / (lm10+3) );
-	printf("\t%.20Lf\n", (long double) -4.  / (lm10+5) );
-	printf("\t%.20Lf\n", (long double) -4.  / (lm10+7) );
-	printf("\t%.20Lf\n", (long double) 1.   / (lm10+9) );
-	printf("\t%.20Lf\n", (long double) lp2 );
-
-	printf("\t[%.20Lf]\n", termo );
-
 	return (n % 2) ? -termo : termo;
 }
 
@@ -195,14 +184,14 @@ int main(int argc, char *argv[]){
 			do{
 				*termos = bellard( n, m4, m10, p2 );
 				pi += *termos;
-				printf("%.20Lf\t%.20Lf\n", pi, *termos);
+				printf("%.20Lf\n", pi);
 				n++;
 				m4 += 4;
 				m10 += 10;
 				p2 *= 1024;
 
 				if(n==10) break;
-			} while( fabs(*termos)>precisao );
+			} while( fabs(*termos)>precisao && p2 != 0 );
 
 			printf(
 				"\nOs resultados obtidos de maneira sequencial foram:\n"
