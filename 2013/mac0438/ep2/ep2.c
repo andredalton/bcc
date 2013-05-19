@@ -41,10 +41,9 @@ sem_t sem_estrada[CITAM];
 long double pi;                              /* Variável para guardar o valor de pi para a máxima precisão da linguagem.             */
 long double precisao;                        /* Pecisão do cálculo.                                                                  */
 long double *termos;                         /* Vetor para guardar o resultado das parcelas de cada termo do algoritmo de bellard.   */
-long int N0;                                 /* Número do maior termo no momento da sincronização.                                   */
-long int m4;                                 /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
-long int m10;                                /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
-long int p2;                                 /* Variável que acumula parte do cálculo que contém potências de 2.                     */
+long double p2;                              /* Variável que acumula parte do cálculo que contém potências de 2.                     */
+long double m4;                                 /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
+long double m10;                                /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
 long int n;
 
 /*pthread_mutex_t meu_mutex = PTHREAD_MUTEX_INITIALIZER;*/
@@ -62,9 +61,9 @@ void *mallocX (unsigned int nbytes) {
 
 long double bellard(
 	long int ln,
-	long int lm4,
-	long int lm10,
-	long int lp2
+	long double lm4,
+	long double lm10,
+	long double lp2
 ) {
 	long double
 		termo = 0;
@@ -125,13 +124,12 @@ int main(int argc, char *argv[]){
 	double d, s=0, d2;
 	long double mem;
 	pthread_t *threads = (pthread_t *) mallocX( numCPU * sizeof (pthread_t));
-	printf( "\n\tcores=%d\n\n", numCPU);
+	printf( "Utilizando %d nucleos.\n\n", numCPU);
 
 	/* Inicializando variaveis globais.
 	 *********************************/
 	param = 0;
 	pi = 0;
-	N0 = 0;
 	n = 0;
 	m4 = 0;
 	m10 = 0;
@@ -184,18 +182,16 @@ int main(int argc, char *argv[]){
 			do{
 				*termos = bellard( n, m4, m10, p2 );
 				pi += *termos;
-				printf("%.20Lf\n", pi);
+				printf("%.40Lf\t[%g]\n", pi, (double) *termos);
 				n++;
 				m4 += 4;
 				m10 += 10;
 				p2 *= 1024;
-
-				if(n==10) break;
 			} while( fabs(*termos)>precisao && p2 != 0 );
 
 			printf(
 				"\nOs resultados obtidos de maneira sequencial foram:\n"
-				"pi: %.20Lf\n"
+				"pi: %.30Lf\n"
 				"termos: %d\n", pi, n
 			);
 			break;
