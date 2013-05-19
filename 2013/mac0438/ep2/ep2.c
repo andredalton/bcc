@@ -69,15 +69,26 @@ long double bellard(
 	long double
 		termo = 0;
 
-	termo += -32. / (lm4+1);
-	termo += -1.  / (lm4+3);
-	termo += 256. / (lm10+1);
-	termo += -64. / (lm10+3);
-	termo += -4.  / (lm10+5);
-	termo += -4.  / (lm10+7);
-	termo += 1.   / (lm10+9);
+	termo += (long double) -32 / (lm4+1);
+	termo += (long double)  -1 / (lm4+3);
+	termo += (long double) 256 / (lm10+1);
+	termo += (long double) -64 / (lm10+3);
+	termo += (long double)  -4 / (lm10+5);
+	termo += (long double)  -4 / (lm10+7);
+	termo += (long double)   1 / (lm10+9);
 	termo /= lp2;
 	
+	printf("\t%.20Lf\n", (long double) -32. / (lm4+1) );
+	printf("\t%.20Lf\n", (long double) -1.  / (lm4+3) );
+	printf("\t%.20Lf\n", (long double) 256. / (lm10+1) );
+	printf("\t%.20Lf\n", (long double) -64. / (lm10+3) );
+	printf("\t%.20Lf\n", (long double) -4.  / (lm10+5) );
+	printf("\t%.20Lf\n", (long double) -4.  / (lm10+7) );
+	printf("\t%.20Lf\n", (long double) 1.   / (lm10+9) );
+	printf("\t%.20Lf\n", (long double) lp2 );
+
+	printf("\t[%.20Lf]\n", termo );
+
 	return (n % 2) ? -termo : termo;
 }
 
