@@ -20,6 +20,8 @@
 #include <semaphore.h>
 #include <string.h>
 #include <unistd.h>
+#include <float.h>
+#include <limits.h>
 
   /****************************************/
  /* Inicialização das variáveis globais. */
@@ -41,6 +43,9 @@ long int N0;                                 /* Número do maior termo no moment
 long int m4;                                 /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
 long int m10;                                /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
 long int p2;                                 /* Variável que acumula parte do cálculo que contém potências de 2.                     */
+double f;
+
+pthread_mutex_t meu_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void *mallocX (unsigned int nbytes) {
    void *ptr;
@@ -62,31 +67,36 @@ long double bellard( int n ) {
 	termo += -4.  / (m10+5 + 10*(n-N0));
 	termo += -4.  / (m10+7 + 10*(n-N0));
 	termo += 1.   / (m10+9 + 10*(n-N0));
-	termo /= p2;						  
+	termo /= p2;
 
 	return (n%2) ? -termo : termo;
 }
 
-void *calculaTermo( void *param ){
-	int p = (int) param;
-	while(1){
+void *calculaTermo( void *param) {
+	int n = 1,
+		 p = (int) param;
+	long double termthread;
 
-		/* Espera caso não tenha nenhuma nova parcela a ser calculada. */
-	}
+	/* Enquanto a diferenca entre duas iteracoes consecutivas for maior que f
+	 * (parametro de entrada) continua.
+	 ***********************************************************************/
+	do {
+		termthread = bellard( n++);
+		pthread_mutex_lock( &meu_mutex);
+		pi += termthread;
+		pthread_mutex_unlock( &meu_mutex);
+	} while (termthread > f && termthread > LDBL_EPSILON);
 }
 
 /* Função principal.
  *******************/
 int main(int argc, char *argv[]){
 	int
-		i,
-		j,
+		i, j,
 		n,
 		numCPU = sysconf( _SC_NPROCESSORS_ONLN );
 	double d, s=0, d2;
 	long double mem;
-	
-	termos = 
 
 	/* Inicializando variaveis globais.
 	 *********************************/
@@ -96,6 +106,7 @@ int main(int argc, char *argv[]){
 	m4 = 0;
 	m10 = 0;
 	p2 = 64;
+	f = LDBL_EPSILON;
 
 	/*
 	for( i=0; i<10; i++){
@@ -122,7 +133,7 @@ int main(int argc, char *argv[]){
 		);
 	}
 	else {
-		
+
 		for(i=1; i<argc; i++) {
 			if( strcmp(argv[i], "DEBUG")==0 )
 				param = 1;
@@ -132,6 +143,20 @@ int main(int argc, char *argv[]){
 		}
 	}
 
+	/*
+	pthread_t threads[NUM_THREADS];
+	for (t=0; t<NUM_THREADS; t++)
+		pthread_create(&threads[t], NULL, AtualizaSaldo, (void *)t);
+	*/
+	/*
+    for(i = 0; i < numCPU; ++i) {
+        pthread_attr_init( thread_attrs + i);
+        pthread_attr_setdetachstate( thread_attrs + i, PTHREAD_CREATE_JOINABLE);
+        pthread_create( threads + i, thread_attrs + i, worker_function, (void *) i);
+    }
+	for (t = 0; t < numCPU; t++)
+		pthread_join( threads[t], NULL);
+	*/
 	switch(param){
 		case 1:
 			/* DEBUG */
