@@ -29,19 +29,19 @@
  /* Inicialização das variáveis globais. */
 /****************************************/
 
-short int param;                             /* Variável que guarda qual dos modos de cálculo será utilizado.                        */
-long int impreciso;                          /* Variável usada para indicar que a precisão foi ou não atingida.                      */
+short int param;                                      /* Variável que guarda qual dos modos de cálculo será utilizado.                        */
+long int impreciso;                                   /* Variável usada para indicar que a precisão foi ou não atingida.                      */
+long int iteracoes;                                   /* Número de vezes que as threads se encontraram na barreira.                           */
 
+long double *termos;                                  /* Vetor para guardar o resultado das parcelas de cada termo do algoritmo de bellard.   */
 long double pi;                              /* Variável para guardar o valor de pi para a máxima precisão da linguagem.             */
 long double precisao;                        /* Pecisão do cálculo.                                                                  */
-long double *termos;                         /* Vetor para guardar o resultado das parcelas de cada termo do algoritmo de bellard.   */
 long double p2;                              /* Variável que acumula parte do cálculo que contém potências de 2.                     */
 long double m4;                              /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
 long double m10;                             /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
-long int n;                                  /* Número do termo atual a ser calculado.                                               */
-long int iteracoes;                          /* Número de vezes que as threads se encontraram na barreira.                           */
+unsigned long int n;                                  /* Número do termo atual a ser calculado.                                               */
 
-sem_t sem_writeread;                         /* Semaforo para proteger a leitura e a escrita dos termos précalculados.               */
+sem_t sem_writeread;                                  /* Semaforo para proteger a leitura e a escrita dos termos précalculados.               */
 
 
   /*************************************************/
@@ -89,7 +89,7 @@ void *calculaTermo_nl( void *t) {
 	int p = *(int *) t;
 	long int ln;
 	long double lm4, lm10, lp2;
-	long double termo;
+	long double termo = 0;
 
 	/* Continua calculando enquanto a precisão não tenha sido atingida anteriormente
 	 * por nenhuma thread de um termo menor que a atual.
@@ -102,13 +102,58 @@ void *calculaTermo_nl( void *t) {
 		lp2 = p2; p2 *= 1024;
 		sem_post( &sem_writeread);
 
-		if(ln>impreciso && !impreciso) break;
+		if( impreciso!=-1 && ln>impreciso)
+			break;
 
 		termo = bellard( ln, lm4, lm10, lp2);
+
 		pi += termo;
 		printf( "thread: %d - it: %ld\tpi: %.20Lf\ttermo: %g\n", p, ln, pi, (double)termo );
-	} while ( fabs(termo)>precisao && !impreciso);
-	if(impreciso==0) impreciso = n;
+	} while ( fabs(termo)>precisao && impreciso==-1 );
+	
+	if(impreciso==-1)
+		impreciso = n;
+
+	return NULL;
+}
+
+/* Calcula o enésimo termo acumulando os resultados diretamente
+ * em pi e sem a necessidade de uso de barreuras.
+ *********************************************/
+void *calculaTermo( void *t) {
+	calculaTermo_nl(t);
+
+	/*
+	int p = *(int *) t;
+	long int ln;
+	long double lm4, lm10, lp2;
+	long double termo = 0;
+	*/
+
+	/* Continua calculando enquanto a precisão não tenha sido atingida anteriormente
+	 * por nenhuma thread de um termo menor que a atual.
+	 ***********************************************************************/
+	/*
+	do {
+		sem_wait( &sem_writeread);
+		ln = n++;
+		lm4 = m4; m4 += 4;
+		lm10 = m10; m10 += 10;
+		lp2 = p2; p2 *= 1024;
+		sem_post( &sem_writeread);
+
+		if( impreciso!=-1 && ln>impreciso)
+			break;
+
+		termo = bellard( ln, lm4, lm10, lp2);
+
+		pi += termo;
+		printf( "thread: %d - it: %ld\tpi: %.20Lf\ttermo: %g\n", p, ln, pi, (double)termo );
+	} while ( fabs(termo)>precisao && impreciso==-1 );
+	
+	if(impreciso==-1)
+		impreciso = n;
+	*/
 	return NULL;
 }
 
@@ -126,7 +171,7 @@ int main(int argc, char *argv[]){
 	 *********************************/
 	param = 0;
 	iteracoes = 0;
-	impreciso = 0;
+	impreciso = -1;
 	pi = 0;
 	n = 0;
 	m4 = 0;
@@ -197,6 +242,7 @@ int main(int argc, char *argv[]){
 			for (t = 0; t < numCPU; ++t)
 				pthread_join( threads[t], NULL);
 			sem_destroy( &sem_writeread);
+			printf("\nO resultado de pi obtido usando %d processos foi:\n%.40Lf\n", numCPU, pi);
 			break;
 		default:
 			/* DEBUG */
@@ -205,10 +251,11 @@ int main(int argc, char *argv[]){
 
 			sem_init( &sem_writeread, 0, 1);
 			for (t = 0; t < numCPU; ++t)
-				pthread_create( &threads[t], NULL, calculaTermo_nl, (void *) &t);
+				pthread_create( &threads[t], NULL, calculaTermo, (void *) &t);
 			for (t = 0; t < numCPU; ++t)
 				pthread_join( threads[t], NULL);
 			sem_destroy( &sem_writeread);
+			printf("\nO resultado de pi obtido usando %d processos foi:\n%.40Lf\n", numCPU, pi);
 			break;
 	}
 
