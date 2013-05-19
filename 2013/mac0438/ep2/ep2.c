@@ -43,9 +43,10 @@ long int N0;                                 /* Número do maior termo no moment
 long int m4;                                 /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
 long int m10;                                /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
 long int p2;                                 /* Variável que acumula parte do cálculo que contém potências de 2.                     */
-double f;
+long int n;
 
-pthread_mutex_t meu_mutex = PTHREAD_MUTEX_INITIALIZER;
+/*pthread_mutex_t meu_mutex = PTHREAD_MUTEX_INITIALIZER;*/
+sem_t sem_writeread;
 
 void *mallocX (unsigned int nbytes) {
    void *ptr;
@@ -57,56 +58,74 @@ void *mallocX (unsigned int nbytes) {
    return ptr;
 }
 
-long double bellard( int n ) {
-	long double termo = 0;
+long double bellard( ) {
+	long double termo = 0,
+					buffm4,
+					buffm10,
+					buffp2;
+	long int buffN0, buffn;
 
-	termo += -32. / (m4+1 + 4*(n-N0));
-	termo += -1.  / (m4+3 + 4*(n-N0));
-	termo += 256. / (m10+1 + 10*(n-N0));
-	termo += -64. / (m10+3 + 10*(n-N0));
-	termo += -4.  / (m10+5 + 10*(n-N0));
-	termo += -4.  / (m10+7 + 10*(n-N0));
-	termo += 1.   / (m10+9 + 10*(n-N0));
-	termo /= p2;
+	/* Efetua a leitura atomicamente */
+	sem_wait( &sem_writeread);
+	buffm10 = m10;
+	m10 *= 10;
+	buffm4 = m4;
+	m4 *= 4;
+	buffp2 = p2;
+	p2 *= 1024;
+	buffN0 = ++N0;
+	buffn = ++n;
+	sem_post( &sem_writeread);
+	termo += -32. / (buffm4+1 + 4*(buffn-buffN0));
+	termo += -1.  / (buffm4+3 + 4*(buffn-buffN0));
+	termo += 256. / (buffm10+1 + 10*(buffn-buffN0));
+	termo += -64. / (buffm10+3 + 10*(buffn-buffN0));
+	termo += -4.  / (buffm10+5 + 10*(buffn-buffN0));
+	termo += -4.  / (buffm10+7 + 10*(buffn-buffN0));
+	termo += 1.   / (buffm10+9 + 10*(buffn-buffN0));
+	termo /= buffp2;
+	sem_wait( &sem_writeread);
+	(buffn % 2) ? (pi -= termo) : (pi += termo);
+	printf( "thread: %d - it: %ld\tpi=%.20Lf\n", param, buffn, pi);
+	sem_post( &sem_writeread);
 
-	return (n%2) ? -termo : termo;
+	return (n % 2) ? -termo : termo;
 }
 
-void *calculaTermo( void *param) {
-	int n = 1,
-		 p = (int) param;
+void *calculaTermo( void *t) {
+	int p = *(int *) t;
 	long double termthread;
 
 	/* Enquanto a diferenca entre duas iteracoes consecutivas for maior que f
 	 * (parametro de entrada) continua.
 	 ***********************************************************************/
 	do {
-		termthread = bellard( n++);
-		pthread_mutex_lock( &meu_mutex);
-		pi += termthread;
-		pthread_mutex_unlock( &meu_mutex);
-	} while (termthread > f && termthread > LDBL_EPSILON);
+		termthread = bellard( );
+	} while (termthread > precisao && termthread > LDBL_EPSILON);
+	return NULL;
 }
 
 /* Função principal.
  *******************/
 int main(int argc, char *argv[]){
 	int
-		i, j,
+		i, j, t,
 		n,
 		numCPU = sysconf( _SC_NPROCESSORS_ONLN );
 	double d, s=0, d2;
 	long double mem;
-
+	pthread_t *threads = (pthread_t *) mallocX( numCPU * sizeof (pthread_t));
+printf( "\n\tcores=%d\n\n", numCPU);
 	/* Inicializando variaveis globais.
 	 *********************************/
 	param = 0;
 	pi = 0;
 	N0 = 0;
+	n = 0;
 	m4 = 0;
 	m10 = 0;
 	p2 = 64;
-	f = LDBL_EPSILON;
+	precisao = LDBL_EPSILON; /* Posteriormente sera parametro de entrada */
 
 	/*
 	for( i=0; i<10; i++){
@@ -126,10 +145,10 @@ int main(int argc, char *argv[]){
 	if(argc<2) {
 		printf(
 			"Modo de uso:\n"
-			"%s DEBUG SEQUENCIAL <f>\n"
-			"DEBUG: para rodar em modo de depuracao.\n"
-			"SEQUENCIAL: rodar sem o uso de threads.\n"
-			"<f>: precisao do calculo.\n", argv[0]
+			"%s [DEBUG] [SEQUENCIAL] <f>\n"
+			"\tDEBUG: para rodar em modo de depuracao;\n"
+			"\tSEQUENCIAL: rodar sem o uso de threads;\n"
+			"\t<f>: precisao do calculo.\n", argv[0]
 		);
 	}
 	else {
@@ -149,7 +168,7 @@ int main(int argc, char *argv[]){
 		pthread_create(&threads[t], NULL, AtualizaSaldo, (void *)t);
 	*/
 	/*
-    for(i = 0; i < numCPU; ++i) {
+    for (i = 0; i < numCPU; ++i) {
         pthread_attr_init( thread_attrs + i);
         pthread_attr_setdetachstate( thread_attrs + i, PTHREAD_CREATE_JOINABLE);
         pthread_create( threads + i, thread_attrs + i, worker_function, (void *) i);
@@ -157,6 +176,12 @@ int main(int argc, char *argv[]){
 	for (t = 0; t < numCPU; t++)
 		pthread_join( threads[t], NULL);
 	*/
+	sem_init( &sem_writeread, 0, 1);
+	for (t = 0; t < numCPU; ++t)
+		pthread_create( &threads[t], NULL, calculaTermo, (void *) t);
+	for (t = 0; t < numCPU; ++t)
+		pthread_join( threads[t], NULL);
+	sem_destroy( &sem_writeread);
 	switch(param){
 		case 1:
 			/* DEBUG */

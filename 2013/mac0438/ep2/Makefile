@@ -13,16 +13,18 @@
 # *****************************************************************************/
 
 CC = gcc
-OPTS = -lm -lpthread -Wall -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
+CCOPTS = -Wall -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
+LDOPTS = -lm -lpthread
 #CC = c99
 #OPTS = -Wall -pedantic -O2 -U_FORTFY_SOURCE -g
 
 # Verifica as dependencias para o binário principal
 ep2: ep2.c
 	# @$(CC) -c $(OPTS) defines.c defines.h
-	@$(CC) ep2.c -o $@
+	@$(CC) -c $(CCOPTS) ep2.c
+	@$(CC) ep2.o -o $@ $(LDOPTS)
 
-# Binário que simula o algoritmo da punição. 
+# Binário que simula o algoritmo da punição.
 #simula: defines.c defines.h
 #	@$(CC) $(OPTS) -DSIMULACAO=1 -DPRECISAO=1 defines.c -o $@
 
