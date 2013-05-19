@@ -44,7 +44,7 @@ long double *termos;                         /* Vetor para guardar o resultado d
 long double p2;                              /* Variável que acumula parte do cálculo que contém potências de 2.                     */
 long double m4;                                 /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
 long double m10;                                /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
-long int n;
+long int n;												/* Número do maior termo no momento da sincronização.
 
 /*pthread_mutex_t meu_mutex = PTHREAD_MUTEX_INITIALIZER;*/
 sem_t sem_writeread;
@@ -76,41 +76,31 @@ long double bellard(
 	termo += (long double)  -4 / (lm10+7);
 	termo += (long double)   1 / (lm10+9);
 	termo /= lp2;
-	
-	return (n % 2) ? -termo : termo;
+
+	return termo;
 }
 
 void *calculaTermo( void *t) {
 	int p = *(int *) t;
+	long int ln, lm4, lm10, lp2;
 	long double termthread;
 
 	/* Enquanto a diferenca entre duas iteracoes consecutivas for maior que f
 	 * (parametro de entrada) continua.
 	 ***********************************************************************/
-
-	/*
-	sem_wait( &sem_writeread);
-	buffm10 = m10;
-	m10 *= 10;
-	buffm4 = m4;
-	m4 *= 4;
-	buffp2 = p2;
-	p2 *= 1024;
-	buffN0 = ++N0;
-	buffn = ++n;
-	sem_post( &sem_writeread);
-	
-	sem_wait( &sem_writeread);
-	(buffn % 2) ? (pi -= termo) : (pi += termo);
-	printf( "thread: %d - it: %ld\tpi=%.20Lf\n", p, buffn, pi);
-	sem_post( &sem_writeread);
-	*/
-
 	do {
-		/*
-		termthread = bellard( p);
-		*/
-	} while (termthread > precisao && termthread > LDBL_EPSILON);
+		sem_wait( &sem_writeread);
+		ln = n++;
+		lm4 = m4; m4 += 4;
+		lm10 = m10; m10 += 10;
+		lp2 = p2; p2 *= 1024;
+		sem_post( &sem_writeread);
+		termthread = bellard( ln, lm4, lm10, lp2);
+		sem_wait( &sem_writeread);
+		(ln % 2) ? (pi -= termthread) : (pi += termthread);
+		sem_post( &sem_writeread);
+		printf( "thread: %d - it: %ld\ttermo=%.20Lf\tpi=%.20Lf\n", p, ln, termthread, pi);
+	} while (fabs( termthread) > precisao && fabs( termthread) > LDBL_EPSILON);
 	return NULL;
 }
 
@@ -170,7 +160,7 @@ int main(int argc, char *argv[]){
 	for (t = 0; t < numCPU; t++)
 		pthread_join( threads[t], NULL);
 	*/
-	
+
 	switch(param){
 		case 1:
 			/* DEBUG */
