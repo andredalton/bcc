@@ -58,7 +58,7 @@ void *mallocX (unsigned int nbytes) {
    return ptr;
 }
 
-long double bellard( ) {
+long double bellard( int p) {
 	long double termo = 0,
 					buffm4,
 					buffm10,
@@ -86,7 +86,7 @@ long double bellard( ) {
 	termo /= buffp2;
 	sem_wait( &sem_writeread);
 	(buffn % 2) ? (pi -= termo) : (pi += termo);
-	printf( "thread: %d - it: %ld\tpi=%.20Lf\n", param, buffn, pi);
+	printf( "thread: %d - it: %ld\tpi=%.20Lf\n", p, buffn, pi);
 	sem_post( &sem_writeread);
 
 	return (n % 2) ? -termo : termo;
@@ -100,7 +100,7 @@ void *calculaTermo( void *t) {
 	 * (parametro de entrada) continua.
 	 ***********************************************************************/
 	do {
-		termthread = bellard( );
+		termthread = bellard( p);
 	} while (termthread > precisao && termthread > LDBL_EPSILON);
 	return NULL;
 }
@@ -178,16 +178,17 @@ printf( "\n\tcores=%d\n\n", numCPU);
 	*/
 	sem_init( &sem_writeread, 0, 1);
 	for (t = 0; t < numCPU; ++t)
-		pthread_create( &threads[t], NULL, calculaTermo, (void *) t);
+		pthread_create( &threads[t], NULL, calculaTermo, (void *) &t);
 	for (t = 0; t < numCPU; ++t)
 		pthread_join( threads[t], NULL);
 	sem_destroy( &sem_writeread);
+/*
 	switch(param){
 		case 1:
-			/* DEBUG */
+			/* DEBUG
 			break;
 		case 2:
-			/* SEQUENCIAL */
+			/* SEQUENCIAL
 			termos = (long double*) mallocX(sizeof(long double));
 			n = 0;
 			do{
@@ -210,9 +211,9 @@ printf( "\n\tcores=%d\n\n", numCPU);
 			);
 			break;
 		default:
-			/* NORMAL */
+			/* NORMAL
 			break;
-	}
+	}*/
 
 	return 0;
 }
