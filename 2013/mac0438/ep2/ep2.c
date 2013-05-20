@@ -30,17 +30,22 @@
 /****************************************/
 
 short int param;                                      /* Variável que guarda qual dos modos de cálculo será utilizado.                        */
+int numCPU;                                           /* Número de núcleos do computador onde o processo esta rodando.                        */
 long int impreciso;                                   /* Variável usada para indicar que a precisão foi ou não atingida.                      */
 long int iteracoes;                                   /* Número de vezes que as threads se encontraram na barreira.                           */
 
 long double *termos;                                  /* Vetor para guardar o resultado das parcelas de cada termo do algoritmo de bellard.   */
-long double pi;                              /* Variável para guardar o valor de pi para a máxima precisão da linguagem.             */
-long double precisao;                        /* Pecisão do cálculo.                                                                  */
-long double p2;                              /* Variável que acumula parte do cálculo que contém potências de 2.                     */
-long double m4;                              /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
-long double m10;                             /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
+long double pi;                                       /* Variável para guardar o valor de pi para a máxima precisão da linguagem.             */
+long double precisao;                                 /* Pecisão do cálculo.                                                                  */
+
+
+/* Variáveis para calculos acumulados. */
+long double p2;                                       /* Variável que acumula parte do cálculo que contém potências de 2.                     */
+long double m4;                                       /* Variável que acumula parte do cálculo que contém multiplos de 4.                     */
+long double m10;                                      /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
 unsigned long int n;                                  /* Número do termo atual a ser calculado.                                               */
 
+/* Semaforos. */
 sem_t sem_writeread;                                  /* Semaforo para proteger a leitura e a escrita dos termos précalculados.               */
 
 
@@ -84,7 +89,7 @@ long double bellard(
 
 /* Calcula o enésimo termo acumulando os resultados diretamente
  * em pi e sem a necessidade de uso de barreuras.
- *********************************************/
+ ******************************************************************************************************/
 void *calculaTermo_nl( void *t) {
 	int p = *(int *) t;
 	long int ln;
@@ -93,7 +98,7 @@ void *calculaTermo_nl( void *t) {
 
 	/* Continua calculando enquanto a precisão não tenha sido atingida anteriormente
 	 * por nenhuma thread de um termo menor que a atual.
-	 ***********************************************************************/
+	 **************************************************************************************************/
 	do {
 		sem_wait( &sem_writeread);
 		ln = n++;
@@ -108,7 +113,6 @@ void *calculaTermo_nl( void *t) {
 		termo = bellard( ln, lm4, lm10, lp2);
 
 		pi += termo;
-		printf( "thread: %d - it: %ld\tpi: %.20Lf\ttermo: %g\n", p, ln, pi, (double)termo );
 	} while ( fabs(termo)>precisao && impreciso==-1 );
 	
 	if(impreciso==-1)
@@ -117,23 +121,18 @@ void *calculaTermo_nl( void *t) {
 	return NULL;
 }
 
-/* Calcula o enésimo termo acumulando os resultados diretamente
- * em pi e sem a necessidade de uso de barreuras.
- *********************************************/
+/* Calcula o enésimo termo acumulando os resultados em um vetor
+ * depois que todos os processos terminan o valor de pi é atualizado.
+ ******************************************************************************************************/
 void *calculaTermo( void *t) {
-	calculaTermo_nl(t);
-
-	/*
 	int p = *(int *) t;
 	long int ln;
 	long double lm4, lm10, lp2;
 	long double termo = 0;
-	*/
 
 	/* Continua calculando enquanto a precisão não tenha sido atingida anteriormente
 	 * por nenhuma thread de um termo menor que a atual.
 	 ***********************************************************************/
-	/*
 	do {
 		sem_wait( &sem_writeread);
 		ln = n++;
@@ -148,12 +147,20 @@ void *calculaTermo( void *t) {
 		termo = bellard( ln, lm4, lm10, lp2);
 
 		pi += termo;
-		printf( "thread: %d - it: %ld\tpi: %.20Lf\ttermo: %g\n", p, ln, pi, (double)termo );
+
+		if ( param==1 )
+			printf( "thread: %d - it: %ld\tpi: %.20Lf\ttermo: %g\n", p, ln, pi, (double)termo );
+
+		if(p==0) {
+			/* Se for esta thread fica parado até que a barreira atinga o valor de n */
+		}
+		else {
+			
+		}
 	} while ( fabs(termo)>precisao && impreciso==-1 );
 	
 	if(impreciso==-1)
 		impreciso = n;
-	*/
 	return NULL;
 }
 
@@ -162,13 +169,14 @@ void *calculaTermo( void *t) {
 int main(int argc, char *argv[]){
 	int
 		i, t,
-		n,
-		numCPU = sysconf( _SC_NPROCESSORS_ONLN );
+		n;
+		
 	pthread_t *threads = (pthread_t *) mallocX( numCPU * sizeof (pthread_t));
 	printf( "Utilizando %d nucleos.\n\n", numCPU);
 
 	/* Inicializando variaveis globais.
 	 *********************************/
+	numCPU = sysconf( _SC_NPROCESSORS_ONLN );
 	param = 0;
 	iteracoes = 0;
 	impreciso = -1;
@@ -202,21 +210,6 @@ int main(int argc, char *argv[]){
 		}
 	}
 
-	/*
-	pthread_t threads[NUM_THREADS];
-	for (t=0; t<NUM_THREADS; t++)
-		pthread_create(&threads[t], NULL, AtualizaSaldo, (void *)t);
-	*/
-	/*
-    for (i = 0; i < numCPU; ++i) {
-        pthread_attr_init( thread_attrs + i);
-        pthread_attr_setdetachstate( thread_attrs + i, PTHREAD_CREATE_JOINABLE);
-        pthread_create( threads + i, thread_attrs + i, worker_function, (void *) i);
-    }
-	for (t = 0; t < numCPU; t++)
-		pthread_join( threads[t], NULL);
-	*/
-
 	switch(param){
 		case 2:
 			/* SEQUENCIAL */
@@ -247,7 +240,7 @@ int main(int argc, char *argv[]){
 		default:
 			/* DEBUG */
 			/* NORMAL */
-			termos = (long double*) mallocX( MAX_TERMOS*sizeof(long double) );
+			termos = (long double*) mallocX( numCPU*sizeof(long double) );
 
 			sem_init( &sem_writeread, 0, 1);
 			for (t = 0; t < numCPU; ++t)
