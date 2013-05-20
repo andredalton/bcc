@@ -47,7 +47,10 @@ unsigned long int n;                                  /* Número do termo atual 
 
 /* Semaforos. */
 sem_t sem_writeread;                                  /* Semaforo para proteger a leitura e a escrita dos termos précalculados.               */
+int barreira;                                         /* Barreira de sincronização das threads.                                               */
 
+/* Mutex */
+static pthread_mutex_t cs_mutex = PTHREAD_MUTEX_INITIALIZER;
 
   /*************************************************/
  /* Termino da declaração das variáveis globais.  */
@@ -111,7 +114,6 @@ void *calculaTermo_nl( void *t) {
 			break;
 
 		termo = bellard( ln, lm4, lm10, lp2);
-
 		pi += termo;
 	} while ( fabs(termo)>precisao && impreciso==-1 );
 	
@@ -126,6 +128,7 @@ void *calculaTermo_nl( void *t) {
  ******************************************************************************************************/
 void *calculaTermo( void *t) {
 	int p = *(int *) t;
+	int i;
 	long int ln;
 	long double lm4, lm10, lp2;
 	long double termo = 0;
@@ -134,11 +137,17 @@ void *calculaTermo( void *t) {
 	 * por nenhuma thread de um termo menor que a atual.
 	 ***********************************************************************/
 	do {
+
+		barreira = 1;
+		
 		sem_wait( &sem_writeread);
 		ln = n++;
 		lm4 = m4; m4 += 4;
 		lm10 = m10; m10 += 10;
 		lp2 = p2; p2 *= 1024;
+
+
+
 		sem_post( &sem_writeread);
 
 		if( impreciso!=-1 && ln>impreciso)
@@ -151,13 +160,19 @@ void *calculaTermo( void *t) {
 		if ( param==1 )
 			printf( "thread: %d - it: %ld\tpi: %.20Lf\ttermo: %g\n", p, ln, pi, (double)termo );
 
-		if(p==0) {
-			/* Se for esta thread fica parado até que a barreira atinga o valor de n */
+		/* Todos os processos ficam travados até que o primeiro faça a sincronização adequada. */
+		if (p!=0) {
+			while(barreira);
 		}
 		else {
-			
+			/* Espera até que todas as threads tenham terminado. */
+			while(n%numCPU!=0);
+			for( i=0; i<numCPU; i++) {
+				pi += termos[i];
+				termos[i] = 0;
+			}
 		}
-	} while ( fabs(termo)>precisao && impreciso==-1 );
+	} while ( fabs(termos[p])>precisao && impreciso==-1 );
 	
 	if(impreciso==-1)
 		impreciso = n;
@@ -241,6 +256,7 @@ int main(int argc, char *argv[]){
 			/* DEBUG */
 			/* NORMAL */
 			termos = (long double*) mallocX( numCPU*sizeof(long double) );
+			pthread_mutex_lock( &cs_mutex );
 
 			sem_init( &sem_writeread, 0, 1);
 			for (t = 0; t < numCPU; ++t)
