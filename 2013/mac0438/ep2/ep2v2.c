@@ -15,11 +15,15 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/time.h>
+#include <float.h>
+#include <limits.h>
+
+#define MAX_TERMOS 1000
 
   /****************************************/
  /* Inicialização das variáveis globais. */
@@ -41,13 +45,12 @@ long double m4;                                       /* Variável que acumula p
 long double m10;                                      /* Variável que acumula parte do cálculo que contém multiplos de 10.                    */
 unsigned long int n;                                  /* Número do termo atual a ser calculado.                                               */
 
-/* Variaveis auxiliares de controle de fluxo. */
-int *chegada;                                         /* Vetor para guardar a posição de chegada das threads na barreira.                     */
-int Flag = 0;                                         /* Barreira de sincronização das threads.                                               */
-int processos;                                        /* Numero de processos concluidos.                                                      */
-
 /* Semaforos. */
 sem_t sem_writeread;                                  /* Semaforo para proteger a leitura e a escrita dos termos précalculados.               */
+sem_t *sem_thread;
+
+int *chegada;                                         /* Barreira de sincronização das threads.                                               */
+int processos;
 
   /*************************************************/
  /* Termino da declaração das variáveis globais.  */
@@ -119,49 +122,19 @@ void *calculaTermo_nl( void *t) {
 	return NULL;
 }
 
-
-void *gerencia(void *p) {
-	int i;
-
-	while ( impreciso ) {
-		iteracoes++;
-		
-		while(processos<numCPU) printf("\r%d - %ld            ", processos, impreciso);
-		
-		if (param==1)
-			printf("\nSincronizando threads!\nChegada:\n");
-
-		for( i=0; i<numCPU; i++) {
-			if (param==1)
-				printf("%d ", chegada[i]);
-			pi += termos[i];
-			
-			if ( fabs(termos[i])<=precisao )
-				impreciso = 0;
-			termos[i] = 0;
-		}
-
-		processos = 0;
-		Flag = (Flag+1)%2;
-	}
-
-	return NULL;
-}
-
 /* Calcula o enésimo termo acumulando os resultados em um vetor
  * depois que todos os processos terminan o valor de pi é atualizado.
  ******************************************************************************************************/
-void *calculaTermo( int t) {
-	int p = t;
+void *calculaTermo( void *t) {
+	int p = *(int *) t;
+	int i;
 	long int ln = 0;
 	long double lm4, lm10, lp2;
-	int flag = 0;
 
 	/* Continua calculando enquanto a precisão não tenha sido atingida anteriormente
 	 * por nenhuma thread de um termo menor que a atual.
 	 ***********************************************************************/
 	do {
-		flag = (flag+1)%2;
 		/* Acessando a sessão crítica. */
 		sem_wait( &sem_writeread );
 		ln = n++;
@@ -170,14 +143,50 @@ void *calculaTermo( int t) {
 		lp2 = p2; p2 *= 1024;
 		sem_post( &sem_writeread);
 
+		/* Caso este processo esteja calculando um termo de precisão
+		 * maior que a necessária, sai do laço.
+		if( impreciso!=-1 && ln>impreciso)
+		 ***********************************************************************/
+		if( !impreciso )
+			break;
+
 		/* Gardando o termo calculado em seu devido lugar.
 		 ************************************************************************/
 		termos[p] = bellard( ln, lm4, lm10, lp2);
-		chegada[processos++] = p;
 
-		/* Todos os processos ficam travados até que o gerenciador faça a sincronização adequada.
+		/* Caso esteja em modo de depuração imprime 
+		if ( param==1 ) printf( "%d ", p );
+		 */
+		if ( param==1 ) printf( "\nthread: %d [termino] - termo: %ld\tvalor: %g\n", p, ln, (double)termos[p] );
+
+		chegada[processos] = p;
+		processos++;
+
+		/* ligando a barreira. */
+		sem_wait( &sem_thread[p] );
+		
+		/* Todos os processos ficam travados até que o primeiro faça a sincronização adequada.
 		 ********************************************************************************************/
-		while( flag!=Flag && impreciso ) printf("\r");
+		if (p==0) {
+			iteracoes++;
+			while(processos!=numCPU) printf("#%d\n", processos);;
+
+			if (param==1)
+				printf("\nSincronizando threads!\nChegada:\n");
+
+			for( i=0; i<numCPU; i++) {
+				if (param==1)
+					printf("%d ", chegada[i]);
+				pi += termos[i];
+				termos[i] = 0;
+				
+				if ( fabs(termos[p])<=precisao ) impreciso = 0;
+			}
+			for( i=0; i<numCPU; i++) {
+				sem_post( &sem_thread[i]);
+			processos = 0;
+		}
+
 	} while ( impreciso );
 
 	return NULL;
@@ -187,20 +196,10 @@ void *calculaTermo( int t) {
  *******************/
 int main(int argc, char *argv[]){
 	int
-		i,
-		t;
-	
-	struct timespec tps, tpe;
-
-	if ( (clock_gettime(1, &tps) != 0) ) {
-	    perror("clock_gettime");
-	    return -1;
-	  }
-
-	pthread_t
-		*threads = (pthread_t *) mallocX( numCPU * sizeof (pthread_t)),
-		gerente;
-
+		i, t,
+		n;
+		
+	pthread_t *threads = (pthread_t *) mallocX( numCPU * sizeof (pthread_t));
 
 	/* Inicializando variaveis globais.
 	 *********************************/
@@ -256,7 +255,7 @@ int main(int argc, char *argv[]){
 				p2 *= 1024;
 			} while( fabs(*termos)>precisao && p2 != 0 );
 
-			printf("\nO resultado de pi obtido com %ld termos calculados de maneira sequencial foi:\n%.40Lf\n", n, pi);
+			printf("\nO resultado de pi obtido com %d termos calculados de maneira sequencial foi:\n%.40Lf\n", n, pi);
 			break;
 		case 3:
 			/* UNLIMITED */
@@ -267,38 +266,30 @@ int main(int argc, char *argv[]){
 				pthread_join( threads[t], NULL);
 			sem_destroy( &sem_writeread);
 			printf("\nO resultado de pi obtido usando %d processos foi:\n%.40Lf\n", numCPU, pi);
-			printf("Foram calculados %ld termos.\n", n);
 			break;
 		default:
 			/* DEBUG */
 			/* NORMAL */
-
+			sem_thread = (sem_t*) mallocX( numCPU*sizeof(sem_t) );
 			termos = (long double*) mallocX( numCPU*sizeof(long double) );
 			chegada = (int*) mallocX( numCPU*sizeof(int) );
 
-			pthread_create( &gerente, NULL, gerencia, NULL);
-
 			sem_init( &sem_writeread, 0, 1);
-			for (t = 0; t < numCPU; t++) {
-				termos[t] = 0;
-				pthread_create( &threads[t], NULL, calculaTermo, t);
+			for (t = 0; t < numCPU; ++t) {
+				sem_init( &sem_thread[t], 0, 1);
+				if(t>0)
+					sem_wait( &sem_thread[t] );
+				pthread_create( &threads[t], NULL, calculaTermo, (void *) &t);
 			}
 
 			for (t = 0; t < numCPU; ++t)
 				pthread_join( threads[t], NULL);
-			pthread_join( gerente, NULL);
-			
+			for (t = 0; t < numCPU; ++t)
+				sem_destroy( &sem_thread[t]);
 			sem_destroy( &sem_writeread);
-			printf("O resultado de pi obtido usando %d processos foi:\n%.40Lf\n", numCPU, pi);
-			printf("As threads se encontraram %ld vezes na sincronizacao\n", iteracoes);
+			printf("\nO resultado de pi obtido usando %d processos foi:\n%.40Lf\n", numCPU, pi);
 			break;
 	}
-
-	if ( (clock_gettime(1, &tpe) != 0)) {
-		perror("clock_gettime");
-		return -1;
-	}
-	printf("\ntempo: %lu s, %lu ns\n", tpe.tv_sec-tps.tv_sec, tpe.tv_nsec-tps.tv_nsec);
 
 	return 0;
 }

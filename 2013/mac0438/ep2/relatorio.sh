@@ -19,8 +19,6 @@ make clean
 echo Gerando todos os binarios.
 make all
 
-mkdir -p relatorios
-
 PROCESSADOR=`cat /proc/cpuinfo|grep "vendor_id" |cut -d ':' -f 2 | tr -d [:blank:] | head -1`
 MODELOPROC=`cat /proc/cpuinfo|grep "model name" |cut -d ':' -f 2 | tr -d [:blank:] | head -1`
 CORES=`cat /proc/cpuinfo|grep "cpu cores" |cut -d ':' -f 2 | tr -d [:blank:] | head -1`
@@ -36,34 +34,40 @@ echo Gerando relatorio.
 
 echo "" > relatorios/myep1.tex
 
-for f in `ls entradas/*.txt | cut -d '/' -f 2`
+
+for precisao in 0.001 0.0000001 0.0000000000000001 0.0000000000000000000000001 0.0000000000000000000000000000000000000000001
 do
-	echo Rodando ep1 para \"$f\"
-	/usr/bin/time -f "\t$HOSTNAME & ep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./ep1 entradas/$f > /dev/null
-	
-	echo Rodando ep1-mili para \"$f\"
-	/usr/bin/time -f "\t$HOSTNAME & ep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./ep1-mili entradas/$f > /dev/null
-	
-	echo Rodando pep1 para \"$f\"
-	/usr/bin/time -f "\t$HOSTNAME & pep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./pep1 entradas/$f > /dev/null
-	
-	echo Rodando pep1-mili para \"$f\"
-	/usr/bin/time -f "\t$HOSTNAME & pep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./pep1-mili entradas/$f > /dev/null
-	
-	echo Rodando gep1 para \"$f\"
-	/usr/bin/time -f "\t$HOSTNAME & gep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./gep1 entradas/$f > /dev/null
-	
-	echo Rodando gep1-mili para \"$f\"
-	/usr/bin/time -f "\t$HOSTNAME & gep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./gep1-mili entradas/$f > /dev/null
+	for modo in "SEQUENCIAL" "UNLIMITED" "NORMAL"
+	do
+		echo Rodando ep2 para \"$precisao\"
+		/usr/bin/time -f "\t$HOSTNAME & $precisao & $modo & %es & %M Kbytes & %x @@ " -ao relatorios/myep2.tex ./ep2 $precisao > /dev/null
+	done
 done
 
-sed -i 's:@@:\\\\\n\t\\hline:g' relatorios/myep1.tex
-sed -i 's:_:\\_:g' relatorios/myep1.tex
-sed -i 's:_:\\_:g' relatorios/mycpu.tex
-sed -i '/^Command exited with non-zero status [0-9]/d' relatorios/myep1.tex
 
-cat relatorios/ep1.*.tex > relatorios/tempos.tex
-cat relatorios/cpu.*.tex > relatorios/maquinas.tex
 
-cd relatorios/
-pdflatex relatorio.tex
+#echo Rodando ep1-mili para \"$f\"
+#/usr/bin/time -f "\t$HOSTNAME & ep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./ep1-mili entradas/$f > /dev/null
+#
+#echo Rodando pep1 para \"$f\"
+#/usr/bin/time -f "\t$HOSTNAME & pep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./pep1 entradas/$f > /dev/null
+#
+#echo Rodando pep1-mili para \"$f\"
+#/usr/bin/time -f "\t$HOSTNAME & pep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./pep1-mili entradas/$f > /dev/null
+#
+#echo Rodando gep1 para \"$f\"
+#/usr/bin/time -f "\t$HOSTNAME & gep1 & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./gep1 entradas/$f > /dev/null
+#
+#echo Rodando gep1-mili para \"$f\"
+#/usr/bin/time -f "\t$HOSTNAME & gep1-mili & $f & %es & %M Kbytes & %x @@ " -ao relatorios/myep1.tex ./gep1-mili entradas/$f > /dev/null
+#
+#sed -i 's:@@:\\\\\n\t\\hline:g' relatorios/myep1.tex
+#sed -i 's:_:\\_:g' relatorios/myep1.tex
+#sed -i 's:_:\\_:g' relatorios/mycpu.tex
+#sed -i '/^Command exited with non-zero status [0-9]/d' relatorios/myep1.tex
+#
+#cat relatorios/ep1.*.tex > relatorios/tempos.tex
+#cat relatorios/cpu.*.tex > relatorios/maquinas.tex
+#
+#cd relatorios/
+#pdflatex relatorio.tex

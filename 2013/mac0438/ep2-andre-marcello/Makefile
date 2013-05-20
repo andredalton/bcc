@@ -13,8 +13,8 @@
 # *****************************************************************************/
 
 CC = gcc
-CCOPTS = -Wall -std=c99 -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
-LDOPTS = -lm -lpthread -lrt 
+CCOPTS = -Wall -pedantic -ansi -O2 -U_FORTFY_SOURCE -g
+LDOPTS = -lm -lpthread -lrt
 
 # Verifica as dependencias para o binário principal
 ep2: ep2.c

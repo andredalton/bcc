@@ -1,0 +1,8 @@
+Modo de uso:
+
+ep2 [DEBUG] [SEQUENCIAL] [UNLIMITED] <f>\n"
+
+DEBUG: para rodar em modo de depuracao;\n"
+SEQUENCIAL: rodar sem o uso de threads;\n"
+UNLIMITED: rodar sem ter que parar na barreira;\n"
+<f>: precisao do calculo.\n", argv[0]

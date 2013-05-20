@@ -19,7 +19,7 @@
 #include <semaphore.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/time.h>
+#include <time.h>
 
   /****************************************/
  /* Inicialização das variáveis globais. */
