@@ -62,6 +62,12 @@ Uma vez que o contador regressivo chegue a \verb+0+ a abelha irá incrementar o 
 
 \subsection{Ursos:}
 
+O monitor urso controla as \verb+B+ threads ursos. 
+Uma variável \verb+b em [0:B-1]+ controla o urso que será acordado (mantendo a justiça no acesso dos ursos ao pote). 
+Isto é, no monitor urso, um wait aguarda que o b-ésimo urso seja acordado, quando esse urso acorda, no primeiro momento, decrementa a variável \verb+H+ à metade, e depois para \verb+zero+ (pulando no 'tempo virtual' para os momentos relevantes). Como apenas um urso pode comer por vez, só temos uma thread ativa nesse momento, e portanto, não precisamos sincronizar o tempo.
+
+Neste momento, chama a \verb+allWake+ para acordar as abelhas e volta a dormir (note que a variável b é incrementada para que na próxima chamada \verb+allSleep+ das abelhas, um urso diferente seja acordado).
+
 \subsection{Monitores trabalhando em conjunto:}
 
 \end{document}
