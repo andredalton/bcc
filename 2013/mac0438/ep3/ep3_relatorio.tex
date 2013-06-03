@@ -46,6 +46,8 @@
 
 \subsection{Descrição do problema:}
 
+O problema deste EP deve ser resolvido utilizando monitores para controlar a concorrência. Os monitores que devem ser implementados serão o \verb+abelha+ e o \verb+urso+. Suas funções principais de controle de fluxo estão descritas nas duas próximas subsessões e a ultima subsessão faz uma abordagem ao funcionamento dos monitores em conjunto.
+
 \subsection{Abelhas:}
 
 Como descrito no problema existem \verb+N+ \emph{abelhas caridosas} que alimentam \verb+B+ \emph{ursos enjaulados}. Para resolver o problema o monitor abelha será implementado com uma variável \verb+tatu+, em memória compartilhada, funcionando como um contador regressivo. Esta variável indica quanto tempo resta para que cada uma das abelhas produza mel. Este contador será decrementado de maneira sincronizada entre os monitores do tipo \emph{abelha} utilizando a função \verb+sincronizacao+ implementada por ele.
