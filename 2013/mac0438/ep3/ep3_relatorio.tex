@@ -68,7 +68,7 @@ O monitor urso controla as \verb+B+ threads ursos.
 
 Como o algorítimo do urso deve ser disparado apenas quando a ultima abelha completa o pote de mel, então este monitor deverá conter uma variável \verb+sleep+ que indica quando um urso deve ser acordado pela ultima abelha que teve acesso ao pote. Para isso esta abelha chama a função \verb+signal+ do monitor urso que faz com que \verb+sleep=FALSE+.
 
-A justiça de acesso ao pote de mel pelos ursos é feita utilizando uma variável \verb+b em [0:B-1]+  que indica qual dos ursos está se alimentando atualmente, fazendo com que apenas o urso cujo idêntificador \verb+id=b+ seja acordado. Logo após ser acordado este urso modifica a variável \verb+sleep+ para \verb+TRUE+ fazendo fazendo com que o acesso ao pote seja dependente da chamada de \verb+signal+ por uma das abelhas.
+A justiça de acesso ao pote de mel pelos ursos é feita utilizando uma variável \verb+b em [0:B-1]+  que indica qual dos ursos está se alimentando atualmente, fazendo com que apenas o urso cujo idêntificador \verb+id=b+ seja acordado. Logo após ser acordado este urso modifica a variável \verb+sleep+ para \verb+TRUE+ tornando o acesso ao pote dependente da chamada de \verb+signal+ por uma das abelhas.
 
 Então o algoritmo salta para os instantes de tempo relevantes, decrementando a variável \verb+H+ à metade, e depois para \verb+zero+. Como apenas um urso pode comer por vez não existe necessidade de sincronização do tempo para os ursos.
 
