@@ -52,9 +52,11 @@ Como descrito no problema existem \verb+N+ \emph{abelhas caridosas} que alimenta
 
 Imediatamente antes do decréscimo do tempo restante para que esta abelha produza mel haverá a chamada á função \verb+sincronizacao+ que espera que todas as abelhas estejam sincronizadas neste ponto. Para tanto o monitor abelha terá uma variável \verb+Nab+ em memória compartilhada que guarda o número restante de processos que faltam a ser sincronizados. Imediatamente antes de chamar \verb+sincronizacao+ o monitor irá decrementar o número de processos ainda não sincronizados e \verb+sincronizacao+ irá aguardar que o contador \verb+Nab+ atinga o valor \verb+0+.
 
-Como existe ainda a necessidade de as abelhas estarem paradas enquanto um urso se alimenta existe também uma variável \verb+sleep+, em memória compartilhada, que irá indicar se as abelhas podem ou não prosseguir. Seu valor será alterado através das funções \verb+allSleep+ (\verb+sleep=TRUE+) e \verb+allWake+ (\verb+sleep=FALSE+) implementadas no monitor abelha.
+Como ainda há necessidade de as abelhas estarem paradas enquanto um urso se alimenta existe também uma variável \verb+sleep+, em memória compartilhada, que irá indicar se as abelhas podem ou não prosseguir. Seu valor será alterado através das funções \verb+allSleep+ (\verb+sleep=TRUE+) e \verb+allWake+ (\verb+sleep=FALSE+) implementadas no monitor abelha.
 
 Então para contemplar as duas necessidades a função \verb+sincronizacao+ irá aguardar que todos os processos estejam sincronizados e as abelhas não estejam dormindo para então prosseguir com o algoritmo.
+
+Uma vez que o contador regressivo chegue a \verb+0+ a abelha irá incrementar o número de porções de mel contidas no pote e irá verificar se o pote esta cheio. Se o pote estiver cheio esta abelha chama a função \verb+allSleep+ e logo após \verb+signal+ do monitor urso para que um dos ursos seja acordado.
 
 \subsection{Ursos:}
 
