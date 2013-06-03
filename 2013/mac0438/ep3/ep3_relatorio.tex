@@ -52,7 +52,7 @@ O problema deste EP deve ser resolvido utilizando monitores para controlar a con
 
 O monitor abelha controla as \verb+N+ threads abelhas.
 
-Para resolver o problema o monitor abelha será implementado com uma variável \verb+tatu+, em memória compartilhada, funcionando como um contador regressivo. Esta variável indica quanto tempo resta para que cada uma das abelhas produza mel. Este contador será decrementado de maneira sincronizada entre os monitores do tipo \emph{abelha} utilizando a função \verb+sincronizacao+ implementada por ele.
+Para resolver o problema o monitor abelha será implementado com uma variável \verb+tatu em [0:N]+, em memória compartilhada, funcionando como um contador regressivo. Esta variável indica quanto tempo resta para que cada uma das abelhas produza mel. Este contador será decrementado de maneira sincronizada entre os monitores do tipo \emph{abelha} utilizando a função \verb+sincronizacao+ implementada por ele.
 
 Imediatamente antes do decréscimo do tempo restante para que esta abelha produza mel haverá a chamada á função \verb+sincronizacao+ que espera que todas as abelhas estejam sincronizadas neste ponto. Para tanto o monitor abelha terá uma variável \verb+Nab+ em memória compartilhada que guarda o número restante de processos que faltam a ser sincronizados. Imediatamente antes de chamar \verb+sincronizacao+ o monitor irá decrementar o número de processos ainda não sincronizados e \verb+sincronizacao+ irá aguardar que o contador \verb+Nab+ atinga o valor \verb+0+.
 
