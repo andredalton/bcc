@@ -46,11 +46,13 @@
 
 \subsection{Descrição do problema:}
 
-O problema deste EP deve ser resolvido utilizando monitores para controlar a concorrência. Os monitores que devem ser implementados serão o \verb+abelha+ e o \verb+urso+. Suas funções principais de controle de fluxo estão descritas nas duas próximas subsessões e a ultima subsessão faz uma abordagem ao funcionamento dos monitores em conjunto.
+O problema deste EP deve ser resolvido utilizando monitores para controlar a concorrência. Os monitores que devem ser implementados serão o \verb+abelha+ e o \verb+urso+. Suas funções principais de controle de fluxo estão descritas nas duas próximas subsessões.
 
 \subsection{Abelhas:}
 
-Como descrito no problema existem \verb+N+ \emph{abelhas caridosas} que alimentam \verb+B+ \emph{ursos enjaulados}. Para resolver o problema o monitor abelha será implementado com uma variável \verb+tatu+, em memória compartilhada, funcionando como um contador regressivo. Esta variável indica quanto tempo resta para que cada uma das abelhas produza mel. Este contador será decrementado de maneira sincronizada entre os monitores do tipo \emph{abelha} utilizando a função \verb+sincronizacao+ implementada por ele.
+O monitor abelha controla as \verb+N+ threads abelhas.
+
+Para resolver o problema o monitor abelha será implementado com uma variável \verb+tatu+, em memória compartilhada, funcionando como um contador regressivo. Esta variável indica quanto tempo resta para que cada uma das abelhas produza mel. Este contador será decrementado de maneira sincronizada entre os monitores do tipo \emph{abelha} utilizando a função \verb+sincronizacao+ implementada por ele.
 
 Imediatamente antes do decréscimo do tempo restante para que esta abelha produza mel haverá a chamada á função \verb+sincronizacao+ que espera que todas as abelhas estejam sincronizadas neste ponto. Para tanto o monitor abelha terá uma variável \verb+Nab+ em memória compartilhada que guarda o número restante de processos que faltam a ser sincronizados. Imediatamente antes de chamar \verb+sincronizacao+ o monitor irá decrementar o número de processos ainda não sincronizados e \verb+sincronizacao+ irá aguardar que o contador \verb+Nab+ atinga o valor \verb+0+.
 
@@ -62,12 +64,14 @@ Uma vez que o contador regressivo chegue a \verb+0+ a abelha irá incrementar o 
 
 \subsection{Ursos:}
 
-O monitor urso controla as \verb+B+ threads ursos. 
-Uma variável \verb+b em [0:B-1]+ controla o urso que será acordado (mantendo a justiça no acesso dos ursos ao pote). 
-Isto é, no monitor urso, um wait aguarda que o b-ésimo urso seja acordado, quando esse urso acorda, no primeiro momento, decrementa a variável \verb+H+ à metade, e depois para \verb+zero+ (pulando no 'tempo virtual' para os momentos relevantes). Como apenas um urso pode comer por vez, só temos uma thread ativa nesse momento, e portanto, não precisamos sincronizar o tempo.
+O monitor urso controla as \verb+B+ threads ursos.
 
-Neste momento, chama a \verb+allWake+ para acordar as abelhas e volta a dormir (note que a variável b é incrementada para que na próxima chamada \verb+allSleep+ das abelhas, um urso diferente seja acordado).
+Como o algorítimo do urso deve ser disparado apenas quando a ultima abelha completa o pote de mel, então este monitor deverá conter uma variável \verb+sleep+ que indica quando um urso deve ser acordado pela ultima abelha que teve acesso ao pote. Para isso esta abelha chama a função \verb+signal+ do monitor urso que faz com que \verb+sleep=FALSE+.
 
-\subsection{Monitores trabalhando em conjunto:}
+A justiça de acesso ao pote de mel pelos ursos é feita utilizando uma variável \verb+b em [0:B-1]+  que indica qual dos ursos está se alimentando atualmente, fazendo com que apenas o urso cujo idêntificador \verb+id=b+ seja acordado. Logo após ser acordado este urso modifica a variável \verb+sleep+ para \verb+TRUE+ fazendo fazendo com que o acesso ao pote seja dependente da chamada de \verb+signal+ por uma das abelhas.
+
+Então o algoritmo salta para os instantes de tempo relevantes, decrementando a variável \verb+H+ à metade, e depois para \verb+zero+. Como apenas um urso pode comer por vez não existe necessidade de sincronização do tempo para os ursos.
+
+Ao final do algorítimo, chama a \verb+allWake+ das abelhas para acordá-las, incrementa a variável \verb+b+ para dar acesso para o próximo urso ao pote de mel e volta a dormir.
 
 \end{document}
