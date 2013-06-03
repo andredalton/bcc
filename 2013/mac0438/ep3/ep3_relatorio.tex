@@ -1,0 +1,63 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[tmargin=2cm, bmargin=2cm, lmargin=2cm, rmargin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage[pdftex]{hyperref}
+\usepackage{enumerate}
+\usepackage{amsthm,amssymb,amstext,amsmath}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{eucal}
+\usepackage{mathrsfs}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{fancyvrb}
+\DefineVerbatimEnvironment{code}{Verbatim}{fontsize=\small}
+\DefineVerbatimEnvironment{example}{Verbatim}{fontsize=\small}
+
+\title{Título\\MAC0438 - Programação Concorrente}
+\author{
+    André Meneghelli Vale - 4898948\\
+    \texttt{andredalton@gmail.com}
+    \and
+    Marcello Souza de Oliveira - 6432692\\
+    \texttt{mcellor210@gmail.com}
+}
+\date{}
+
+\pdfinfo{%
+  /Title    ()
+  /Author   ()
+  /Creator  ()
+  /Producer ()
+  /Subject  ()
+  /Keywords ()
+}
+
+\begin{document}
+\maketitle
+
+\newpage
+
+\section{Problema das abelhas e ursos.}
+
+\subsection{Descrição do problema:}
+
+\subsection{Abelhas:}
+
+Como descrito no problema existem \verb+N+ \emph{abelhas caridosas} que alimentam \verb+B+ \emph{ursos enjaulados}. Para resolver o problema o monitor abelha será implementado com uma variável \verb+tatu+, em memória compartilhada, funcionando como um contador regressivo. Esta variável indica quanto tempo resta para que cada uma das abelhas produza mel. Este contador será decrementado de maneira sincronizada entre os monitores do tipo \emph{abelha} utilizando a função \verb+sincronizacao+ implementada por ele.
+
+Imediatamente antes do decréscimo do tempo restante para que esta abelha produza mel haverá a chamada á função \verb+sincronizacao+ que espera que todas as abelhas estejam sincronizadas neste ponto. Para tanto o monitor abelha terá uma variável \verb+Nab+ em memória compartilhada que guarda o número restante de processos que faltam a ser sincronizados. Imediatamente antes de chamar \verb+sincronizacao+ o monitor irá decrementar o número de processos ainda não sincronizados e \verb+sincronizacao+ irá aguardar que o contador \verb+Nab+ atinga o valor \verb+0+.
+
+Como existe ainda a necessidade de as abelhas estarem paradas enquanto um urso se alimenta existe também uma variável \verb+sleep+, em memória compartilhada, que irá indicar se as abelhas podem ou não prosseguir. Seu valor será alterado através das funções \verb+allSleep+ (\verb+sleep=TRUE+) e \verb+allWake+ (\verb+sleep=FALSE+) implementadas no monitor abelha.
+
+Então para contemplar as duas necessidades a função \verb+sincronizacao+ irá aguardar que todos os processos estejam sincronizados e as abelhas não estejam dormindo para então prosseguir com o algoritmo.
+
+\subsection{Ursos:}
+
+\subsection{Monitores trabalhando em conjunto:}
+
+\end{document}

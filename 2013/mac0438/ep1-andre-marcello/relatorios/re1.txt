@@ -1,0 +1,325 @@
+Solucao concorrente.  \\*
+Criando atletas:   \\*
+	Masculino Profissional: 5  \\*
+	Feminino Profissional: 5  \\*
+	Masculino Amador: 20  \\*
+	Feminino Amador: 20  \\*
+  \\*
+Classificacao 30min:  \\*
+   1) "Blake Green"                 M   P   NA   2400.00m  \\*
+   2) "Josiah Rivera"               M   P   NA   2400.00m  \\*
+   3) "Cameron Hill"                M   P   NA   2400.00m  \\*
+   1) "Carly Gentry"                F   P   NA   2000.00m  \\*
+   2) "Jakira Cortez"               F   P   NA   2000.00m  \\*
+   3) "Audrey Lawson"               F   P   NA   2000.00m  \\*
+   1) "Geovanni Soto"               M   A   NA   1500.00m  \\*
+   2) "Jquan Rodriguez"             M   A   NA   1500.00m  \\*
+   3) "Michael Nolan"               M   A   NA   1500.00m  \\*
+   1) "Phoebe Ruiz"                 F   A   NA   1200.00m  \\*
+   2) "Kaleigh Ford"                F   A   NA   1200.00m  \\*
+   3) "Kiaya Patel"                 F   A   NA   1200.00m  \\*
+  \\*
+Classificacao 60min:  \\*
+   1) "Blake Green"                M   P   CI   12966.67m  \\*
+   2) "Josiah Rivera"              M   P   CI   12883.33m  \\*
+   3) "Jackie Boyd"                M   P   CI   12800.00m  \\*
+   1) "Jakira Cortez"               F   P   CI   4812.50m  \\*
+   2) "Carly Gentry"                F   P   CI   4737.50m  \\*
+   3) "Audrey Lawson"               F   P   CI   4625.00m  \\*
+   1) "Geovanni Soto"               M   A   NA   3000.00m  \\*
+   2) "Jquan Rodriguez"             M   A   NA   3000.00m  \\*
+   3) "Michael Nolan"               M   A   NA   3000.00m  \\*
+   1) "Phoebe Ruiz"                 F   A   NA   2400.00m  \\*
+   2) "Kaleigh Ford"                F   A   NA   2400.00m  \\*
+   3) "Kiaya Patel"                 F   A   NA   2400.00m  \\*
+  \\*
+Classificacao 90min:  \\*
+   1) "Blake Green"                M   P   CI   37966.67m  \\*
+   2) "Josiah Rivera"              M   P   CI   37883.33m  \\*
+   3) "Jackie Boyd"                M   P   CI   37800.00m  \\*
+   1) "Jakira Cortez"              F   P   CI   27312.50m  \\*
+   2) "Carly Gentry"               F   P   CI   27237.50m  \\*
+   3) "Audrey Lawson"              F   P   CI   27125.00m  \\*
+   1) "Jquan Rodriguez"             M   A   CI   9550.00m  \\*
+   2) "Titus Soto"                  M   A   CI   9500.00m  \\*
+   3) "Ian Miller"                  M   A   CI   9450.00m  \\*
+   1) "Phoebe Ruiz"                 F   A   NA   3600.00m  \\*
+   2) "Kaleigh Ford"                F   A   NA   3600.00m  \\*
+   3) "Kiaya Patel"                 F   A   NA   3600.00m  \\*
+  \\*
+Classificacao 120min:  \\*
+   1) "Blake Green"                M   P   CI   59300.00m  \\*
+   2) "Josiah Rivera"              M   P   CI   59250.00m  \\*
+   3) "Jackie Boyd"                M   P   CI   59200.00m  \\*
+   1) "Jakira Cortez"              F   P   CI   49812.50m  \\*
+   2) "Carly Gentry"               F   P   CI   49737.50m  \\*
+   3) "Audrey Lawson"              F   P   CI   49625.00m  \\*
+   1) "Jquan Rodriguez"            M   A   CI   24550.00m  \\*
+   2) "Titus Soto"                 M   A   CI   24500.00m  \\*
+   3) "Ian Miller"                 M   A   CI   24450.00m  \\*
+   1) "Chloe Wilson"               F   A   CI   13029.17m  \\*
+   2) "Bina Ramos"                 F   A   CI   12966.67m  \\*
+   3) "Carolina Rogers"            F   A   CI   12904.17m  \\*
+  \\*
+Classificacao 150min:  \\*
+   1) "Blake Green"                M   P   CI   91300.00m  \\*
+   2) "Josiah Rivera"              M   P   CI   91216.67m  \\*
+   3) "Jackie Boyd"                M   P   CI   91133.33m  \\*
+   1) "Jakira Cortez"              F   P   CI   62027.78m  \\*
+   2) "Carly Gentry"               F   P   CI   61994.44m  \\*
+   3) "Audrey Lawson"              F   P   CI   61944.44m  \\*
+   1) "Jquan Rodriguez"            M   A   CI   39550.00m  \\*
+   2) "Titus Soto"                 M   A   CI   39500.00m  \\*
+   3) "Ian Miller"                 M   A   CI   39450.00m  \\*
+   1) "Chloe Wilson"               F   A   CI   25529.17m  \\*
+   2) "Bina Ramos"                 F   A   CI   25466.67m  \\*
+   3) "Carolina Rogers"            F   A   CI   25404.17m  \\*
+  \\*
+Classificacao 180min:  \\*
+   1) "Blake Green"               M   P   CI   116300.00m  \\*
+   2) "Josiah Rivera"             M   P   CI   116216.67m  \\*
+   3) "Jackie Boyd"               M   P   CI   116133.33m  \\*
+   1) "Jakira Cortez"              F   P   CI   89562.50m  \\*
+   2) "Carly Gentry"               F   P   CI   89487.50m  \\*
+   3) "Audrey Lawson"              F   P   CI   89375.00m  \\*
+   1) "Jquan Rodriguez"            M   A   CI   54100.00m  \\*
+   2) "Titus Soto"                 M   A   CI   54080.00m  \\*
+   3) "Ian Miller"                 M   A   CI   54060.00m  \\*
+   1) "Chloe Wilson"               F   A   CI   38029.17m  \\*
+   2) "Bina Ramos"                 F   A   CI   37966.67m  \\*
+   3) "Carolina Rogers"            F   A   CI   37904.17m  \\*
+  \\*
+Classificacao 210min:  \\*
+   1) "Blake Green"               M   P   CI   141300.00m  \\*
+   2) "Josiah Rivera"             M   P   CI   141216.67m  \\*
+   3) "Jackie Boyd"               M   P   CI   141133.33m  \\*
+   1) "Jakira Cortez"             F   P   CI   112062.50m  \\*
+   2) "Carly Gentry"              F   P   CI   111987.50m  \\*
+   3) "Audrey Lawson"             F   P   CI   111875.00m  \\*
+   1) "Jquan Rodriguez"            M   A   CI   60100.00m  \\*
+   2) "Titus Soto"                 M   A   CI   60080.00m  \\*
+   3) "Ian Miller"                 M   A   CI   60060.00m  \\*
+   1) "Chloe Wilson"               F   A   CI   50529.17m  \\*
+   2) "Bina Ramos"                 F   A   CI   50466.67m  \\*
+   3) "Carolina Rogers"            F   A   CI   50404.17m  \\*
+  \\*
+Classificacao 240min:  \\*
+   1) "Blake Green"               M   P   CI   166300.00m  \\*
+   2) "Josiah Rivera"             M   P   CI   166216.67m  \\*
+   3) "Jackie Boyd"               M   P   CI   166133.33m  \\*
+   1) "Jakira Cortez"             F   P   CI   134562.50m  \\*
+   2) "Carly Gentry"              F   P   CI   134487.50m  \\*
+   3) "Audrey Lawson"             F   P   CI   134375.00m  \\*
+   1) "Jquan Rodriguez"            M   A   CI   73383.33m  \\*
+   2) "Titus Soto"                 M   A   CI   73300.00m  \\*
+   3) "Ian Miller"                 M   A   CI   73216.67m  \\*
+   1) "Chloe Wilson"               F   A   CI   57491.67m  \\*
+   2) "Bina Ramos"                 F   A   CI   57466.67m  \\*
+   3) "Carolina Rogers"            F   A   CI   57441.67m  \\*
+  \\*
+Classificacao 270min:  \\*
+   1) "Blake Green"               M   P   CO   185550.00m  \\*
+   2) "Josiah Rivera"             M   P   CO   185475.00m  \\*
+   3) "Jackie Boyd"               M   P   CO   185475.00m  \\*
+   1) "Jakira Cortez"             F   P   CI   157062.50m  \\*
+   2) "Carly Gentry"              F   P   CI   156987.50m  \\*
+   3) "Audrey Lawson"             F   P   CI   156875.00m  \\*
+   1) "Jquan Rodriguez"            M   A   CI   92550.00m  \\*
+   2) "Titus Soto"                 M   A   CI   92500.00m  \\*
+   3) "Ian Miller"                 M   A   CI   92450.00m  \\*
+   1) "Chloe Wilson"               F   A   CI   62491.67m  \\*
+   2) "Bina Ramos"                 F   A   CI   62466.67m  \\*
+   3) "Carolina Rogers"            F   A   CI   62441.67m  \\*
+  \\*
+Classificacao 300min:  \\*
+   1) "Blake Green"               M   P   CO   193050.00m  \\*
+   2) "Josiah Rivera"             M   P   CO   192975.00m  \\*
+   3) "Jackie Boyd"               M   P   CO   192975.00m  \\*
+   1) "Jakira Cortez"             F   P   CI   179562.50m  \\*
+   2) "Carly Gentry"              F   P   CI   179487.50m  \\*
+   3) "Audrey Lawson"             F   P   CI   179375.00m  \\*
+   1) "Jquan Rodriguez"           M   A   CI   107550.00m  \\*
+   2) "Titus Soto"                M   A   CI   107500.00m  \\*
+   3) "Ian Miller"                M   A   CI   107450.00m  \\*
+   1) "Chloe Wilson"               F   A   CI   82258.33m  \\*
+   2) "Bina Ramos"                 F   A   CI   82133.33m  \\*
+   3) "Carolina Rogers"            F   A   CI   82008.33m  \\*
+  \\*
+Classificacao 330min:  \\*
+   1) "Blake Green"               M   P   CO   200550.00m  \\*
+   2) "Josiah Rivera"             M   P   CO   200475.00m  \\*
+   3) "Jackie Boyd"               M   P   CO   200475.00m  \\*
+   1) "Carly Gentry"              F   P   CO   188819.23m  \\*
+   2) "Jakira Cortez"             F   P   CO   188819.23m  \\*
+   3) "Audrey Lawson"             F   P   CO   188738.46m  \\*
+   1) "Jquan Rodriguez"           M   A   CI   122550.00m  \\*
+   2) "Titus Soto"                M   A   CI   122500.00m  \\*
+   3) "Ian Miller"                M   A   CI   122450.00m  \\*
+   1) "Chloe Wilson"               F   A   CI   95529.17m  \\*
+   2) "Bina Ramos"                 F   A   CI   95466.67m  \\*
+   3) "Carolina Rogers"            F   A   CI   95404.17m  \\*
+  \\*
+Classificacao 360min:  \\*
+   1) "Blake Green"               M   P   CO   208050.00m  \\*
+   2) "Josiah Rivera"             M   P   CO   207975.00m  \\*
+   3) "Jackie Boyd"               M   P   CO   207975.00m  \\*
+   1) "Carly Gentry"              F   P   CO   195742.31m  \\*
+   2) "Jakira Cortez"             F   P   CO   195742.31m  \\*
+   3) "Audrey Lawson"             F   P   CO   195661.54m  \\*
+   1) "Jquan Rodriguez"           M   A   CI   137550.00m  \\*
+   2) "Titus Soto"                M   A   CI   137500.00m  \\*
+   3) "Ian Miller"                M   A   CI   137450.00m  \\*
+   1) "Chloe Wilson"              F   A   CI   108029.17m  \\*
+   2) "Bina Ramos"                F   A   CI   107966.67m  \\*
+   3) "Carolina Rogers"           F   A   CI   107904.17m  \\*
+  \\*
+Classificacao 390min:  \\*
+   1) "Blake Green"               M   P   CO   215550.00m  \\*
+   2) "Josiah Rivera"             M   P   CO   215475.00m  \\*
+   3) "Jackie Boyd"               M   P   CO   215475.00m  \\*
+   1) "Carly Gentry"              F   P   CO   202665.38m  \\*
+   2) "Jakira Cortez"             F   P   CO   202665.38m  \\*
+   3) "Audrey Lawson"             F   P   CO   202584.62m  \\*
+   1) "Jquan Rodriguez"           M   A   CI   152550.00m  \\*
+   2) "Titus Soto"                M   A   CI   152500.00m  \\*
+   3) "Ian Miller"                M   A   CI   152450.00m  \\*
+   1) "Chloe Wilson"              F   A   CI   120529.17m  \\*
+   2) "Bina Ramos"                F   A   CI   120466.67m  \\*
+   3) "Carolina Rogers"           F   A   CI   120404.17m  \\*
+  \\*
+Classificacao 420min:  \\*
+   1) "Blake Green"               M   P   CO   223050.00m  \\*
+   2) "Josiah Rivera"             M   P   CO   222975.00m  \\*
+   3) "Jackie Boyd"               M   P   CO   222975.00m  \\*
+   1) "Carly Gentry"              F   P   CO   209588.46m  \\*
+   2) "Jakira Cortez"             F   P   CO   209588.46m  \\*
+   3) "Audrey Lawson"             F   P   CO   209507.69m  \\*
+   1) "Jquan Rodriguez"           M   A   CI   167550.00m  \\*
+   2) "Titus Soto"                M   A   CI   167500.00m  \\*
+   3) "Ian Miller"                M   A   CI   167450.00m  \\*
+   1) "Chloe Wilson"              F   A   CI   133029.17m  \\*
+   2) "Bina Ramos"                F   A   CI   132966.67m  \\*
+   3) "Carolina Rogers"           F   A   CI   132904.17m  \\*
+  \\*
+Classificacao 450min:  \\*
+   1) "Carly Gentry"              F   P   CO   216511.54m  \\*
+   2) "Jakira Cortez"             F   P   CO   216511.54m  \\*
+   3) "Audrey Lawson"             F   P   CO   216430.77m  \\*
+   1) "Jquan Rodriguez"           M   A   CI   182550.00m  \\*
+   2) "Titus Soto"                M   A   CI   182500.00m  \\*
+   3) "Ian Miller"                M   A   CI   182450.00m  \\*
+   1) "Chloe Wilson"              F   A   CI   145529.17m  \\*
+   2) "Bina Ramos"                F   A   CI   145466.67m  \\*
+   3) "Carolina Rogers"           F   A   CI   145404.17m  \\*
+  \\*
+*********************************************************************  \\*
+**                      CLASSIFICACAO FINAL!!!                     **  \\*
+**-----------------------------------------------------------------**  \\*
+**                      Masculino Profissional                     **  \\*
+*********************************************************************  \\*
+   1) "Blake Green"            M   P   FI   07h11m00s  \\*
+   2) "Josiah Rivera"          M   P   FI   07h11m18s  \\*
+   3) "Jackie Boyd"            M   P   FI   07h11m18s  \\*
+  \\*
+Classificacao 480min:  \\*
+   1) "Carly Gentry"              F   P   CO   223434.62m  \\*
+   2) "Jakira Cortez"             F   P   CO   223434.62m  \\*
+   3) "Audrey Lawson"             F   P   CO   223353.85m  \\*
+   1) "Jquan Rodriguez"           M   A   CO   188480.00m  \\*
+   2) "Titus Soto"                M   A   CO   188480.00m  \\*
+   3) "Traven Moore"              M   A   CO   188360.00m  \\*
+   1) "Chloe Wilson"              F   A   CI   158029.17m  \\*
+   2) "Bina Ramos"                F   A   CI   157966.67m  \\*
+   3) "Carolina Rogers"           F   A   CI   157904.17m  \\*
+  \\*
+Classificacao 510min:  \\*
+   1) "Jquan Rodriguez"           M   A   CO   194480.00m  \\*
+   2) "Titus Soto"                M   A   CO   194480.00m  \\*
+   3) "Traven Moore"              M   A   CO   194360.00m  \\*
+   1) "Chloe Wilson"              F   A   CI   170529.17m  \\*
+   2) "Bina Ramos"                F   A   CI   170466.67m  \\*
+   3) "Carolina Rogers"           F   A   CI   170404.17m  \\*
+  \\*
+*********************************************************************  \\*
+**                      CLASSIFICACAO FINAL!!!                     **  \\*
+**-----------------------------------------------------------------**  \\*
+**                      Feminino  Profissional                     **  \\*
+*********************************************************************  \\*
+   1) "Carly Gentry"           F   P   FI   08h10m15s  \\*
+   2) "Jakira Cortez"          F   P   FI   08h10m15s  \\*
+   3) "Audrey Lawson"          F   P   FI   08h10m36s  \\*
+  \\*
+Classificacao 540min:  \\*
+   1) "Jquan Rodriguez"           M   A   CO   200480.00m  \\*
+   2) "Titus Soto"                M   A   CO   200480.00m  \\*
+   3) "Traven Moore"              M   A   CO   200360.00m  \\*
+   1) "Chloe Wilson"              F   A   CI   183029.17m  \\*
+   2) "Bina Ramos"                F   A   CI   182966.67m  \\*
+   3) "Carolina Rogers"           F   A   CI   182904.17m  \\*
+  \\*
+Classificacao 570min:  \\*
+   1) "Jquan Rodriguez"           M   A   CO   206480.00m  \\*
+   2) "Titus Soto"                M   A   CO   206480.00m  \\*
+   3) "Traven Moore"              M   A   CO   206360.00m  \\*
+   1) "Chloe Wilson"              F   A   CO   188081.82m  \\*
+   2) "Bina Ramos"                F   A   CO   188072.73m  \\*
+   3) "Carolina Rogers"           F   A   CO   188009.09m  \\*
+  \\*
+Classificacao 600min:  \\*
+   1) "Jquan Rodriguez"           M   A   CO   212480.00m  \\*
+   2) "Titus Soto"                M   A   CO   212480.00m  \\*
+   3) "Traven Moore"              M   A   CO   212360.00m  \\*
+   1) "Chloe Wilson"              F   A   CO   193536.36m  \\*
+   2) "Bina Ramos"                F   A   CO   193527.27m  \\*
+   3) "Carolina Rogers"           F   A   CO   193463.64m  \\*
+  \\*
+Classificacao 630min:  \\*
+   1) "Jquan Rodriguez"           M   A   CO   218480.00m  \\*
+   2) "Titus Soto"                M   A   CO   218480.00m  \\*
+   3) "Traven Moore"              M   A   CO   218360.00m  \\*
+   1) "Chloe Wilson"              F   A   CO   198990.91m  \\*
+   2) "Bina Ramos"                F   A   CO   198981.82m  \\*
+   3) "Carolina Rogers"           F   A   CO   198918.18m  \\*
+  \\*
+Classificacao 660min:  \\*
+   1) "Jquan Rodriguez"           M   A   CO   224480.00m  \\*
+   2) "Titus Soto"                M   A   CO   224480.00m  \\*
+   3) "Traven Moore"              M   A   CO   224360.00m  \\*
+   1) "Chloe Wilson"              F   A   CO   204445.45m  \\*
+   2) "Bina Ramos"                F   A   CO   204436.36m  \\*
+   3) "Carolina Rogers"           F   A   CO   204372.73m  \\*
+  \\*
+Classificacao 690min:  \\*
+   1) "Chloe Wilson"              F   A   CO   209900.00m  \\*
+   2) "Bina Ramos"                F   A   CO   209890.91m  \\*
+   3) "Carolina Rogers"           F   A   CO   209827.27m  \\*
+  \\*
+*********************************************************************  \\*
+**                      CLASSIFICACAO FINAL!!!                     **  \\*
+**-----------------------------------------------------------------**  \\*
+**                         Masculino Amador                        **  \\*
+*********************************************************************  \\*
+   1) "Jquan Rodriguez"        M   A   FI   11h06m36s  \\*
+   2) "Titus Soto"             M   A   FI   11h06m36s  \\*
+   3) "Traven Moore"           M   A   FI   11h07m12s  \\*
+  \\*
+Classificacao 720min:  \\*
+   1) "Chloe Wilson"              F   A   CO   215354.55m  \\*
+   2) "Bina Ramos"                F   A   CO   215345.45m  \\*
+   3) "Carolina Rogers"           F   A   CO   215281.82m  \\*
+  \\*
+Classificacao 750min:  \\*
+   1) "Chloe Wilson"              F   A   CO   220809.09m  \\*
+   2) "Bina Ramos"                F   A   CO   220800.00m  \\*
+   3) "Carolina Rogers"           F   A   CO   220736.36m  \\*
+  \\*
+Classificacao 780min:  \\*
+  \\*
+*********************************************************************  \\*
+**                      CLASSIFICACAO FINAL!!!                     **  \\*
+**-----------------------------------------------------------------**  \\*
+**                          Feminino Amador                        **  \\*
+*********************************************************************  \\*
+   1) "Chloe Wilson"           F   A   FI   12h57m27s  \\*
+   2) "Bina Ramos"             F   A   FI   12h57m30s  \\*
+   3) "Carolina Rogers"        F   A   FI   12h57m51s  \\*

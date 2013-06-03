@@ -1,0 +1,357 @@
+Solucao concorrente.
+Criando atletas: 
+	Masculino Profissional: 500
+	Feminino Profissional: 500
+	Masculino Amador: 500
+	Feminino Amador: 500
+
+[40;37mClassificacao 30min:                                                [0m
+[31m   1) "Alex Gates"                  M   P   NA   2400.00m      [0m
+[31m   2) "Jacob Sanders"               M   P   NA   2400.00m      [0m
+[31m   3) "Aidan Parker"                M   P   NA   2400.00m      [0m
+[32m   1) "Sophie Fox"                  F   P   NA   2000.00m      [0m
+[32m   2) "Deasia Suarez"               F   P   NA   2000.00m      [0m
+[32m   3) "Marina Henry"                F   P   NA   2000.00m      [0m
+[33m   1) "Carter Smith"                M   A   NA   1500.00m      [0m
+[33m   2) "Kempton Maxwell"             M   A   NA   1500.00m      [0m
+[33m   3) "Jesse Blair"                 M   A   NA   1500.00m      [0m
+[34m   1) "Molly Flynn"                 F   A   NA   1200.00m      [0m
+[34m   2) "Taniya Dean"                 F   A   NA   1200.00m      [0m
+[34m   3) "Mary Vazquez"                F   A   NA   1200.00m      [0m
+
+[40;37mClassificacao 60min:                                                [0m
+[31m   1) "Alex Gates"                 M   P   CI   12966.67m      [0m
+[31m   2) "Jacob Sanders"              M   P   CI   12883.33m      [0m
+[31m   3) "Aidan Parker"               M   P   CI   12800.00m      [0m
+[32m   1) "Maria Baker"                 F   P   TI   3800.00m      [0m
+[32m   2) "Karlie Perez"                F   P   TI   3800.00m      [0m
+[32m   3) "Andrea Trevino"              F   P   TI   3800.00m      [0m
+[33m   1) "Carter Smith"                M   A   NA   3000.00m      [0m
+[33m   2) "Kempton Maxwell"             M   A   NA   3000.00m      [0m
+[33m   3) "Jesse Blair"                 M   A   NA   3000.00m      [0m
+[34m   1) "Molly Flynn"                 F   A   NA   2400.00m      [0m
+[34m   2) "Taniya Dean"                 F   A   NA   2400.00m      [0m
+[34m   3) "Mary Vazquez"                F   A   NA   2400.00m      [0m
+
+[40;37mClassificacao 90min:                                                [0m
+[31m   1) "Alex Gates"                 M   P   CI   37966.67m      [0m
+[31m   2) "Jacob Sanders"              M   P   CI   37883.33m      [0m
+[31m   3) "Aidan Parker"               M   P   CI   37800.00m      [0m
+[32m   1) "Maria Baker"                F   P   CI   16625.00m      [0m
+[32m   2) "Karlie Perez"               F   P   CI   16550.00m      [0m
+[32m   3) "Sophia Sanchez"             F   P   CI   16175.00m      [0m
+[33m   1) "Carter Smith"                M   A   TI   3800.00m      [0m
+[33m   2) "Kempton Maxwell"             M   A   TI   3800.00m      [0m
+[33m   3) "Wesley Hall"                 M   A   TI   3800.00m      [0m
+[34m   1) "Molly Flynn"                 F   A   NA   3600.00m      [0m
+[34m   2) "Taniya Dean"                 F   A   NA   3600.00m      [0m
+[34m   3) "Mary Vazquez"                F   A   NA   3600.00m      [0m
+
+[40;37mClassificacao 120min:                                                [0m
+[31m   1) "Alex Gates"                 M   P   CI   59300.00m      [0m
+[31m   2) "Jacob Sanders"              M   P   CI   59250.00m      [0m
+[31m   3) "Aidan Parker"               M   P   CI   59200.00m      [0m
+[32m   1) "Maria Baker"                F   P   CI   39125.00m      [0m
+[32m   2) "Karlie Perez"               F   P   CI   39050.00m      [0m
+[32m   3) "Sophia Sanchez"             F   P   CI   38675.00m      [0m
+[33m   1) "Carter Smith"                M   A   TI   3800.00m      [0m
+[33m   2) "Kempton Maxwell"             M   A   TI   3800.00m      [0m
+[33m   3) "Wesley Hall"                 M   A   TI   3800.00m      [0m
+[34m   1) "Alexandra Mcdaniel"          F   A   TI   3800.00m      [0m
+[34m   2) "Julia Ellison"               F   A   TI   3800.00m      [0m
+[34m   3) "Grace Beard"                 F   A   TI   3800.00m      [0m
+
+[40;37mClassificacao 150min:                                                [0m
+[31m   1) "Alex Gates"                 M   P   CI   91300.00m      [0m
+[31m   2) "Jacob Sanders"              M   P   CI   91216.67m      [0m
+[31m   3) "Aidan Parker"               M   P   CI   91091.67m      [0m
+[32m   1) "Maria Baker"                F   P   CI   57277.78m      [0m
+[32m   2) "Karlie Perez"               F   P   CI   57244.44m      [0m
+[32m   3) "Sophia Sanchez"             F   P   CI   57077.78m      [0m
+[33m   1) "Jaeden Franklin"             M   A   CI   7850.00m      [0m
+[33m   2) "Joshua Brown"                M   A   CI   7550.00m      [0m
+[33m   3) "Jack Jackson"                M   A   CI   7200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"          F   A   TI   3800.00m      [0m
+[34m   2) "Julia Ellison"               F   A   TI   3800.00m      [0m
+[34m   3) "Grace Beard"                 F   A   TI   3800.00m      [0m
+
+[40;37mClassificacao 180min:                                                [0m
+[31m   1) "Alex Gates"                M   P   CI   116300.00m      [0m
+[31m   2) "Jacob Sanders"             M   P   CI   116216.67m      [0m
+[31m   3) "Aidan Parker"              M   P   CI   116091.67m      [0m
+[32m   1) "Maria Baker"                F   P   CI   76074.51m      [0m
+[32m   2) "Karlie Perez"               F   P   CI   75956.86m      [0m
+[32m   3) "Sophia Sanchez"             F   P   CI   75368.63m      [0m
+[33m   1) "Jaeden Franklin"            M   A   CI   22850.00m      [0m
+[33m   2) "Joshua Brown"               M   A   CI   22550.00m      [0m
+[33m   3) "Jack Jackson"               M   A   CI   22200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"         F   A   CI   11445.83m      [0m
+[34m   2) "Julia Ellison"              F   A   CI   10841.67m      [0m
+[34m   3) "Grace Beard"                F   A   CI   10445.83m      [0m
+
+[40;37mClassificacao 210min:                                                [0m
+[31m   1) "Alex Gates"                M   P   CI   141300.00m      [0m
+[31m   2) "Jacob Sanders"             M   P   CI   141216.67m      [0m
+[31m   3) "Aidan Parker"              M   P   CI   141091.67m      [0m
+[32m   1) "Maria Baker"               F   P   CI   101375.00m      [0m
+[32m   2) "Karlie Perez"              F   P   CI   101300.00m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CI   100925.00m      [0m
+[33m   1) "Jaeden Franklin"            M   A   CI   37850.00m      [0m
+[33m   2) "Joshua Brown"               M   A   CI   37550.00m      [0m
+[33m   3) "Jack Jackson"               M   A   CI   37200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"         F   A   CI   23945.83m      [0m
+[34m   2) "Julia Ellison"              F   A   CI   23341.67m      [0m
+[34m   3) "Grace Beard"                F   A   CI   22945.83m      [0m
+
+[40;37mClassificacao 240min:                                                [0m
+[31m   1) "Alex Gates"                M   P   CI   166300.00m      [0m
+[31m   2) "Jacob Sanders"             M   P   CI   166216.67m      [0m
+[31m   3) "Aidan Parker"              M   P   CI   166091.67m      [0m
+[32m   1) "Maria Baker"               F   P   CI   123875.00m      [0m
+[32m   2) "Karlie Perez"              F   P   CI   123800.00m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CI   123425.00m      [0m
+[33m   1) "Jaeden Franklin"            M   A   CI   52850.00m      [0m
+[33m   2) "Joshua Brown"               M   A   CI   52550.00m      [0m
+[33m   3) "Jack Jackson"               M   A   CI   52200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"         F   A   CI   36445.83m      [0m
+[34m   2) "Julia Ellison"              F   A   CI   35841.67m      [0m
+[34m   3) "Grace Beard"                F   A   CI   35445.83m      [0m
+
+[40;37mClassificacao 270min:                                                [0m
+[31m   1) "Alex Gates"                M   P   CO   185550.00m      [0m
+[31m   2) "Jacob Sanders"             M   P   CO   185500.00m      [0m
+[31m   3) "Aidan Parker"              M   P   CO   185425.00m      [0m
+[32m   1) "Maria Baker"               F   P   CI   146375.00m      [0m
+[32m   2) "Karlie Perez"              F   P   CI   146300.00m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CI   145925.00m      [0m
+[33m   1) "Jaeden Franklin"            M   A   CI   59420.00m      [0m
+[33m   2) "Joshua Brown"               M   A   CI   59300.00m      [0m
+[33m   3) "Jack Jackson"               M   A   CI   59160.00m      [0m
+[34m   1) "Alexandra Mcdaniel"         F   A   CI   48945.83m      [0m
+[34m   2) "Julia Ellison"              F   A   CI   48341.67m      [0m
+[34m   3) "Grace Beard"                F   A   CI   47945.83m      [0m
+
+[40;37mClassificacao 300min:                                                [0m
+[31m   1) "Alex Gates"                M   P   CO   193050.00m      [0m
+[31m   2) "Jacob Sanders"             M   P   CO   193000.00m      [0m
+[31m   3) "Aidan Parker"              M   P   CO   192925.00m      [0m
+[32m   1) "Maria Baker"               F   P   CI   168875.00m      [0m
+[32m   2) "Karlie Perez"              F   P   CI   168800.00m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CI   168425.00m      [0m
+[33m   1) "Jaeden Franklin"            M   A   CI   70550.00m      [0m
+[33m   2) "Joshua Brown"               M   A   CI   70050.00m      [0m
+[33m   3) "Jack Jackson"               M   A   CI   69466.67m      [0m
+[34m   1) "Alexandra Mcdaniel"         F   A   CI   56858.33m      [0m
+[34m   2) "Julia Ellison"              F   A   CI   56616.67m      [0m
+[34m   3) "Grace Beard"                F   A   CI   56458.33m      [0m
+
+[40;37mClassificacao 330min:                                                [0m
+[31m   1) "Alex Gates"                M   P   CO   200550.00m      [0m
+[31m   2) "Jacob Sanders"             M   P   CO   200500.00m      [0m
+[31m   3) "Aidan Parker"              M   P   CO   200425.00m      [0m
+[32m   1) "Maria Baker"               F   P   T2   183800.00m      [0m
+[32m   2) "Karlie Perez"              F   P   T2   183800.00m      [0m
+[32m   3) "Andrea Trevino"            F   P   T2   183800.00m      [0m
+[33m   1) "Jaeden Franklin"            M   A   CI   90850.00m      [0m
+[33m   2) "Joshua Brown"               M   A   CI   90550.00m      [0m
+[33m   3) "Jack Jackson"               M   A   CI   90200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"         F   A   CI   61858.33m      [0m
+[34m   2) "Julia Ellison"              F   A   CI   61616.67m      [0m
+[34m   3) "Grace Beard"                F   A   CI   61458.33m      [0m
+
+[40;37mClassificacao 360min:                                                [0m
+[31m   1) "Alex Gates"                M   P   CO   208050.00m      [0m
+[31m   2) "Jacob Sanders"             M   P   CO   208000.00m      [0m
+[31m   3) "Aidan Parker"              M   P   CO   207925.00m      [0m
+[32m   1) "Maria Baker"               F   P   CO   189834.62m      [0m
+[32m   2) "Karlie Perez"              F   P   CO   189788.46m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CO   189580.77m      [0m
+[33m   1) "Jaeden Franklin"           M   A   CI   105850.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CI   105550.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CI   105200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"         F   A   CI   79091.67m      [0m
+[34m   2) "Julia Ellison"              F   A   CI   77883.33m      [0m
+[34m   3) "Grace Beard"                F   A   CI   77091.67m      [0m
+
+[40;37mClassificacao 390min:                                                [0m
+[31m   1) "Alex Gates"                M   P   CO   215550.00m      [0m
+[31m   2) "Jacob Sanders"             M   P   CO   215500.00m      [0m
+[31m   3) "Aidan Parker"              M   P   CO   215425.00m      [0m
+[32m   1) "Maria Baker"               F   P   CO   196757.69m      [0m
+[32m   2) "Karlie Perez"              F   P   CO   196711.54m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CO   196503.85m      [0m
+[33m   1) "Jaeden Franklin"           M   A   CI   120850.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CI   120550.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CI   120200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"         F   A   CI   93945.83m      [0m
+[34m   2) "Julia Ellison"              F   A   CI   93341.67m      [0m
+[34m   3) "Grace Beard"                F   A   CI   92945.83m      [0m
+
+[40;37mClassificacao 420min:                                                [0m
+[31m   1) "Alex Gates"                M   P   CO   223050.00m      [0m
+[31m   2) "Jacob Sanders"             M   P   CO   223000.00m      [0m
+[31m   3) "Aidan Parker"              M   P   CO   222925.00m      [0m
+[32m   1) "Maria Baker"               F   P   CO   203680.77m      [0m
+[32m   2) "Karlie Perez"              F   P   CO   203634.62m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CO   203426.92m      [0m
+[33m   1) "Jaeden Franklin"           M   A   CI   135850.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CI   135550.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CI   135200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CI   106445.83m      [0m
+[34m   2) "Julia Ellison"             F   A   CI   105841.67m      [0m
+[34m   3) "Grace Beard"               F   A   CI   105445.83m      [0m
+
+[40;37mClassificacao 450min:                                                [0m
+[32m   1) "Maria Baker"               F   P   CO   210603.85m      [0m
+[32m   2) "Karlie Perez"              F   P   CO   210557.69m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CO   210350.00m      [0m
+[33m   1) "Jaeden Franklin"           M   A   CI   150850.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CI   150550.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CI   150200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CI   118945.83m      [0m
+[34m   2) "Julia Ellison"             F   A   CI   118341.67m      [0m
+[34m   3) "Grace Beard"               F   A   CI   117945.83m      [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                      Masculino Profissional                     **[0m
+[30;47m*********************************************************************[0m
+[47;31m   1) "Alex Gates"             M   P   FI   07h11m00s                [0m
+[47;31m   2) "Jacob Sanders"          M   P   FI   07h11m12s                [0m
+[47;31m   3) "Aidan Parker"           M   P   FI   07h11m30s                [0m
+
+[40;37mClassificacao 480min:                                                [0m
+[32m   1) "Maria Baker"               F   P   CO   217526.92m      [0m
+[32m   2) "Karlie Perez"              F   P   CO   217480.77m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CO   217273.08m      [0m
+[33m   1) "Jaeden Franklin"           M   A   CI   165850.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CI   165550.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CI   165200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CI   131445.83m      [0m
+[34m   2) "Julia Ellison"             F   A   CI   130841.67m      [0m
+[34m   3) "Grace Beard"               F   A   CI   130445.83m      [0m
+
+[40;37mClassificacao 510min:                                                [0m
+[32m   1) "Maria Baker"               F   P   CO   224450.00m      [0m
+[32m   2) "Karlie Perez"              F   P   CO   224403.85m      [0m
+[32m   3) "Sophia Sanchez"            F   P   CO   224196.15m      [0m
+[33m   1) "Jaeden Franklin"           M   A   CI   180850.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CI   180550.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CI   180200.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CI   143945.83m      [0m
+[34m   2) "Julia Ellison"             F   A   CI   143341.67m      [0m
+[34m   3) "Grace Beard"               F   A   CI   142945.83m      [0m
+
+[40;37mClassificacao 540min:                                                [0m
+[33m   1) "Jaeden Franklin"           M   A   T2   183800.00m      [0m
+[33m   2) "Joshua Brown"              M   A   T2   183800.00m      [0m
+[33m   3) "Jack Jackson"              M   A   T2   183800.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CI   156445.83m      [0m
+[34m   2) "Julia Ellison"             F   A   CI   155841.67m      [0m
+[34m   3) "Grace Beard"               F   A   CI   155445.83m      [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                      Feminino  Profissional                     **[0m
+[30;47m*********************************************************************[0m
+[47;32m   1) "Maria Baker"            F   P   FI   08h35m51s                [0m
+[47;32m   2) "Karlie Perez"           F   P   FI   08h36m03s                [0m
+[47;32m   3) "Sophia Sanchez"         F   P   FI   08h36m57s                [0m
+
+[40;37mClassificacao 570min:                                                [0m
+[33m   1) "Jaeden Franklin"           M   A   CO   184920.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CO   184720.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CO   184500.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CI   168945.83m      [0m
+[34m   2) "Julia Ellison"             F   A   CI   168341.67m      [0m
+[34m   3) "Grace Beard"               F   A   CI   167945.83m      [0m
+
+[40;37mClassificacao 600min:                                                [0m
+[33m   1) "Jaeden Franklin"           M   A   CO   190920.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CO   190720.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CO   190500.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CI   181445.83m      [0m
+[34m   2) "Julia Ellison"             F   A   CI   180841.67m      [0m
+[34m   3) "Grace Beard"               F   A   CI   180445.83m      [0m
+
+[40;37mClassificacao 630min:                                                [0m
+[33m   1) "Jaeden Franklin"           M   A   CO   196920.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CO   196720.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CO   196500.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   T2   183800.00m      [0m
+[34m   2) "Julia Ellison"             F   A   T2   183800.00m      [0m
+[34m   3) "Grace Beard"               F   A   T2   183800.00m      [0m
+
+[40;37mClassificacao 660min:                                                [0m
+[33m   1) "Jaeden Franklin"           M   A   CO   202920.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CO   202720.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CO   202500.00m      [0m
+[34m   1) "Issabella Mcknight"        F   A   T2   183800.00m      [0m
+[34m   2) "Brooke Montgomery"         F   A   T2   183800.00m      [0m
+[34m   3) "Jordyn Marsh"              F   A   T2   183800.00m      [0m
+
+[40;37mClassificacao 690min:                                                [0m
+[33m   1) "Jaeden Franklin"           M   A   CO   208920.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CO   208720.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CO   208500.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CO   188481.82m      [0m
+[34m   2) "Julia Ellison"             F   A   CO   188063.64m      [0m
+[34m   3) "Sasha Blake"               F   A   CO   187845.45m      [0m
+
+[40;37mClassificacao 720min:                                                [0m
+[33m   1) "Jaeden Franklin"           M   A   CO   214920.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CO   214720.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CO   214500.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CO   193936.36m      [0m
+[34m   2) "Julia Ellison"             F   A   CO   193518.18m      [0m
+[34m   3) "Sasha Blake"               F   A   CO   193300.00m      [0m
+
+[40;37mClassificacao 750min:                                                [0m
+[33m   1) "Jaeden Franklin"           M   A   CO   220920.00m      [0m
+[33m   2) "Joshua Brown"              M   A   CO   220720.00m      [0m
+[33m   3) "Jack Jackson"              M   A   CO   220500.00m      [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CO   199390.91m      [0m
+[34m   2) "Julia Ellison"             F   A   CO   198972.73m      [0m
+[34m   3) "Sasha Blake"               F   A   CO   198754.55m      [0m
+
+[40;37mClassificacao 780min:                                                [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CO   204845.45m      [0m
+[34m   2) "Julia Ellison"             F   A   CO   204427.27m      [0m
+[34m   3) "Sasha Blake"               F   A   CO   204209.09m      [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                         Masculino Amador                        **[0m
+[30;47m*********************************************************************[0m
+[47;33m   1) "Jaeden Franklin"        M   A   FI   12h54m24s                [0m
+[47;33m   2) "Joshua Brown"           M   A   FI   12h55m24s                [0m
+[47;33m   3) "Jack Jackson"           M   A   FI   12h56m30s                [0m
+
+[40;37mClassificacao 810min:                                                [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CO   210300.00m      [0m
+[34m   2) "Julia Ellison"             F   A   CO   209881.82m      [0m
+[34m   3) "Sasha Blake"               F   A   CO   209663.64m      [0m
+
+[40;37mClassificacao 840min:                                                [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CO   215754.55m      [0m
+[34m   2) "Julia Ellison"             F   A   CO   215336.36m      [0m
+[34m   3) "Sasha Blake"               F   A   CO   215118.18m      [0m
+
+[40;37mClassificacao 870min:                                                [0m
+[34m   1) "Alexandra Mcdaniel"        F   A   CO   221209.09m      [0m
+[34m   2) "Julia Ellison"             F   A   CO   220790.91m      [0m
+[34m   3) "Sasha Blake"               F   A   CO   220572.73m      [0m
+
+[40;37mClassificacao 900min:                                                [0m
+
+[30;47m*********************************************************************[0m
+[30;47m**                      CLASSIFICACAO FINAL!!!                     **[0m
+[30;47m**-----------------------------------------------------------------**[0m
+[30;47m**                          Feminino Amador                        **[0m
+[30;47m*********************************************************************[0m
+[47;34m   1) "Alexandra Mcdaniel"     F   A   FI   14h55m15s                [0m
+[47;34m   2) "Julia Ellison"          F   A   FI   14h57m33s                [0m
+[47;34m   3) "Sasha Blake"            F   A   FI   14h58m45s                [0m
