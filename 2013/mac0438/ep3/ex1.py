@@ -21,6 +21,7 @@ xdata, ydata = [], []
 def run(data):
     # update the data
     t,y = data
+    t += 0.1
     xdata.append(t)
     ydata.append(y)
     xmin, xmax = ax.get_xlim()
