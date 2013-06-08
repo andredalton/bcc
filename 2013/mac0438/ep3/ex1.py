@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import time
 
 def data_gen():
     t = data_gen.t
@@ -21,11 +22,9 @@ xdata, ydata = [], []
 def run(data):
     # update the data
     t,y = data
-    t += 0.1
     xdata.append(t)
     ydata.append(y)
     xmin, xmax = ax.get_xlim()
-
     if t >= xmax:
         ax.set_xlim(xmin, 2*xmax)
         ax.figure.canvas.draw()
@@ -33,6 +32,16 @@ def run(data):
 
     return line,
 
-ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=10,
+ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=0.1,
     repeat=False)
 plt.show()
+
+time.sleep(5)
+print "Passaram 5s."
+
+
+time.sleep(5)
+print "Passaram 10s."
+
+time.sleep(5)
+print "Passaram 15s."

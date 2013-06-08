@@ -1,23 +1,35 @@
 #!/usr/bin/python
+# -*- coding: UTF8 -*-
 
 import threading
 import time
 import sys
 
-pote = 0
-a_condition = threading.Condition()
-b_condition = threading.Condition()
-runtime = 0
+def roletaUrsa(B):
+    global roleta
+    roleta = (roleta + 1) % B
 
-
-class Relogio(threading.Thread):
+class  DeLorean(threading.Thread):
+    """
+    Esta classe precissa de 1,21 Gigawatt para funcionar corretamente!
+    """
     def __init__(self):
         threading.Thread.__init__(self)
-        self.time = 0
+        self.a_time = 0
+        self.b_time = 0
     def getTime(self):
-        return self.time
-    def updateTime(self, delta_t):
-        self.time+=delta_t
+        """
+        Somente funionará ao alcançar 88 Mph!
+        """
+        return self.a_time + self.b_time
+    def getATime(self):
+        return self.a_time
+    def getBTime(self):
+        return self.b_time
+    def setATime(self, tmp):
+        self.a_time=tmp
+    def updateBTime(self, delta_t):
+        self.b_time+=delta_t
 
 class Monitor(threading.Thread):
     def __init__(self, condition):
@@ -37,8 +49,6 @@ class Urso( Monitor ):
         self.b = 0
         self.T = T
         self.a_condition = a_condition
-    def roletaUrsa():
-        self.b = (self.b + 1) % self.B
     def run(self):
         while True:
             self.control.wait()
@@ -56,21 +66,19 @@ class Abelha( Monitor ):
     def run(self):
         pass
 
-def main():
-    global runtime
-#    [ N, B, H, t, T ] = sys.argv[1:]
+time_machine = DeLorean();
+pote = 0
+a_condition = threading.Condition()
+b_condition = threading.Condition()
 
-    rel = Relogio(2, "2s");
-    rel.start()
-    rel.updateTime(1)
-    print rel.getTime()
-    rel.updateTime(1)
-    rel.updateTime(1)
-    rel.updateTime(1)
-    rel.updateTime(1)
-    print rel.getTime()
-    rel.updateTime(5)
-    print rel.getTime()
+roleta = 0
+
+def main():
+    print len(sys.argv)
+#    [ N, B, H, t, T ] = sys.argv[1:]
+    global time_machine
+    print time_machine.getTime()
+
 
 
 if __name__ == "__main__":
