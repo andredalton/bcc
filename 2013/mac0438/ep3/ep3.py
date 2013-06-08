@@ -1,7 +1,11 @@
 #!/usr/bin/python
 # -*- coding: UTF8 -*-
 
+import numpy as np
+
 import threading
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import time
 import sys
 
@@ -17,6 +21,12 @@ class  DeLorean(threading.Thread):
         threading.Thread.__init__(self)
         self.a_time = 0
         self.b_time = 0
+    
+    def run(self):
+        for i in range(60):
+            print i
+            time.sleep(1)
+
     def getTime(self):
         """
         Somente funionará ao alcançar 88 Mph!
@@ -66,7 +76,7 @@ class Abelha( Monitor ):
     def run(self):
         pass
 
-time_machine = DeLorean();
+time_machine = 0
 pote = 0
 a_condition = threading.Condition()
 b_condition = threading.Condition()
@@ -74,11 +84,53 @@ b_condition = threading.Condition()
 roleta = 0
 
 def main():
-    print len(sys.argv)
-#    [ N, B, H, t, T ] = sys.argv[1:]
     global time_machine
-    print time_machine.getTime()
+#    [ N, B, H, t, T ] = sys.argv[1:]
+    if len(sys.argv) == 7:
+        if "-g" == sys.argv[6]:
+            time_machine = DeLorean()
+            time_machine.start()
 
+            def data_gen():
+                t = data_gen.t
+                cnt = 0
+                while cnt < 1000:
+                    yield t, np.sin(2*np.pi*t) * np.exp(-t/10.)
+                    cnt+=1
+                    t += 0.05
+            
+            data_gen.t = 0
+
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            line, = ax.plot([], [], lw=2)
+            ax.set_ylim(-1.1, 1.1)
+            ax.set_xlim(0, 5)
+            ax.grid()
+            xdata, ydata = [], []
+            def run(data):
+                # update the data
+                t,y = data
+                xdata.append(t)
+                ydata.append(y)
+                xmin, xmax = ax.get_xlim()
+                if t >= xmax:
+                    ax.set_xlim(xmin, 2*xmax)
+                    ax.figure.canvas.draw()
+                line.set_data(xdata, ydata)
+
+                return line,
+
+            ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=0.00001,
+                repeat=False)
+            plt.show()
+
+
+
+    else:
+        time_machine = DeLorean()
+
+    print time_machine
 
 
 if __name__ == "__main__":

@@ -1,15 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-import time
+#import time
 
 def data_gen():
     t = data_gen.t
     cnt = 0
     while cnt < 1000:
+        yield t, np.sin(2*np.pi*t) * np.exp(-t/10.)
         cnt+=1
         t += 0.05
-        yield t, np.sin(2*np.pi*t) * np.exp(-t/10.)
+        
 data_gen.t = 0
 
 fig = plt.figure()
@@ -32,16 +33,6 @@ def run(data):
 
     return line,
 
-ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=0.1,
+ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=0.00001,
     repeat=False)
 plt.show()
-
-time.sleep(5)
-print "Passaram 5s."
-
-
-time.sleep(5)
-print "Passaram 10s."
-
-time.sleep(5)
-print "Passaram 15s."
