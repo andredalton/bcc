@@ -49,13 +49,14 @@ class Monitor(threading.Thread):
         self.control.notifyAll()
 
 class Urso( threading.Thread ):
-    def __init__(self, id, T):
+    def __init__(self, id, T, sem):
         threading.Thread.__init__(self)
         '''
         Monitor.__init__(b_condition)
         '''
         self.id = id
         self.T = T
+        self.sem = sem
         self.alimentado = 0
     
     def run(self):
@@ -66,14 +67,21 @@ class Urso( threading.Thread ):
         global run
         while run:
             self.wait()
+            self.sem.acquire()
+            b_sleep = True
             if run:
-                b_sleep = True
-                print "Urso [%(id)d] comendo! %(run)d" %{"id": self.id, "run": run}
+                dic = {"tmpa": time_machine.getTime()+self.T/2, "id": self.id, "tmpb": time_machine.getTime()+self.T}
+                print "T[%(tmpa)d]\tMetade do pote consumida (Urso %(id)d)." %dic
+                print "T[%(tmpb)d]\tPote consumido (Urso %(id)d)." %dic
                 self.alimentado += 1
                 time_machine.updateBTime(self.T)
+                '''
+                Aqui deve acordar as abelhas.
+                '''
+            self.roletaUrsa()
+            self.sem.release()
 
     def signal(self):
-        self.roletaUrsa()
         global b_sleep
         b_sleep = False
 
@@ -94,63 +102,98 @@ class Urso( threading.Thread ):
     def getId(self):
         return self.id
     
-class Abelha( Monitor ):
-    def __init__(self, id, N, H, t, a_condition, b_condition):
+class Abelha( Monitor, threading.Thread ):
+    def __init__(self, id, N, H, t, sem):
+        '''
         Monitor.__init__(a_condition)
+        '''
+        threading.Thread.__init__(self)
         self.id = id
         self.N = N
-        self.tatu = N
         self.t
-        self.a_condition = a_condition
-        self.b_condition = b_condition
-        self.alimentou = 0
+        self.sem = sem
+        self.acordou = 0
     
     def enchePote():
         pass
     
+    def wait(self):
+        global a_sleep
+
+        while a_sleep:
+            pass
+
+    def signal_all(self):
+        pass
+
     def run(self):
         pass
 
     def getAlimentou(self):
         return self.alimentou
 
+    def getId(self):
+        return self.id
+
 time_machine = 0
+
 pote = 0
 a_pote = 0
-a_condition = threading.Condition()
-b_condition = threading.Condition()
+
 roleta = 0
 
 b_sleep = True
 a_sleep = True
 
+papai_urso = 0
+abelha_rainha = 0
+
 run = True
+
+
+a_condition = threading.Condition()
+b_condition = threading.Condition()
+
 
 def main():
     global time_machine
+    global a_sleep
     global b_sleep
     global roleta
+    global papai_urso
     global run
-    time_machine = DeLorean()
 
-    ursos = [Urso(i, 10) for i in range(10)]
-    
-    for urso in ursos:
-        urso.start()
-    
-    for i in xrange(50):
-        print roleta
-        print "Wakeup, Mother Fuckers!!!"
-        ursos[0].signal()
-        print time_machine.getTime()
-
-    run = False
-    print "Fim!!!"
-    sys.exit()
-
-#    [ N, B, H, t, T ] = sys.argv[1:]
     if len(sys.argv) >= 6:
+        [ N, B, H, t, T ] = sys.argv[1:]
         print "Numero minimo de parametros de entrada."
+
+        time_machine = DeLorean()
+        sem_ursos    = threading.RLock()
+        sem_abelhas  = threading.RLock()
+
+        ursos      = [Urso(i, T, sem_ursos) for i in range(B)]
+        papai_urso = ursos[0]
+
+        abelhas       = [Abelha(i, N, H, t, sem_ursos) for i in range(N)]
+        abelha_rainha = abelhas[0]
+
+        for urso in ursos:
+            urso.start()
+        
+        for abelha in abelhas:
+            abelha.start()
+
+        a_sleep = False
+
+        while time_machine.getBTime()/T < 1000:
+            pass
+
+        run = False
+
+        for i in xrange(50):
+            print "Wakeup, Mother Fuckers!!!"
+            ursos[0].signal()
+
     if len(sys.argv) == 7:
         if "-g" == sys.argv[6]:
             def data_gen():
@@ -191,6 +234,9 @@ def main():
     else:
         print "Modo de usar:"
         print "python "
+
+    run = False
+    print "Fim!!!"
 
 if __name__ == "__main__":
     main()
