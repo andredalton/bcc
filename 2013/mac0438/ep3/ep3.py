@@ -31,151 +31,192 @@ class  DeLorean():
     def getBTime(self):
         return self.b_time
     
-    def setATime(self, tmp):
-        self.a_time=tmp
+    def updateATime(self, delta_t):
+        self.a_time+=delta_t
     
     def updateBTime(self, delta_t):
         self.b_time+=delta_t
 
-class Monitor(threading.Thread):
-    def __init__(self, condition):
-        threading.Thread.__init__(self)
-        self.control = condition
-    def wait():
-        self.control.wait()
-    def signal():
-        self.control.notify()
-    def signalAll():
-        self.control.notifyAll()
-
 class Urso( threading.Thread ):
     def __init__(self, id, T, sem):
         threading.Thread.__init__(self)
-        '''
-        Monitor.__init__(b_condition)
-        '''
         self.id = id
         self.T = T
         self.sem = sem
+
         self.alimentado = 0
     
     def run(self):
         sys.stdout.write( "Nasceu o urso %(id)d!\n" %{"id": self.id} )
-        global b_sleep
+        global sleep
         global roleta
         global time_machine
         global run
-        while run:
-            self.wait()
-            self.sem.acquire()
-            b_sleep = True
-            if run:
-                dic = {"tmpa": time_machine.getTime()+self.T/2, "id": self.id, "tmpb": time_machine.getTime()+self.T}
-                print "T[%(tmpa)d]\tMetade do pote consumida (Urso %(id)d)." %dic
-                print "T[%(tmpb)d]\tPote consumido (Urso %(id)d)." %dic
-                self.alimentado += 1
-                time_machine.updateBTime(self.T)
+        global abelhas
+        global pote
+        while run<2:
+            if run==1:
+                self.wait()
+                if run:
+                    dic = {"tmpa": time_machine.getTime()+self.T/2, "id": self.id, "tmpb": time_machine.getTime()+self.T}
+                    print "T[%(tmpa)d]\tUrso %(id)d:\tMetade do pote consumida." %dic
+                    print "T[%(tmpb)d]\tUrso %(id)d:\tPote consumido." %dic
+                    self.alimentado += 1
+                    pote = 0
+                    time_machine.updateBTime(self.T)
                 '''
-                Aqui deve acordar as abelhas.
+                Aqui as abelhas são acordadas por intermédio da abelha rainha.
                 '''
-            self.roletaUrsa()
-            self.sem.release()
+                abelhas[0].signal_all()
+                self.roletaUrsa()
+                self.sem.release()
 
     def signal(self):
-        global b_sleep
-        b_sleep = False
+        global sleep
+        sleep = False
 
     def wait(self):
         global run
         global roleta
-        global b_sleep
-        while( (b_sleep or roleta!=self.id) and run ):
+        global sleep
+        while( (sleep or roleta!=self.id) and run ):
             pass
+        self.sem.acquire()
 
     def roletaUrsa(self):
         global roleta
         roleta = (roleta + 1) % self.T
-
-    def getAlimentado(self):
-        return self.alimentado
-
-    def getId(self):
-        return self.id
     
-class Abelha( Monitor, threading.Thread ):
-    def __init__(self, id, N, H, t, sem):
+class Abelha( threading.Thread ):
+    def __init__(self, id, N, H, t, sem, sem_sc):
         '''
         Monitor.__init__(a_condition)
         '''
         threading.Thread.__init__(self)
         self.id = id
         self.N = N
-        self.t
+        self.H = H
+        self.t = t
         self.sem = sem
-        self.acordou = 0
-    
-    def enchePote():
-        pass
-    
-    def wait(self):
-        global a_sleep
+        self.sem_sc = sem_sc
+        self.local_time = -1
+        
+    def run(self):
+        global run
+        global time_machine
+        global a_pote
+        global pote
+        global ursos
+        sys.stdout.write( "Nasceu a abelha %(id)d!\n" %{"id": self.id} )
+        while run<2:
+            if run==1:
+                self.wait()
+                self.sem_sc.acquire()
+                self.local_time = time_machine.getATime()
 
-        while a_sleep:
+                a_pote += 1
+                pote += 1
+                
+                dic = {"tmp": time_machine.getTime()+self.t, "id": self.id}
+
+                if pote == self.H/2:
+                    print "T[%(tmp)d]\tAbelha %(id)d:\tPote na metade." %dic
+                elif pote == self.H:
+                    print "T[%(tmp)d]\tAbelha %(id)d:\tPote cheio." %dic
+                    ursos[0].signal()
+                    while not sleep:
+                        pass
+
+                if a_pote == 100 or a_pote == self.N:
+                    time_machine.updateATime(self.t)
+                    a_pote = 0
+
+                self.sem_sc.release()
+                
+                while self.local_time == time_machine.getATime():
+                    pass
+
+                self.sem.release()
+
+    def wait(self):
+        global sleep
+        global a_pote
+        global time_machine
+
+        '''
+        Aqui segura as abelhas para todas as suas restrições imediantamente antes desta pegar o recurso. As restrições são:
+
+        1) Algum urso acordado;
+        2) O pote contém 100 abelhas;
+        3) Esta abelha já trabalhou neste tic de tempo.
+        '''
+        while (not sleep or a_pote == 100) and run:
             pass
+        self.sem.acquire()
 
     def signal_all(self):
-        pass
+        global sleep
+        sleep = True
 
-    def run(self):
-        pass
+'''
+Variavel que guarda o objeto da classe DeLorean que cuida do fluxo de tempo.
+'''
+time_machine = DeLorean()
 
-    def getAlimentou(self):
-        return self.alimentou
-
-    def getId(self):
-        return self.id
-
-time_machine = 0
-
+'''
+Variáveis que controlam a quantidade de mel no pote e a quantidade de abelhas no pote respectivamente.
+'''
 pote = 0
 a_pote = 0
 
+'''
+Variável que controla qual dos ursos é o próximo a ser alimentado.
+'''
 roleta = 0
 
-b_sleep = True
-a_sleep = True
+'''
+Variável que significa se todos os ursos estão dormindo.
+'''
+sleep = True
 
-papai_urso = 0
-abelha_rainha = 0
+'''
+Variáveis que permitem acesso ao primeiro objeto dos monitores Urso e Abelhas respectivamente.
+Permitindo assim que os signal de cada uma das classes possa ser acessado em escopo global.
+'''
+ursos = []
+abelhas = []
 
-run = True
+'''
+Variável que indica o estágio do programa:
 
-
-a_condition = threading.Condition()
-b_condition = threading.Condition()
-
+0 - Sendo inicializado;
+1 - Rodando;
+2 - Finalizando.
+'''
+run = 0
 
 def main():
     global time_machine
-    global a_sleep
-    global b_sleep
+    global sleep
     global roleta
-    global papai_urso
+    global ursos
+    global abelhas
     global run
 
     if len(sys.argv) >= 6:
         [ N, B, H, t, T ] = sys.argv[1:]
-        print "Numero minimo de parametros de entrada."
+        N = int(N)
+        B = int(B)
+        H = int(H)
+        t = int(t)
+        T = int(T)
 
-        time_machine = DeLorean()
-        sem_ursos    = threading.RLock()
-        sem_abelhas  = threading.RLock()
+        sem_ursos      = threading.Lock()
+        sem_abelhas    = threading.BoundedSemaphore()
+        sem_abelhas_sc = threading.Lock()
 
-        ursos      = [Urso(i, T, sem_ursos) for i in range(B)]
-        papai_urso = ursos[0]
-
-        abelhas       = [Abelha(i, N, H, t, sem_ursos) for i in range(N)]
-        abelha_rainha = abelhas[0]
+        ursos    = [Urso(i, T, sem_ursos) for i in range(B)]
+        abelhas  = [Abelha(i, N, H, t, sem_abelhas, sem_abelhas_sc) for i in range(N)]
 
         for urso in ursos:
             urso.start()
@@ -183,18 +224,37 @@ def main():
         for abelha in abelhas:
             abelha.start()
 
-        a_sleep = False
+        '''
+        Depois que todos os processos foram inicializados e estão rodando, libera o acesso dos monitores ao recurso.
+        '''
+        run = 1
 
+        '''
+        Espera até que 1000 ursos tenham sido acordados.
+        '''
         while time_machine.getBTime()/T < 1000:
             pass
 
-        run = False
+        '''
+        Envia sinal de término aos monitores.
+        '''
+        run = 2
 
-        for i in xrange(50):
-            print "Wakeup, Mother Fuckers!!!"
-            ursos[0].signal()
+    else:
+        print "Modo de usar:"
+        print "\tpython " + sys.argv[0] + " N B H t T <-g>"
+        print "onde:"
+        print "\tN\tnúmero de abelhas (obrigatório);"
+        print "\tB\tnúmero de ursos (obrigatório);"
+        print "\tH\ttamanho do pote (obrigatório);"
+        print "\tt\ttempo gasto por uma abelha no pote (obrigatório);"
+        print "\tT\ttempo gasto por um urso pra se alimentar (obrigatório);"
+        print "\t-g\tmodo gráfico (opcional)."
 
     if len(sys.argv) == 7:
+        '''
+        Inicializando o modo gráfico.
+        '''
         if "-g" == sys.argv[6]:
             def data_gen():
                 t = data_gen.t
@@ -231,12 +291,6 @@ def main():
             plt.show()
         elif "-h" == sys.argv[6]:
             pass
-    else:
-        print "Modo de usar:"
-        print "python "
-
-    run = False
-    print "Fim!!!"
 
 if __name__ == "__main__":
     main()
