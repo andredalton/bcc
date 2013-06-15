@@ -38,9 +38,11 @@ class  DeLorean():
         self.b_time+=delta_t
 
 class Urso( threading.Thread ):
-    def __init__(self, id, T, sem):
+    def __init__(self, id, B, H, T, sem):
         threading.Thread.__init__(self)
         self.id = id
+        self.B = B
+        self.H = H
         self.T = T
         self.sem = sem
 
@@ -79,12 +81,13 @@ class Urso( threading.Thread ):
         global run
         global roleta
         global sleep
-        while( (sleep or roleta!=self.id) and run==1 ):
+        global pote
+        while( (sleep or roleta!=self.id or pote!=self.H) and run==1 ):
             pass
 
     def roletaUrsa(self):
         global roleta
-        roleta = (roleta + 1) % self.T
+        roleta = (roleta + 1) % self.B
     
 class Abelha( threading.Thread ):
     def __init__(self, id, N, H, t, sem, sem_sc):
@@ -123,9 +126,10 @@ class Abelha( threading.Thread ):
                     print "T[%(tmp)d]\tAbelha %(id)d:\tPote na metade." %dic
                 elif pote == self.H:
                     print "T[%(tmp)d]\tAbelha %(id)d:\tPote cheio." %dic
-                    ursos[0].signal()
-                    while not sleep:
-                        pass
+                    if run==1:
+                        ursos[0].signal()
+                        while not sleep and run==1:
+                            pass
 
                 if a_pote == 100 or a_pote == self.N:
                     time_machine.updateATime(self.t)
@@ -213,10 +217,10 @@ def main():
         time_machine.updateATime(t)
 
         sem_ursos      = threading.Lock()
-        sem_abelhas    = threading.BoundedSemaphore()
+        sem_abelhas    = threading.BoundedSemaphore(100)
         sem_abelhas_sc = threading.Lock()
 
-        ursos    = [Urso(i, T, sem_ursos) for i in range(B)]
+        ursos    = [Urso(i, B, H, T, sem_ursos) for i in range(B)]
         abelhas  = [Abelha(i, N, H, t, sem_abelhas, sem_abelhas_sc) for i in range(N)]
 
         for urso in ursos:
@@ -231,9 +235,9 @@ def main():
         run = 1
 
         '''
-        Espera até que 1000 ursos tenham sido acordados.
+        Este programa fornece apenas 5 refeições por urso.
         '''
-        while time_machine.getBTime()/T < 1000:
+        while time_machine.getBTime()/T < 5*B:
             pass
 
         '''
