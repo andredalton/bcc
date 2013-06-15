@@ -55,21 +55,21 @@ class Urso( threading.Thread ):
         global abelhas
         global pote
         while run<2:
+            self.wait()
+            self.sem.acquire()
             if run==1:
-                self.wait()
-                if run:
-                    dic = {"tmpa": time_machine.getTime()+self.T/2, "id": self.id, "tmpb": time_machine.getTime()+self.T}
-                    print "T[%(tmpa)d]\tUrso %(id)d:\tMetade do pote consumida." %dic
-                    print "T[%(tmpb)d]\tUrso %(id)d:\tPote consumido." %dic
-                    self.alimentado += 1
-                    pote = 0
-                    time_machine.updateBTime(self.T)
+                dic = {"tmpa": time_machine.getTime()+self.T/2, "id": self.id, "tmpb": time_machine.getTime()+self.T}
+                print "T[%(tmpa)d]\tUrso %(id)d:\t\tMetade do pote consumida." %dic
+                print "T[%(tmpb)d]\tUrso %(id)d:\t\tPote consumido." %dic
+                self.alimentado += 1
+                pote = 0
+                time_machine.updateBTime(self.T)
                 '''
                 Aqui as abelhas são acordadas por intermédio da abelha rainha.
                 '''
                 abelhas[0].signal_all()
                 self.roletaUrsa()
-                self.sem.release()
+            self.sem.release()
 
     def signal(self):
         global sleep
@@ -79,9 +79,8 @@ class Urso( threading.Thread ):
         global run
         global roleta
         global sleep
-        while( (sleep or roleta!=self.id) and run ):
+        while( (sleep or roleta!=self.id) and run==1 ):
             pass
-        self.sem.acquire()
 
     def roletaUrsa(self):
         global roleta
@@ -99,7 +98,7 @@ class Abelha( threading.Thread ):
         self.t = t
         self.sem = sem
         self.sem_sc = sem_sc
-        self.local_time = -1
+        self.local_time = 0
         
     def run(self):
         global run
@@ -109,8 +108,9 @@ class Abelha( threading.Thread ):
         global ursos
         sys.stdout.write( "Nasceu a abelha %(id)d!\n" %{"id": self.id} )
         while run<2:
+            self.wait()
+            self.sem.acquire()
             if run==1:
-                self.wait()
                 self.sem_sc.acquire()
                 self.local_time = time_machine.getATime()
 
@@ -133,10 +133,10 @@ class Abelha( threading.Thread ):
 
                 self.sem_sc.release()
                 
-                while self.local_time == time_machine.getATime():
+                while self.local_time == time_machine.getATime() and run==1:
                     pass
 
-                self.sem.release()
+            self.sem.release()
 
     def wait(self):
         global sleep
@@ -150,9 +150,8 @@ class Abelha( threading.Thread ):
         2) O pote contém 100 abelhas;
         3) Esta abelha já trabalhou neste tic de tempo.
         '''
-        while (not sleep or a_pote == 100) and run:
+        while (not sleep or a_pote == 100) and run==1:
             pass
-        self.sem.acquire()
 
     def signal_all(self):
         global sleep
@@ -211,6 +210,8 @@ def main():
         t = int(t)
         T = int(T)
 
+        time_machine.updateATime(t)
+
         sem_ursos      = threading.Lock()
         sem_abelhas    = threading.BoundedSemaphore()
         sem_abelhas_sc = threading.Lock()
@@ -220,7 +221,7 @@ def main():
 
         for urso in ursos:
             urso.start()
-        
+
         for abelha in abelhas:
             abelha.start()
 
