@@ -63,9 +63,10 @@ class Urso( threading.Thread ):
                 dic = {"tmpa": time_machine.getTime()+self.T/2, "id": self.id, "tmpb": time_machine.getTime()+self.T}
                 print "T[%(tmpa)d]\tUrso %(id)d:\t\tMetade do pote consumida." %dic
                 print "T[%(tmpb)d]\tUrso %(id)d:\t\tPote consumido." %dic
+                time_machine.updateBTime(self.T)
                 self.alimentado += 1
                 pote = 0
-                time_machine.updateBTime(self.T)
+                
                 '''
                 Aqui as abelhas são acordadas por intermédio da abelha rainha.
                 '''
@@ -82,7 +83,7 @@ class Urso( threading.Thread ):
         global roleta
         global sleep
         global pote
-        while( (sleep or roleta!=self.id or pote!=self.H) and run==1 ):
+        while( (sleep or roleta!=self.id or pote!=self.H) and run<2 ):
             pass
 
     def roletaUrsa(self):
@@ -120,7 +121,7 @@ class Abelha( threading.Thread ):
                 a_pote += 1
                 pote += 1
                 
-                dic = {"tmp": time_machine.getTime()+self.t, "id": self.id}
+                dic = {"tmp": time_machine.getTime(), "id": self.id}
 
                 if pote == self.H/2:
                     print "T[%(tmp)d]\tAbelha %(id)d:\tPote na metade." %dic
@@ -131,7 +132,7 @@ class Abelha( threading.Thread ):
                         while not sleep and run==1:
                             pass
 
-                if a_pote == 100 or a_pote == self.N:
+                if a_pote == 100 or a_pote == self.H or a_pote == self.N:
                     time_machine.updateATime(self.t)
                     a_pote = 0
 
@@ -154,7 +155,7 @@ class Abelha( threading.Thread ):
         2) O pote contém 100 abelhas;
         3) Esta abelha já trabalhou neste tic de tempo.
         '''
-        while (not sleep or a_pote == 100) and run==1:
+        while (not sleep or a_pote==100 or a_pote==self.H) and run<2:
             pass
 
     def signal_all(self):
@@ -217,7 +218,10 @@ def main():
         time_machine.updateATime(t)
 
         sem_ursos      = threading.Lock()
-        sem_abelhas    = threading.BoundedSemaphore(100)
+        if H < 100:
+            sem_abelhas    = threading.BoundedSemaphore(100)
+        else:
+            sem_abelhas    = threading.BoundedSemaphore(H)
         sem_abelhas_sc = threading.Lock()
 
         ursos    = [Urso(i, B, H, T, sem_ursos) for i in range(B)]
