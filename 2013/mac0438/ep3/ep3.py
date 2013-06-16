@@ -356,39 +356,55 @@ def main():
 
             fout = open( './ep3.h.data', 'w')
             id = 0
+            max = 0
+            min = 100000000
             for acessos in [abelhas[i].acesso_pote for i in range(N)]:
                 outline = str( id ) + "\t" + str( acessos ) + "\n"
                 fout.write( outline ) 
+                if acessos > max:
+                    max = acessos
+                if acessos < min:
+                    min = acessos
                 id += 1
+            fout.close()
+
+            min -= 1
+            max += 1
+
             fout.close()
 
             fout = open( './ep3.gnuplot.script', 'w')
 
             fout.write( "#!/usr/bin/gnuplot -persist \n\n" )
-            fout.write( "set title \"Média de Alimentação dos Ursos\"\n" )
+            fout.write( "set title \"Média de Alimentação dos " + str(B) + " Ursos pelas " + str(N) + " Abelhas.\\nT=" + str(T) + "     t=" + str(t) + "\"\n" )
             fout.write( "set xlabel \"tempo\"\n" )
-            fout.write( "set ylabel \"Alimentados/" + str(B) + "\"\n" )
+            fout.write( "set ylabel \"Alimentados\"\n" )
             fout.write( "set terminal png\n" )
+            fout.write( "set key off\n" )
             fout.write( "set output \"./graficos/ursos_" + str(N) + "_" + str(B) + "_" + str(H) + "_" + str(t) + "_" + str(T) + ".png\"\n" )
             fout.write( "plot [0:" + str(time_machine.getTime()) + "] \"./ep3.g.data\" u ($1):($2) w l lt 1 lw 1 \n\n" )
             fout.write( "reset\n" )
-            fout.write( "set title \"Média que as Abelhas acordaram os Ursos.\" \n" )
+            fout.write( "set title \"Média que as " + str(N) + " Abelhas acordaram os " + str(B) + " Ursos.\\nT=" + str(T) + "     t=" + str(t) + "\" \n" )
             fout.write( "set xlabel \"tempo\"\n" )
+            fout.write( "set key off\n" )
             fout.write( "set ylabel \"Acordaram/" + str(N) + "\"\n" )
             fout.write( "set terminal png\n" )
             fout.write( "set output \"./graficos/abelhas_" + str(N) + "_" + str(B) + "_" + str(H) + "_" + str(t) + "_" + str(T) + ".png\"\n" )
             fout.write( "plot [0:" + str(time_machine.getTime()) + "] \"./ep3.g.data\" u ($1):($3) w l lt 1 lw 1\n\n" )
             fout.write( "reset\n" )
-            fout.write( "set title \"Histograma de acesso das abelhas ao pote." )
+            fout.write( "set title \"Histograma de acesso das " + str(N) + " Abelhas ao pote.\n" )
+            fout.write( "set key off\n" )
+            fout.write( "set style fill solid 5.00 border 0\n" )
             fout.write( "set terminal png\n" )
-            fout.write( "set xrange [0:" + str(N) + "]\n" )
+            fout.write( "set xrange [-1:" + str(N) + "]\n" )
+            fout.write( "set yrange [" + str(min) +":" + str(max) + "]\n" )
             fout.write( "set output \"./graficos/histograma_" + str(N) + "_" + str(B) + "_" + str(H) + "_" + str(t) + "_" + str(T) + ".png\"\n" )
             fout.write( "bin_width = 1\n" );
             fout.write( "plot './ep3.h.data' u ($1):($2) smooth frequency w boxes\n" );
+
             fout.close()
 
-            call("gnuplot -persist ./ep3.gnuplot.script")
-
+            call(["gnuplot", "-persist", "./ep3.gnuplot.script"])
 
     else:
         print "Modo de usar:"
@@ -400,6 +416,7 @@ def main():
         print "\tt\ttempo gasto por uma abelha no pote (obrigatório);"
         print "\tT\ttempo gasto por um urso pra se alimentar (obrigatório);"
         print "\t-g\tmodo gráfico (opcional)."
+        print "\nObs: Este programa oferece apenas 10 refeições por urso."
 
 if __name__ == "__main__":
     main()
