@@ -3,11 +3,14 @@
 
 import numpy as np
 
+from subprocess import call
+
 import threading
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
 import sys
+
 
 class  DeLorean():
     """
@@ -38,14 +41,14 @@ class  DeLorean():
         self.b_time+=delta_t
 
 class Urso( threading.Thread ):
-    def __init__(self, id, B, H, T, sem):
+    def __init__(self, id, N, B, H, T, sem):
         threading.Thread.__init__(self)
         self.id = id
+        self.N = N
         self.B = B
         self.H = H
         self.T = T
         self.sem = sem
-
         self.alimentado = 0
     
     def run(self):
@@ -56,15 +59,35 @@ class Urso( threading.Thread ):
         global run
         global abelhas
         global pote
+        global media_urso
+        global fout
         while run<2:
             self.wait()
             self.sem.acquire()
             if run==1:
-                dic = {"tmpa": time_machine.getTime()+self.T/2, "id": self.id, "tmpb": time_machine.getTime()+self.T}
+                dic = {"tmpa": time_machine.getTime()+self.T/2, "id": self.id, "tmpb": time_machine.getTime()+self.T, "paradas": self.N}
                 print "T[%(tmpa)d]\tUrso %(id)d:\t\tMetade do pote consumida." %dic
-                print "T[%(tmpb)d]\tUrso %(id)d:\t\tPote consumido." %dic
-                time_machine.updateBTime(self.T)
+                print "\tAbelhas paradas: %(paradas)d" %dic
+                print "\tMedia alimentação urso: " + str(self.mediaAlimentado())
+                print "\tMedia abelhas despertam ursos: " + str(abelhas[0].mediaAcorda())
+
+                if fout != 0:
+                    outline = str( dic["tmpa"] ) + "\t" + str( self.mediaAlimentado() ) + "\t" + str( abelhas[0].mediaAcorda() ) + "\n"
+                    fout.write( outline )
+                
                 self.alimentado += 1
+
+                print "T[%(tmpb)d]\tUrso %(id)d:\t\tPote consumido." %dic
+                print "\tAbelhas paradas: %(paradas)d" %dic
+                print "\tMedia alimentação urso: " + str(self.mediaAlimentado())
+                print "\tMedia abelhas despertam ursos: " + str(abelhas[0].mediaAcorda())
+
+                if fout != 0:
+                    outline = str( dic["tmpb"] ) + "\t" + str( self.mediaAlimentado() ) + "\t" + str( abelhas[0].mediaAcorda() ) + "\n"
+                    fout.write( outline )
+
+                time_machine.updateBTime(self.T)
+                
                 pote = 0
                 
                 '''
@@ -73,6 +96,9 @@ class Urso( threading.Thread ):
                 abelhas[0].signal_all()
                 self.roletaUrsa()
             self.sem.release()
+
+    def mediaAlimentado(self):
+        return float(sum([ursos[i].alimentado for i in range(self.B)]))/self.B
 
     def signal(self):
         global sleep
@@ -103,6 +129,8 @@ class Abelha( threading.Thread ):
         self.sem = sem
         self.sem_sc = sem_sc
         self.local_time = 0
+        self.acorda_urso = 0
+        self.acesso_pote = 0
         
     def run(self):
         global run
@@ -110,38 +138,88 @@ class Abelha( threading.Thread ):
         global a_pote
         global pote
         global ursos
+        global media_abelha
+        global fout
         sys.stdout.write( "Nasceu a abelha %(id)d!\n" %{"id": self.id} )
         while run<2:
             self.wait()
+            '''
+            Semáforo com tamanho fixo de acesso, apenas 100 abelhas ou o tamanho máximo do pote podem estar nesta área.
+            '''
             self.sem.acquire()
             if run==1:
+                '''
+                Semáforo da sessão crítica. Impede que abelhas tenham acesso simultâneo ao pote.
+                '''
                 self.sem_sc.acquire()
                 self.local_time = time_machine.getATime()
 
-                a_pote += 1
-                pote += 1
-                
-                dic = {"tmp": time_machine.getTime(), "id": self.id}
+                if self.local_time == time_machine.getATime():
+                    self.acesso_pote += 1
+                    a_pote += 1
+                    pote += 1
+                    dic = {"tmp": time_machine.getTime(), "id": self.id}
+                    status = self.getStatus()
+                    if pote == self.H/2:
+                        print "T[%(tmp)d]\tAbelha %(id)d:\tPote na metade." %dic
+                        print "\tAbelhas voando: %(voando)d" %status
+                        print "\tAbelhas trabalhando: %(trabalhando)d" %status
+                        print "\tAbelhas paradas: %(paradas)d" %status
+                        print "\tMedia alimentação urso: " + str(ursos[0].mediaAlimentado())
+                        print "\tMedia abelhas despertam ursos: " + str(self.mediaAcorda())
+                    
+                    elif pote == self.H and sleep:
+                        print "T[%(tmp)d]\tAbelha %(id)d:\tPote cheio." %dic
+                        print "\tAbelhas voando: %(voando)d" %status
+                        print "\tAbelhas trabalhando: %(trabalhando)d" %status
+                        print "\tAbelhas paradas: %(paradas)d" %status
+                        print "\tMedia alimentação urso: " + str(ursos[0].mediaAlimentado())
+                        print "\tMedia abelhas despertam ursos: " + str(self.mediaAcorda())
 
-                if pote == self.H/2:
-                    print "T[%(tmp)d]\tAbelha %(id)d:\tPote na metade." %dic
-                elif pote == self.H:
-                    print "T[%(tmp)d]\tAbelha %(id)d:\tPote cheio." %dic
-                    if run==1:
-                        ursos[0].signal()
-                        while not sleep and run==1:
-                            pass
+                        if fout != 0:
+                            outline = str( dic["tmp"] ) + "\t" + str( ursos[0].mediaAlimentado() ) + "\t" + str( self.mediaAcorda() ) + "\n"
+                            fout.write( outline )
 
-                if a_pote == 100 or a_pote == self.H or a_pote == self.N:
-                    time_machine.updateATime(self.t)
-                    a_pote = 0
-
+                        print "\t(As abelhas estão prestes a dormir, o pote será reiniciado.)"
+                        if run==1:
+                            self.acorda_urso += 1
+                            ursos[0].signal()
+                            while not sleep and run==1:
+                                pass
+                            time_machine.updateATime(self.t)
+                            a_pote = 0
+                            print "\tPote voltou! Liberando acesso às abelhas.\n\n"
+                    
+                    if a_pote!=0 and ( a_pote==100 or a_pote==self.H or a_pote==self.N):
+                        time_machine.updateATime(self.t)
+                        a_pote = 0
                 self.sem_sc.release()
                 
+                '''
+                Esperam a sincronização aconter.
+                '''
                 while self.local_time == time_machine.getATime() and run==1:
                     pass
 
             self.sem.release()
+
+    def getStatus(self):
+        global sleep
+        global a_pote
+        if not sleep:
+            return {"paradas":self.N, "trabalhando":0, "voando":0}
+        if self.H < 100:
+            if self.H > self.N:
+                return {"paradas":0, "trabalhando":self.N, "voando":0}
+            else:
+                return {"paradas":0, "trabalhando":self.H, "voando":self.N-self.H}
+        if 100 > self.N:
+            return {"paradas":0, "trabalhando":self.N, "voando":0}
+        else:
+            return {"paradas":0, "trabalhando":100, "voando":self.N-100}
+
+    def mediaAcorda(self):
+        return float(sum([abelhas[i].acorda_urso for i in range(self.N)]))/self.N
 
     def wait(self):
         global sleep
@@ -199,6 +277,11 @@ Variável que indica o estágio do programa:
 '''
 run = 0
 
+media_urso = []
+media_abelha = []
+
+fout = 0
+
 def main():
     global time_machine
     global sleep
@@ -206,9 +289,22 @@ def main():
     global ursos
     global abelhas
     global run
+    global media_abelha
+    global media_urso
+    global fout
+
+    if len(sys.argv) == 7:
+        '''
+        Inicializando o modo gráfico.
+        '''
+        if "-g" == sys.argv[6]:
+            '''
+            Cria arquivo de saída para os dados gerados. Será usado para gerar os gráficos.
+            '''
+            fout = open( './ep3.g.data', 'w')
 
     if len(sys.argv) >= 6:
-        [ N, B, H, t, T ] = sys.argv[1:]
+        [ N, B, H, t, T ] = sys.argv[1:6]
         N = int(N)
         B = int(B)
         H = int(H)
@@ -224,7 +320,7 @@ def main():
             sem_abelhas    = threading.BoundedSemaphore(H)
         sem_abelhas_sc = threading.Lock()
 
-        ursos    = [Urso(i, B, H, T, sem_ursos) for i in range(B)]
+        ursos    = [Urso(i, N, B, H, T, sem_ursos) for i in range(B)]
         abelhas  = [Abelha(i, N, H, t, sem_abelhas, sem_abelhas_sc) for i in range(N)]
 
         for urso in ursos:
@@ -239,15 +335,60 @@ def main():
         run = 1
 
         '''
-        Este programa fornece apenas 5 refeições por urso.
+        Este programa fornece apenas 10 refeições por urso.
         '''
-        while time_machine.getBTime()/T < 5*B:
+        while time_machine.getBTime()/T < 10*B:
             pass
 
         '''
         Envia sinal de término aos monitores.
         '''
         run = 2
+
+        for abelha in abelhas:
+            abelha.join()
+
+        for urso in ursos:
+            urso.join()
+
+        if fout != 0:
+            fout.close()
+
+            fout = open( './ep3.h.data', 'w')
+            id = 0
+            for acessos in [abelhas[i].acesso_pote for i in range(N)]:
+                outline = str( id ) + "\t" + str( acessos ) + "\n"
+                fout.write( outline ) 
+                id += 1
+            fout.close()
+
+            fout = open( './ep3.gnuplot.script', 'w')
+
+            fout.write( "#!/usr/bin/gnuplot -persist \n\n" )
+            fout.write( "set title \"Média de Alimentação dos Ursos\"\n" )
+            fout.write( "set xlabel \"tempo\"\n" )
+            fout.write( "set ylabel \"Alimentados/" + str(B) + "\"\n" )
+            fout.write( "set terminal png\n" )
+            fout.write( "set output \"./graficos/ursos_" + str(N) + "_" + str(B) + "_" + str(H) + "_" + str(t) + "_" + str(T) + ".png\"\n" )
+            fout.write( "plot [0:" + str(time_machine.getTime()) + "] \"./ep3.g.data\" u ($1):($2) w l lt 1 lw 1 \n\n" )
+            fout.write( "reset\n" )
+            fout.write( "set title \"Média que as Abelhas acordaram os Ursos.\" \n" )
+            fout.write( "set xlabel \"tempo\"\n" )
+            fout.write( "set ylabel \"Acordaram/" + str(N) + "\"\n" )
+            fout.write( "set terminal png\n" )
+            fout.write( "set output \"./graficos/abelhas_" + str(N) + "_" + str(B) + "_" + str(H) + "_" + str(t) + "_" + str(T) + ".png\"\n" )
+            fout.write( "plot [0:" + str(time_machine.getTime()) + "] \"./ep3.g.data\" u ($1):($3) w l lt 1 lw 1\n\n" )
+            fout.write( "reset\n" )
+            fout.write( "set title \"Histograma de acesso das abelhas ao pote." )
+            fout.write( "set terminal png\n" )
+            fout.write( "set xrange [0:" + str(N) + "]\n" )
+            fout.write( "set output \"./graficos/histograma_" + str(N) + "_" + str(B) + "_" + str(H) + "_" + str(t) + "_" + str(T) + ".png\"\n" )
+            fout.write( "bin_width = 1\n" );
+            fout.write( "plot './ep3.h.data' u ($1):($2) smooth frequency w boxes\n" );
+            fout.close()
+
+            call("gnuplot -persist ./ep3.gnuplot.script")
+
 
     else:
         print "Modo de usar:"
@@ -259,47 +400,6 @@ def main():
         print "\tt\ttempo gasto por uma abelha no pote (obrigatório);"
         print "\tT\ttempo gasto por um urso pra se alimentar (obrigatório);"
         print "\t-g\tmodo gráfico (opcional)."
-
-    if len(sys.argv) == 7:
-        '''
-        Inicializando o modo gráfico.
-        '''
-        if "-g" == sys.argv[6]:
-            def data_gen():
-                t = data_gen.t
-                cnt = 0
-                while cnt < 1000:
-                    yield t, np.sin(2*np.pi*t) * np.exp(-t/10.)
-                    cnt+=1
-                    t += 0.05
-            
-            data_gen.t = 0
-
-            fig = plt.figure()
-            ax = fig.add_subplot(111)
-            line, = ax.plot([], [], lw=2)
-            ax.set_ylim(-1.1, 1.1)
-            ax.set_xlim(0, 5)
-            ax.grid()
-            xdata, ydata = [], []
-            def run(data):
-                # update the data
-                t,y = data
-                xdata.append(t)
-                ydata.append(y)
-                xmin, xmax = ax.get_xlim()
-                if t >= xmax:
-                    ax.set_xlim(xmin, 2*xmax)
-                    ax.figure.canvas.draw()
-                line.set_data(xdata, ydata)
-
-                return line,
-
-            ani = animation.FuncAnimation(fig, run, data_gen, blit=True, interval=0.00001,
-                repeat=False)
-            plt.show()
-        elif "-h" == sys.argv[6]:
-            pass
 
 if __name__ == "__main__":
     main()
