@@ -309,6 +309,17 @@ Também achamos interessante criar um gráfico que contabilize o acesso das abel
 \clearpage
 \section{Conclusão}
 
-Foi possível observar que o desenvolvimento de monitores para controle de acesso a recursos é algo bastante útil quando o problema tenha uma complexidade concorrete bastante elevada e a sessão crítica acabe sendo acessada em sequência. Neste caso é interessante criar uma classe que formalize de maneira mais adequada o problema. No entanto quando apenas poucas áreas de sessão crítica existem e elas tomam muito pouco tempo de processamento, então esta é uma solução pouco eficiente.
+Foi possível observar que o desenvolvimento de monitores para controle de acesso a recursos é algo bastante útil quando o problema tenha uma complexidade concorrete bastante elevada e a sessão crítica acabe sendo acessada em sequência. Neste caso é interessante criar uma classe que formalize de maneira mais adequada o problema. No entanto quando apenas poucas áreas de sessão crítica existem e elas tomam muito pouco tempo de processamento é uma solução pouco eficiente.
+
+Também foi interessante observar o comportamento das abelhas ao acesso ao pote quado estão em grande quantidade. O número de acessos varia bastante, o que mostra que ele realmente está acontecendo ao acaso. Diferente do que ocorre com os ursos, que acessam o pote de maneira sequencial.
+
+\begin{thebibliography}{99}
+\bibitem{python_lock}
+\url{http://www.laurentluce.com/posts/python-threads-synchronization-locks-rlocks-semaphores-conditions-events-and-queues/}
+\bibitem{python_thread}
+\url{http://www.tutorialspoint.com/python/python_multithreading.htm}
+\bibitem{python_lists}
+\url{http://docs.python.org/2/tutorial/datastructures.html}
+\end{thebibliography}
 
 \end{document}

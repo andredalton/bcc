@@ -1,0 +1,7 @@
+Este programa foi feito para rodar com python versão 2.7.
+
+Necessita da instalação do programa gnuplot se for rodar em modo gráfico.
+
+Para rodar em modo gráfico basta inserir -g ao final da linha de comando.
+
+As imagens geradas nos testes estão no diretório gráficos.
