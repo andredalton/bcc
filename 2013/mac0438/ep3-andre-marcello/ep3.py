@@ -53,7 +53,6 @@ class Urso( threading.Thread ):
         global run
         global abelhas
         global pote
-        global media_urso
         global fout
         while run<2:
             self.wait()
@@ -75,6 +74,8 @@ class Urso( threading.Thread ):
                 print "\tAbelhas paradas: %(paradas)d" %dic
                 print "\tMedia alimentação urso: " + str(self.mediaAlimentado())
                 print "\tMedia abelhas despertam ursos: " + str(abelhas[0].mediaAcorda())
+                abelhas[0].printAllStatus()
+                self.printAllStatus()
 
                 if fout != 0:
                     outline = str( dic["tmpb"] ) + "\t" + str( self.mediaAlimentado() ) + "\t" + str( abelhas[0].mediaAcorda() ) + "\n"
@@ -90,6 +91,18 @@ class Urso( threading.Thread ):
                 abelhas[0].signal_all()
                 self.roletaUrsa()
             self.sem.release()
+
+    def printStatus(self):
+        global sleep
+        print "\n========================================"
+        print "Urso " + str(self.id)
+        print "Alimentado " + str(self.alimentado) + " vezes."
+        print "========================================"
+
+    def printAllStatus(self):
+        global ursos
+        for urso in ursos:
+            urso.printStatus()
 
     def mediaAlimentado(self):
         return float(sum([ursos[i].alimentado for i in range(self.B)]))/self.B
@@ -125,6 +138,7 @@ class Abelha( threading.Thread ):
         self.local_time = 0
         self.acorda_urso = 0
         self.acesso_pote = 0
+        self.status = 1
         
     def run(self):
         global run
@@ -132,11 +146,11 @@ class Abelha( threading.Thread ):
         global a_pote
         global pote
         global ursos
-        global media_abelha
         global fout
         sys.stdout.write( "Nasceu a abelha %(id)d!\n" %{"id": self.id} )
         while run<2:
             self.wait()
+            self.status = 1
             '''
             Semáforo com tamanho fixo de acesso, apenas 100 abelhas ou o tamanho máximo do pote podem estar nesta área.
             '''
@@ -153,7 +167,7 @@ class Abelha( threading.Thread ):
                     a_pote += 1
                     pote += 1
                     dic = {"tmp": time_machine.getTime(), "id": self.id}
-                    status = self.getStatus()
+                    status = self.getAllStatus()
                     if pote == self.H/2:
                         print "T[%(tmp)d]\tAbelha %(id)d:\tPote na metade." %dic
                         print "\tAbelhas voando: %(voando)d" %status
@@ -161,6 +175,8 @@ class Abelha( threading.Thread ):
                         print "\tAbelhas paradas: %(paradas)d" %status
                         print "\tMedia alimentação urso: " + str(ursos[0].mediaAlimentado())
                         print "\tMedia abelhas despertam ursos: " + str(self.mediaAcorda())
+                        self.printAllStatus()
+                        ursos[0].printAllStatus()
                     
                     elif pote == self.H and sleep:
                         print "T[%(tmp)d]\tAbelha %(id)d:\tPote cheio." %dic
@@ -169,6 +185,8 @@ class Abelha( threading.Thread ):
                         print "\tAbelhas paradas: %(paradas)d" %status
                         print "\tMedia alimentação urso: " + str(ursos[0].mediaAlimentado())
                         print "\tMedia abelhas despertam ursos: " + str(self.mediaAcorda())
+                        self.printAllStatus()
+                        ursos[0].printAllStatus()
 
                         if fout != 0:
                             outline = str( dic["tmp"] ) + "\t" + str( ursos[0].mediaAlimentado() ) + "\t" + str( self.mediaAcorda() ) + "\n"
@@ -195,9 +213,30 @@ class Abelha( threading.Thread ):
                 while self.local_time == time_machine.getATime() and run==1:
                     pass
 
+                self.status = 0
+
             self.sem.release()
 
-    def getStatus(self):
+    def printStatus(self):
+        global sleep
+        print "\n------------------------------------"
+        print "Abelha " + str(self.id)
+        print "Acordou " + str(self.acorda_urso) + " ursos."
+        print "Acessou " + str(self.acesso_pote) + " vezes o pote."
+        if sleep == 0:
+            print "Status: Esperando urso se alimentar"
+        elif self.status:
+            print "Status: Voando"
+        else:
+            print "Status: Enchendo o pote"
+        print "------------------------------------"
+
+    def printAllStatus(self):
+        global abelhas
+        for abelha in abelhas:
+            abelha.printStatus()
+
+    def getAllStatus(self):
         global sleep
         global a_pote
         if not sleep:
@@ -271,9 +310,6 @@ Variável que indica o estágio do programa:
 '''
 run = 0
 
-media_urso = []
-media_abelha = []
-
 fout = 0
 
 def main():
@@ -283,8 +319,6 @@ def main():
     global ursos
     global abelhas
     global run
-    global media_abelha
-    global media_urso
     global fout
 
     if len(sys.argv) == 7:
