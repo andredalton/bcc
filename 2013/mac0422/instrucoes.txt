@@ -1,0 +1,3 @@
+Entrar no diretorio /usr/src/servers/is
+arquivo dmp.c tem o mapa de teclas
+o arquivo dmp_kernel.c tem a funcao chamada pelo F5 e funcao que devolve a tabela de processos (proctab_dmp)
