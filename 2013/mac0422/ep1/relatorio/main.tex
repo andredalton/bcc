@@ -1,0 +1,85 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[tmargin=2cm, bmargin=2cm, lmargin=2cm, rmargin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{indentfirst}
+\usepackage[pdftex]{hyperref}
+\usepackage{enumerate}
+\usepackage{bbm,amsthm,amssymb,amstext,amsmath}
+\usepackage{verbatim}
+\usepackage{listings}
+
+\author{
+    André Meneghelli Vale - 4898948\\
+    \texttt{andredalton@gmail.com}
+    \and
+    Hilder Vitor Lima Pereira - 6777064\\
+    \texttt{vitor\_lp@yahoo.com}
+}
+
+\date{01 de Setembro} % uma data antiga para fingir que estava sendo feito há muito tempo hahahaha
+
+\title{Relatório: EP1}
+
+\begin{document}
+\maketitle
+
+\section{Introdução}
+
+\subsection{Minix}
+
+   O \emph{Minix} é um sistema operacional semelhante ao \emph{Unix} gratuito e com o código fonte disponível em suas distribuições. É escrito em \emph{Linguagem C} e \emph{assembly}. \emph{Andrew S. Tanenbaum} criou este sistema para explicar os principios de funcionamento de seu livro \emph{"Operating Systems Design and Implementation"}.
+
+   As vantagens deste sistema, além de ser disponibilizado com o seu código fonte, são a necessidade muito reduzida de memória RAM e disco rígido quando comparado aos sistemas operacionais utilizados atualmente e uma arquitetura interessante para o aprendizado. Uma vez que os processos são entidades independentes e estão restritos a camadas, cada processo tem as suas permissões de acesso e algumas propriedades.
+
+   É possível encontrar mais informações e baixar as várias versões disponíveis deste sistema em \url{http://www.minix3.org/}. Para este trabalho foi escolhida a versão \href{http://www.minix3.org/iso/minix_R3.1.7-r7256.iso.gz}{3.1.7}.
+
+\subsection{Virtualbox}
+
+   Para facilitar a instalação e distribuição das alterações necessárias para este Exercício foi estipulado o uso do software de virtualização \href{https://www.virtualbox.org/}{Virtualbox}.
+
+   Este software é gratuito e compatível com vários sistemas operacionais atuais. Outra característica importante é a capacidade de criação de pastas compartilhadas entre a maquina virtual e o hospedeiro, o que facilita muito a criação de um bom ambiente de programação.
+
+\subsection{Problema proposto}
+
+   Modificar o sistema, fazendo com que um resumo da tabela de processos seja mostrada quando a tecla \verb+F5+ for acionada. Este resumo deve conter as informações na ordem da lista a seguir:
+
+\begin{itemize}
+\item PID: identificador do processo;
+\item Tempo de cpu;
+\item Tempo de sistema;
+\item Tempo dos filhos;
+\item Endereço do ponteiro da pilha e dos segmentos data, bss e text;
+\end{itemize}
+
+Sendo que os processos devem ser impressos pela ordem da fila e não pela ordem da tabela.
+
+\section{Códigos alterados}
+
+\subsection{dmp.c}
+
+   Este arquivo contém o mapeamento de caracteres, foi usado para poder tratar a captura de interrupção da tecla \emph{F5}.
+
+\subsubsection{Localização}
+
+   Pasta: /usr/src/servers/is/
+
+\subsubsection{Alterações}
+   
+   \lstinputlisting[language=C, firstline=2, lastline=4]{helloworld.c}
+
+\subsection{/usr/src/servers/is/dmp\_kernel.c}
+
+   Este arquivo contém a função que faz a impressão dos processos.
+
+\subsubsection{Localização}
+
+   Pasta: /usr/src/servers/is/
+   
+\subsubsection{Alterações}
+
+\section{Conclusão}
+
+\end{document}
