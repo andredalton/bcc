@@ -12,6 +12,7 @@
 #include "kernel/type.h"
 #include "kernel/proc.h"
 #include "kernel/ipc.h"
+#include "../pm/mproc.h"
 
 #define LINES 22
 
@@ -489,11 +490,12 @@ int proc_nr;
 *
 ****************************************************************/
 void minha_funcao (){
-
+	struct mproc mproc[NR_PROCS];
 	register struct proc *rp;
 	static struct proc *oldrp = proc;
 	phys_clicks size;
 
+	int i;
 	message m;
 	int id_do_proc;
 	int tempo_cpu;
@@ -505,45 +507,23 @@ void minha_funcao (){
 
 	printf ("Teste\n PID = %d\n PAI = %d\n", getpid(), getppid());
 
-	/* First obtain a fresh copy of the current process table. */
+	/* Pegando uma cópia atualizada da tabela de processos. */
 	if (sys_getproctab(proc) != OK) {
     	printf("IS: warning: couldn't get copy of process table\n");
 		return;
 	}
 
-	printf("\n-nr/name--- --pc--   --sp-- -text---- -data---- -stack--- -cr3-\n");
+	/* pegando cópia atualizada da mproc table */
+	if (getsysinfo(PM_PROC_NR, SI_PROC_TAB, mproc) != OK) {
+		printf("Error obtaining table from PM. Perhaps recompile IS?\n");
+		return;
+  	}
 
 
-	PROCLOOP(rp, oldrp)
-		size = rp->p_memmap[T].mem_len
-			+ ((rp->p_memmap[S].mem_phys + rp->p_memmap[S].mem_len)
-						- rp->p_memmap[D].mem_phys);
-/*		printf("%-7.7s%7lx %8lx %4x %4x %4x %4x %5x %5x %8lx\n", */
 
-		/* FIXME: trocar o PM_PROC_NR pelo número do processo que eu quero o ID */
-		id_do_proc = _syscall(rp->p_nr, MINIX_GETPID, &m);
-		tempo_cpu = rp->p_user_time; /* FIXME: este não deve ser o tempo certo */
-		tempo_sistema = rp->p_sys_time; 
-		endereco_text = rp->p_memmap[T].mem_phys;
-		endereco_data = rp->p_memmap[D].mem_phys;
-		endereco_pilha = rp->p_memmap[S].mem_phys;
-		
-		printf ("ID = %d, CPU_T = %d, SYS_T = %d, END_P = %p, END_D = %p, END_B = %p, END_T = %p\n",
-				id_do_proc,
-				tempo_cpu,
-				tempo_sistema,
-				endereco_pilha,
-				endereco_data,
-				endereco_bss,
-				endereco_text);
+	for (i = 0; i < NR_PROCS; i++){
+		if (mproc[i].mp_pid != 0)
+		printf ("Nome: %s, id: %d\n", mproc[i].mp_name, mproc[i].mp_pid); 
+	}
 
-/*
-	    rp->p_name,
-	    (unsigned long) rp->p_reg.pc,
-	    (unsigned long) rp->p_reg.sp,
-	    rp->p_memmap[T].mem_phys, rp->p_memmap[T].mem_len,
-	    rp->p_memmap[D].mem_phys, rp->p_memmap[D].mem_len,
-	    rp->p_memmap[S].mem_phys, rp->p_memmap[S].mem_len,
-	    rp->p_seg.p_cr3); */
-  }
 }
