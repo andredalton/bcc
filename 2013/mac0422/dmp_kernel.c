@@ -482,7 +482,18 @@ int proc_nr;
 }
 
 
+/*********************************************************************
+*	Imprime os dados dos processos cujo pid do pai é pid_pai. 
+*********************************************************************/
 
+void imprime_filhos (struct mproc mp[], int pid_pai){
+	int i = 0;
+	for (i = 0; i < NR_PROCS; i++)
+	{
+		if (mp[i].mp_pid != 0 && mp[mp[i].mp_parent].mp_pid == pid_pai)
+			printf ("\tpid_filho: %d", mp[i].mp_pid);
+	}
+}
 
 /****************************************************************
 *		Minha função.
@@ -520,10 +531,13 @@ void minha_funcao (){
   	}
 
 
-
+	/* loop principal: percorrendo a tabela de processos */
 	for (i = 0; i < NR_PROCS; i++){
-		if (mproc[i].mp_pid != 0)
-		printf ("Nome: %s, id: %d\n", mproc[i].mp_name, mproc[i].mp_pid); 
+		if (mproc[i].mp_pid != 0){
+			printf ("Nome: %s, id: %d\n", mproc[i].mp_name, mproc[i].mp_pid); 
+			imprime_filhos (mproc, mproc[i].mp_pid);
+			printf ("\n");
+		}
 	}
 
 }
