@@ -482,16 +482,50 @@ int proc_nr;
 }
 
 
+int compara_strings (char* a, char* b){
+	int i;
+	for (i = 0; a[i] != '\0' && b[i] != '\0' && a[i] == b[i]; i++);
+	if (a[i] == '\0' && b[i] == '\0')
+		return 1;
+	return 0;
+}
+
+/*********************************************************************
+*	Acha, na tabela de processos tab_proc, o processo que tenha o nome
+* passado.
+*	Se encontrar, o índice do processo dentro da tabela (ou seja,
+* um valor k tal que tab_proc[k].nome = nome).
+*	Se não encontrar, devolve -1
+*********************************************************************/
+int encontra_processo (struct proc tab_proc[], char* nome){
+	int i;
+	for (i = 0; i < NR_PROCS; i++){
+		if (isemptyp(&(tab_proc[i]))) continue;
+
+		if (compara_strings(tab_proc[i].p_name, nome)){
+			return i;
+		}
+	}
+	return -1;
+}
+
+
 /*********************************************************************
 *	Imprime os dados dos processos cujo pid do pai é pid_pai. 
 *********************************************************************/
-
 void imprime_filhos (struct mproc mp[], int pid_pai){
-	int i = 0;
+	int i;
+	int k;
 	for (i = 0; i < NR_PROCS; i++)
 	{
-		if (mp[i].mp_pid != 0 && mp[mp[i].mp_parent].mp_pid == pid_pai)
-			printf ("\tpid_filho: %d", mp[i].mp_pid);
+		if (mp[i].mp_pid != 0 && mp[mp[i].mp_parent].mp_pid == pid_pai){
+			printf ("\n\tpid_filho: %d", mp[i].mp_pid);
+			if ((k = encontra_processo (proc, mp[k].mp_name)) == -1){
+				printf (" filho NAO encontrado.");
+			}else {
+				printf (" tempo : %d ", proc[k].p_sys_time);
+			}
+		}
 	}
 }
 
@@ -505,8 +539,9 @@ void minha_funcao (){
 	register struct proc *rp;
 	static struct proc *oldrp = proc;
 	phys_clicks size;
+	char enter = 'a';
 
-	int i;
+	int i, k;
 	message m;
 	int id_do_proc;
 	int tempo_cpu;
@@ -530,13 +565,24 @@ void minha_funcao (){
 		return;
   	}
 
-
 	/* loop principal: percorrendo a tabela de processos */
 	for (i = 0; i < NR_PROCS; i++){
 		if (mproc[i].mp_pid != 0){
+			k = encontra_processo (proc, mproc[i].mp_name);
 			printf ("Nome: %s, id: %d\n", mproc[i].mp_name, mproc[i].mp_pid); 
 			imprime_filhos (mproc, mproc[i].mp_pid);
+			if (k == -1){
+				printf ("\nNão ENCONTROU\n");
+			}else{
+				printf ("\nsys_time: %d ", proc[k].p_sys_time);
+			}
 			printf ("\n");
+		}
+		if (((i + 1) % 5) == 0){
+	/*		printf ("--- More ---");
+			while (enter != '\n')
+				scanf ("%c", &enter); */
+			sleep (2);
 		}
 	}
 
