@@ -41,6 +41,8 @@
    Para facilitar a instalação e distribuição das alterações necessárias para este Exercício foi estipulado o uso do software de virtualização \href{https://www.virtualbox.org/}{Virtualbox}.
 
    Este software é gratuito e compatível com vários sistemas operacionais atuais. Outra característica importante é a capacidade de criação de pastas compartilhadas entre a maquina virtual e o hospedeiro, o que facilita muito a criação de um bom ambiente de programação.
+   
+   Para realizar a configuração do sistema operacional de maneira mais conveniente optamos por configurar a placa de rede da VM em modo NAT e usamos redirecionamento de portas para fazer conexão ssh. Permitindo desta maneira que todo o Minix fosse editado usando as ferramentas preferidas de cada um dos integrantes do grupo.
 
 \subsection{Problema proposto}
 
@@ -54,8 +56,6 @@
 \item Endereço do ponteiro da pilha e dos segmentos data, bss e text;
 \end{itemize}
 
-Sendo que os processos devem ser impressos pela ordem da fila e não pela ordem da tabela.
-
 \section{Códigos alterados}
 
 \subsection{dmp.c}
@@ -64,21 +64,36 @@ Sendo que os processos devem ser impressos pela ordem da fila e não pela ordem 
 
 \subsubsection{Localização}
 
-   Pasta: /usr/src/servers/is/
+   Diretório: /usr/src/servers/is/
 
-\subsubsection{Alterações}
+\subsubsection{Alterações [23-27]}
    
-   \lstinputlisting[language=C, firstline=2, lastline=4]{helloworld.c}
+   \lstinputlisting[language=C, firstline=23, lastline=27]{dmp.c}
 
-\subsection{/usr/src/servers/is/dmp\_kernel.c}
+\subsection{proto.h}
 
-   Este arquivo contém a função que faz a impressão dos processos.
+   Arquivo com os protótipos das funções usadas no arquivo \emph{dmp\_kernel.c}.
 
 \subsubsection{Localização}
 
-   Pasta: /usr/src/servers/is/
+   Diretório: /usr/src/servers/is/
+
+\subsubsection{Alterações [14-18]}
    
-\subsubsection{Alterações}
+   \lstinputlisting[language=C, firstline=14, lastline=18]{proto.h}
+
+\subsection{/usr/src/servers/is/dmp\_kernel.c}
+
+   Este arquivo contém a função alterada \emph{ custom\_proctab\_dmp()} que faz a impressão dos processos.
+
+\subsubsection{Localização}
+
+   Diretório /usr/src/servers/is/
+   
+\subsubsection{Alterações [14-18] [415-585]}
+
+A alteração a seguir serve apenas para ter acesso a estrura mproc dentro do escopo do arquivo atual.
+\lstinputlisting[language=C, firstline=14, lastline=18]{dmp_kernel.c}
 
 \section{Conclusão}
 
