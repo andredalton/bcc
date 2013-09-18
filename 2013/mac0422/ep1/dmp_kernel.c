@@ -434,7 +434,7 @@ void custom_proctab_dmp(){
 
 	printf("\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME");
 
-	for (i=0, j=0; i<(NR_TASKS+NR_PROCS); i++) {
+	for (i=NR_TASKS, j=0; i<(NR_TASKS+NR_PROCS); i++) {
 		if (! isemptyp (&(proc[i]))){
 			/* Imprime quando está na página correta. */
 			if ( j/LINES == pg ) {
@@ -445,7 +445,7 @@ void custom_proctab_dmp(){
 						"\t%d"
 						"\t0x%X"
 						"\t0x%X"
-						"\t"
+						"\t0x%X"
 						"\t0x%X"
 						"\t%s",
 						(int)mproc[i - NR_TASKS].mp_pid,
@@ -456,6 +456,7 @@ void custom_proctab_dmp(){
 
 						proc[i].p_memmap[2].mem_phys,
 						proc[i].p_memmap[1].mem_phys,
+						proc[i].p_memmap[D].mem_phys + proc[i].p_memmap[D].mem_len,
 						proc[i].p_memmap[0].mem_phys,
 
 						proc[i].p_name
