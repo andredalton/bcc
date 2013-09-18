@@ -453,18 +453,17 @@ void custom_proctab_dmp(){
 						(int)proc[i].p_user_time,
 						(int)proc[i].p_sys_time,
 						(int)mproc[i - NR_TASKS].mp_child_stime,
-
-						proc[i].p_memmap[2].mem_phys,
-						proc[i].p_memmap[1].mem_phys,
+						proc[i].p_memmap[S].mem_phys,
+						proc[i].p_memmap[D].mem_phys,
 						proc[i].p_memmap[D].mem_phys + proc[i].p_memmap[D].mem_len,
-						proc[i].p_memmap[0].mem_phys,
-
+						proc[i].p_memmap[T].mem_phys,
 						proc[i].p_name
 				);
 			}
 			/* Se ultrapassou a página atual precisa trocar de página e parar o laço. */
 			else if ( j/LINES > pg ) {
 				pg++;
+				j--;
 				break;
 			}
 			j++;
