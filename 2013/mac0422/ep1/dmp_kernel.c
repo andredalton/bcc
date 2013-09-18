@@ -467,7 +467,7 @@ void custom_proctab_dmp(){
 
 	int tempoFilhos[NR_TASKS+NR_PROCS];
 
-	printf("\n\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME");
+	printf("\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME");
 
 	for (i=0, j=0; i<(NR_TASKS+NR_PROCS); i++)
 		tempoFilhos[i] = 0;
@@ -494,17 +494,19 @@ void custom_proctab_dmp(){
 							"\t%d"
 							"\t%d"
 							"\t%d"
+							"\t%X"
+							"\t%X"
 							"\t"
-							"\t"
-							"\t"
-							"\t"
+							"\t%X"
 							"\t%s",
-							(int)proc[i].p_nr,
+							(int)mproc[proc[i].p_nr].mp_pid,
 							(int)proc[i].p_user_time,
 							(int)proc[i].p_sys_time,
 							mproc[proc[i].p_nr].mp_child_stime,
 
-							/* proc[i].p_memmap, */
+							proc[i].p_memmap[2].mem_phys,
+							proc[i].p_memmap[1].mem_phys,
+							proc[i].p_memmap[0].mem_phys,
 
 							proc[i].p_name
 					);
@@ -515,14 +517,19 @@ void custom_proctab_dmp(){
 							"\t%d"
 							"\t%d"
 							"\t-"
+							"\t%X"
+							"\t%X"
 							"\t"
-							"\t"
-							"\t"
-							"\t"
+							"\t%X"
 							"\t%s",
 							(int)proc[i].p_nr,
 							(int)proc[i].p_user_time,
 							(int)proc[i].p_sys_time,
+
+							proc[i].p_memmap[2].mem_phys,
+							proc[i].p_memmap[1].mem_phys,
+							proc[i].p_memmap[0].mem_phys,
+
 							proc[i].p_name
 					);
 				}
@@ -548,7 +555,7 @@ void custom_proctab_dmp(){
 	/* Aqui está parte do controle de fluxo do sistema de paginação. */
 	while (j<LINES) {
 		printf("\n");
-		i++;
+		j++;
 	}
 	if ( i >= NR_TASKS+NR_PROCS ) pg = 0;
 
