@@ -455,51 +455,28 @@ void custom_proctab_dmp(){
 		if (proc[i].p_name[0]!='\0') {
 			/* Imprime quando está na página correta. */
 			if ( j/LINES == pg ) {
-				if ( proc[i].p_nr > 0 ) {
-					printf(
-							"\n%03d"
-							"\t%d"
-							"\t%d"
-							"\t%d"
-							"\t%X"
-							"\t%X"
-							"\t"
-							"\t%X"
-							"\t%s",
-							(int)mproc[proc[i].p_nr].mp_pid,
-							(int)proc[i].p_user_time,
-							(int)proc[i].p_sys_time,
-							mproc[proc[i].p_nr].mp_child_stime,
+				printf(
+						"\n%03d"
+						"\t%d"
+						"\t%d"
+						"\t%d"
+						"\t0x%X"
+						"\t0x%X"
+						"\t"
+						"\t0x%X"
+						"\t%s",
+						(int)mproc[i - NR_TASKS].mp_pid,
 
-							proc[i].p_memmap[2].mem_phys,
-							proc[i].p_memmap[1].mem_phys,
-							proc[i].p_memmap[0].mem_phys,
+						(int)proc[i].p_user_time,
+						(int)proc[i].p_sys_time,
+						(int)mproc[i - NR_TASKS].mp_child_stime,
 
-							proc[i].p_name
-					);
-				}
-				else {
-					printf(
-							"\n%03d"
-							"\t%d"
-							"\t%d"
-							"\t-"
-							"\t%X"
-							"\t%X"
-							"\t"
-							"\t%X"
-							"\t%s",
-							(int)proc[i].p_nr,
-							(int)proc[i].p_user_time,
-							(int)proc[i].p_sys_time,
+						proc[i].p_memmap[2].mem_phys,
+						proc[i].p_memmap[1].mem_phys,
+						proc[i].p_memmap[0].mem_phys,
 
-							proc[i].p_memmap[2].mem_phys,
-							proc[i].p_memmap[1].mem_phys,
-							proc[i].p_memmap[0].mem_phys,
-
-							proc[i].p_name
-					);
-				}
+						proc[i].p_name
+				);
 			}
 			/* Se ultrapassou a página atual precisa trocar de página e parar o laço. */
 			else if ( j/LINES > pg ) {
