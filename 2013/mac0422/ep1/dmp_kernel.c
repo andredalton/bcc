@@ -416,13 +416,15 @@ PUBLIC void proctab_dmp()
 /*??????????????????????????????????????????????????*/
 void custom_proctab_dmp(){
 	register struct proc *rp;
-	struct mproc mproc[NR_PROCS];
-	static struct proc *oldrp = proc;
+	register struct mproc mproc[NR_PROCS];
 	static int pg = 0;
+	/*
+	static struct proc *oldrp = proc;
 	phys_clicks size;
 	char enter = 'a';
-
+	*/
 	int i, j, k;
+	/*
 	message m;
 	int id_do_proc;
 	int tempo_cpu;
@@ -431,13 +433,9 @@ void custom_proctab_dmp(){
 	int endereco_data;
 	void* endereco_bss;
 	int endereco_text;
-
-	int tempoFilhos[NR_TASKS+NR_PROCS];
+	*/
 
 	printf("\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME");
-
-	for (i=0, j=0; i<(NR_TASKS+NR_PROCS); i++)
-		tempoFilhos[i] = 0;
 
 	/* Pegando uma cópia atualizada da tabela de processos. */
 	if (sys_getproctab(proc) != OK) {
