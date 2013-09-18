@@ -414,62 +414,11 @@ PUBLIC void proctab_dmp()
 
 /*??????????????????????????????????????????????????*/
 /*??????????????????????????????????????????????????*/
-PUBLIC void custom_proctab_dmp_andre()
-{
-/* Proc table dump */
-
-  register struct proc *rp;
-  static struct proc *oldrp = BEG_PROC_ADDR;
-  int r;
-  phys_clicks text, data, size;
-
-  /* First obtain a fresh copy of the current process table. */
-  if ((r = sys_getproctab(proc)) != OK) {
-      printf("IS: warning: couldn't get copy of process table: %d\n", r);
-      return;
-  }
-
-  printf("\n-nr-----gen---endpoint-name--- -prior-quant- -user----sys-rtsflags-from/to-\n");
-
-  PROCLOOP(rp, oldrp)
-	text = rp->p_memmap[T].mem_phys;
-	data = rp->p_memmap[D].mem_phys;
-	size = rp->p_memmap[T].mem_len
-		+ ((rp->p_memmap[S].mem_phys + rp->p_memmap[S].mem_len) - data);
-	printf(" %5d %10d ", _ENDPOINT_G(rp->p_endpoint), rp->p_endpoint);
-	printf("%-8.8s %5u %5lu %6lu %6lu ",
-	       rp->p_name,
-	       rp->p_priority,
-	       rp->p_quantum_size_ms,
-	       rp->p_user_time, rp->p_sys_time);
-	PRINTRTS(rp);
-	printf("\n");
-  }
-}
-
 void custom_proctab_dmp(){
 	register struct proc *rp;
-	struct mproc mproc[NR_PROCS];
-	static struct proc *oldrp = proc;
+	register struct mproc mproc[NR_PROCS];
 	static int pg = 0;
-	phys_clicks size;
-	char enter = 'a';
-
-	int i, j, k;
-	message m;
-	int id_do_proc;
-	int tempo_cpu;
-	int tempo_sistema;
-	int endereco_pilha;
-	int endereco_data;
-	void* endereco_bss;
-	int endereco_text;
-
-	int tempoFilhos[NR_TASKS+NR_PROCS];
-
-
-	for (i=0, j=0; i<(NR_TASKS+NR_PROCS); i++)
-		tempoFilhos[i] = 0;
+	int i, j=0, k;
 
 	/* Pegando uma cópia atualizada da tabela de processos. */
 	if (sys_getproctab(proc) != OK) {
@@ -483,62 +432,35 @@ void custom_proctab_dmp(){
 		return;
 	}
 
-	printf("\n\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME");
+	printf("\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME");
+
 	for (i=NR_TASKS, j=0; i<(NR_TASKS+NR_PROCS); i++) {
-		if (! isemptyp (&(proc[i]))){ /* .p_name[0]!='\0') { */
+		if (! isemptyp (&(proc[i]))){
 			/* Imprime quando está na página correta. */
 			if ( j/LINES == pg ) {
-			/*	if ( proc[i].p_nr > 0 ) { */
 				printf(
-							"\n%03d"
-							"\t%d"
-							"\t%d"
-							"\t%d"
-							"\t%d"
-							"\t%d"
-							"\t"
-							"\t%d"
-							"\t%s",
-							(int)mproc[i - NR_TASKS].mp_pid,
-							(int)proc[i].p_user_time,
-							(int)proc[i].p_sys_time,
-							mproc[i - NR_TASKS].mp_child_stime,
-							(int)proc[i].p_memmap[S].mem_phys,
-							(int)proc[i].p_memmap[D].mem_phys,
-							(int)proc[i].p_memmap[T].mem_phys,
+						"\n%03d"
+						"\t%d"
+						"\t%d"
+						"\t%d"
+						"\t0x%X"
+						"\t0x%X"
+						"\t"
+						"\t0x%X"
+						"\t%s",
+						(int)mproc[i - NR_TASKS].mp_pid,
 
-							/* proc[i].p_memmap, */
+						(int)proc[i].p_user_time,
+						(int)proc[i].p_sys_time,
+						(int)mproc[i - NR_TASKS].mp_child_stime,
 
-							proc[i].p_name
-					);
-				}
-			/*	else {
-					printf(
-							"\n%03d"
-							"\t%d"
-							"\t%d"
-							"\t-"
-							"\t"
-							"\t"
-							"\t"
-							"\t"
-							"\t%s",
-							(int)proc[i].p_nr,
-							(int)proc[i].p_user_time,
-							(int)proc[i].p_sys_time,
-							proc[i].p_name
-					);
-				} */
+						proc[i].p_memmap[2].mem_phys,
+						proc[i].p_memmap[1].mem_phys,
+						proc[i].p_memmap[0].mem_phys,
 
-
-				/*
-				k = encontra_processo (proc, mproc[i].mp_name);
-				if ( k == -1 )
-					printf("%03d\t\t-\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, mproc[i].mp_child_stime, mproc[i].mp_name);
-				else
-					printf("%03d\t\t%d\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, proc[k].p_sys_time, mproc[i].mp_child_stime, mproc[i].mp_name);
+						proc[i].p_name
+				);
 			}
-				*/
 			/* Se ultrapassou a página atual precisa trocar de página e parar o laço. */
 			else if ( j/LINES > pg ) {
 				pg++;
@@ -549,114 +471,12 @@ void custom_proctab_dmp(){
 	}
 
 	/* Aqui está parte do controle de fluxo do sistema de paginação. */
-	while (j<LINES) {
+	while (j%(LINES+1)!=0) {
 		printf("\n");
-		i++;
+		j++;
 	}
 	if ( i >= NR_TASKS+NR_PROCS ) pg = 0;
-
-	if (0) {
-		for (i=0, j=0; i<NR_PROCS; i++) {
-				if (mproc[i].mp_pid!=0) {
-					/* Imprime quando está na página correta. */
-					if ( j/LINES == pg ) {
-						k = encontra_processo (proc, mproc[i].mp_name);
-						if ( k == -1 )
-							printf("%03d\t\t-\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, mproc[i].mp_child_stime, mproc[i].mp_name);
-						else
-							printf("%03d\t\t%d\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, proc[k].p_sys_time, mproc[i].mp_child_stime, mproc[i].mp_name);
-					}
-					/* Se ultrapassou a página atual precisa trocar de página e parar o laço. */
-					else if ( j/LINES > pg ) {
-						pg++;
-						break;
-					}
-					j++;
-				}
-			}
-
-			/* Aqui está parte do controle de fluxo do sistema de paginação. */
-			while (j<LINES) {
-				printf("\n");
-				i++;
-			}
-			if ( i >= NR_PROCS ) pg = 0;
-
-
-
-		printf("\n\n%d\n\n", i);
-
-
-		/* loop principal: percorrendo a tabela de processos */
-		for (i = 0; i < NR_PROCS; i++){
-			if (mproc[i].mp_pid != 0){
-				k = encontra_processo (proc, mproc[i].mp_name);
-				printf ("Nome: %s, id: %d\n", mproc[i].mp_name, mproc[i].mp_pid);
-				imprime_filhos (mproc, mproc[i].mp_pid);
-				if (k == -1){
-					printf ("\nNão ENCONTROU\n");
-				}else{
-					printf ("\nsys_time: %d ", proc[k].p_sys_time);
-				}
-				printf ("\n");
-			}
-			if (((i + 1) % 5) == 0){
-				printf ("--- More ---");
-				while (enter != '\n')
-					scanf ("%c", &enter);
-				/* sleep (2);*/
-			}
-		}
-	}
 }
-
-int compara_strings (char* a, char* b){
-	int i;
-	for (i = 0; a[i] != '\0' && b[i] != '\0' && a[i] == b[i]; i++);
-	if (a[i] == '\0' && b[i] == '\0')
-		return 1;
-	return 0;
-}
-
-/*********************************************************************
-*	Acha, na tabela de processos tab_proc, o processo que tenha o nome
-* passado.
-*	Se encontrar, o índice do processo dentro da tabela (ou seja,
-* um valor k tal que tab_proc[k].nome = nome).
-*	Se não encontrar, devolve -1
-*********************************************************************/
-int encontra_processo (struct proc tab_proc[], char* nome){
-	int i;
-	for (i = 0; i < NR_PROCS; i++){
-		if (isemptyp(&(tab_proc[i]))) continue;
-
-		if (compara_strings(tab_proc[i].p_name, nome)){
-			return i;
-		}
-	}
-	return -1;
-}
-
-
-/*********************************************************************
-*	Imprime os dados dos processos cujo pid do pai é pid_pai.
-*********************************************************************/
-void imprime_filhos (struct mproc mp[], int pid_pai){
-	int i;
-	int k;
-	for (i = 0; i < NR_PROCS; i++)
-	{
-		if (mp[i].mp_pid != 0 && mp[mp[i].mp_parent].mp_pid == pid_pai){
-			printf ("\n\tpid_filho: %d", mp[i].mp_pid);
-			if ((k = encontra_processo (proc, mp[k].mp_name)) == -1){
-				printf (" filho NAO encontrado.");
-			}else {
-				printf (" tempo : %d ", proc[k].p_sys_time);
-			}
-		}
-	}
-}
-
 /*??????????????????????????????????????????????????*/
 /*??????????????????????????????????????????????????*/
 #endif				/* (CHIP == INTEL) */
