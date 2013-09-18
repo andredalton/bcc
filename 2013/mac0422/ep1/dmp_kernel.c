@@ -418,24 +418,7 @@ void custom_proctab_dmp(){
 	register struct proc *rp;
 	register struct mproc mproc[NR_PROCS];
 	static int pg = 0;
-	/*
-	static struct proc *oldrp = proc;
-	phys_clicks size;
-	char enter = 'a';
-	*/
-	int i, j, k;
-	/*
-	message m;
-	int id_do_proc;
-	int tempo_cpu;
-	int tempo_sistema;
-	int endereco_pilha;
-	int endereco_data;
-	void* endereco_bss;
-	int endereco_text;
-	*/
-
-	printf("\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME");
+	int i, j=0, k;
 
 	/* Pegando uma cópia atualizada da tabela de processos. */
 	if (sys_getproctab(proc) != OK) {
@@ -449,8 +432,10 @@ void custom_proctab_dmp(){
 		return;
 	}
 
+	printf("\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME");
+
 	for (i=0, j=0; i<(NR_TASKS+NR_PROCS); i++) {
-		if (proc[i].p_name[0]!='\0') {
+		if (! isemptyp (&(proc[i]))){
 			/* Imprime quando está na página correta. */
 			if ( j/LINES == pg ) {
 				printf(
@@ -486,7 +471,7 @@ void custom_proctab_dmp(){
 	}
 
 	/* Aqui está parte do controle de fluxo do sistema de paginação. */
-	while (j<LINES) {
+	while (j%(LINES+1)!=0) {
 		printf("\n");
 		j++;
 	}
