@@ -465,9 +465,12 @@ void custom_proctab_dmp(){
 	void* endereco_bss;
 	int endereco_text;
 
-	int tempoFilhos[NR_PROCS];
+	int tempoFilhos[NR_TASKS+NR_PROCS];
 
-	printf("\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME\n");
+	printf("\n\nPID\tCPU\tSYS\tFTIME\tEPILHA\tDATA\tBSS\tTEXT\tNAME");
+
+	for (i=0, j=0; i<(NR_TASKS+NR_PROCS); i++)
+		tempoFilhos[i] = 0;
 
 	/* Pegando uma cópia atualizada da tabela de processos. */
 	if (sys_getproctab(proc) != OK) {
@@ -481,15 +484,57 @@ void custom_proctab_dmp(){
 		return;
 	}
 
-	for (i=0, j=0; i<NR_PROCS; i++) {
-		if (mproc[i].mp_pid!=0) {
+	for (i=0, j=0; i<(NR_TASKS+NR_PROCS); i++) {
+		if (proc[i].p_name[0]!='\0') {
 			/* Imprime quando está na página correta. */
 			if ( j/LINES == pg ) {
+				if ( proc[i].p_nr > 0 ) {
+					printf(
+							"\n%03d"
+							"\t%d"
+							"\t%d"
+							"\t%d"
+							"\t"
+							"\t"
+							"\t"
+							"\t"
+							"\t%s",
+							(int)proc[i].p_nr,
+							(int)proc[i].p_user_time,
+							(int)proc[i].p_sys_time,
+							mproc[proc[i].p_nr].mp_child_stime,
+
+							/* proc[i].p_memmap, */
+
+							proc[i].p_name
+					);
+				}
+				else {
+					printf(
+							"\n%03d"
+							"\t%d"
+							"\t%d"
+							"\t-"
+							"\t"
+							"\t"
+							"\t"
+							"\t"
+							"\t%s",
+							(int)proc[i].p_nr,
+							(int)proc[i].p_user_time,
+							(int)proc[i].p_sys_time,
+							proc[i].p_name
+					);
+				}
+
+
+				/*
 				k = encontra_processo (proc, mproc[i].mp_name);
 				if ( k == -1 )
 					printf("%03d\t\t-\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, mproc[i].mp_child_stime, mproc[i].mp_name);
 				else
 					printf("%03d\t\t%d\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, proc[k].p_sys_time, mproc[i].mp_child_stime, mproc[i].mp_name);
+				*/
 			}
 			/* Se ultrapassou a página atual precisa trocar de página e parar o laço. */
 			else if ( j/LINES > pg ) {
@@ -505,9 +550,37 @@ void custom_proctab_dmp(){
 		printf("\n");
 		i++;
 	}
-	if ( i >= NR_PROCS ) pg = 0;
+	if ( i >= NR_TASKS+NR_PROCS ) pg = 0;
 
 	if (0) {
+		for (i=0, j=0; i<NR_PROCS; i++) {
+				if (mproc[i].mp_pid!=0) {
+					/* Imprime quando está na página correta. */
+					if ( j/LINES == pg ) {
+						k = encontra_processo (proc, mproc[i].mp_name);
+						if ( k == -1 )
+							printf("%03d\t\t-\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, mproc[i].mp_child_stime, mproc[i].mp_name);
+						else
+							printf("%03d\t\t%d\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, proc[k].p_sys_time, mproc[i].mp_child_stime, mproc[i].mp_name);
+					}
+					/* Se ultrapassou a página atual precisa trocar de página e parar o laço. */
+					else if ( j/LINES > pg ) {
+						pg++;
+						break;
+					}
+					j++;
+				}
+			}
+
+			/* Aqui está parte do controle de fluxo do sistema de paginação. */
+			while (j<LINES) {
+				printf("\n");
+				i++;
+			}
+			if ( i >= NR_PROCS ) pg = 0;
+
+
+
 		printf("\n\n%d\n\n", i);
 
 
