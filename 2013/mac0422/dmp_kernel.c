@@ -495,15 +495,17 @@ void custom_proctab_dmp(){
 							"\t%d"
 							"\t%d"
 							"\t%d"
+							"\t%d"
 							"\t"
-							"\t"
-							"\t"
+							"\t%d"
 							"\t%s",
 							(int)mproc[i - NR_TASKS].mp_pid,
 							(int)proc[i].p_user_time,
 							(int)proc[i].p_sys_time,
 							mproc[i - NR_TASKS].mp_child_stime,
 							(int)proc[i].p_memmap[S].mem_phys,
+							(int)proc[i].p_memmap[D].mem_phys,
+							(int)proc[i].p_memmap[T].mem_phys,
 
 							/* proc[i].p_memmap, */
 
@@ -535,8 +537,8 @@ void custom_proctab_dmp(){
 					printf("%03d\t\t-\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, mproc[i].mp_child_stime, mproc[i].mp_name);
 				else
 					printf("%03d\t\t%d\t%d\t\t\t\t\t%s\n", mproc[i].mp_pid, proc[k].p_sys_time, mproc[i].mp_child_stime, mproc[i].mp_name);
-				*/
 			}
+				*/
 			/* Se ultrapassou a página atual precisa trocar de página e parar o laço. */
 			else if ( j/LINES > pg ) {
 				pg++;
