@@ -12,6 +12,18 @@ typedef struct no* NO;
 
 NO cria_lista (int pid);
 
+/************************************************
+*	Destrói todos os elementos da lista passada.
+************************************************/
+void destroi_lista (NO lista);
+
+/**********************************************************
+*	Procura por <valor> em <lista>.
+*	Devolve o primeiro NO da <lista> que tiver o <valor>,
+* ou NULL, caso não encontre.
+***********************************************************/
+NO esta_na_lista (NO lista, int valor);
+
 NO pega_prox (NO lista);
 
 int pega_valor (NO lista);
@@ -22,7 +34,3 @@ int pega_valor (NO lista);
 ************************************************/
 void insere (NO* lista, int pid);
 
-/************************************************
-*	Destrói todos os elementos da lista passada.
-************************************************/
-void destroi_lista (NO lista);

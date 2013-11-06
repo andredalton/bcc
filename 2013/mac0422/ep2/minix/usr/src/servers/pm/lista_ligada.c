@@ -23,6 +23,31 @@ NO cria_lista (int pid){
 	return n;
 }
 
+/************************************************
+*	Destrói todos os elementos da lista passada.
+************************************************/
+void destroi_lista (NO lista){
+	if (lista){
+		destroi_lista (lista->prox);
+		free (lista);
+		lista = NULL;
+	}
+}
+
+/**********************************************************
+*	Procura por <valor> em <lista>.
+*	Devolve o primeiro NO da <lista> que tiver o <valor>,
+* ou NULL, caso não encontre.
+***********************************************************/
+NO esta_na_lista (NO lista, int valor){
+	while (lista){
+		if (valor == lista->pid)
+			return lista;
+		lista = lista->prox;
+	}
+	return NULL;
+}
+
 
 NO pega_prox (NO lista){
 	if (lista)
@@ -51,13 +76,4 @@ void insere (NO* lista, int pid){
 	}
 
 }
-/************************************************
-*	Destrói todos os elementos da lista passada.
-************************************************/
-void destroi_lista (NO lista){
-	if (lista){
-		destroi_lista (lista->prox);
-		free (lista);
-		lista = NULL;
-	}
-}
+

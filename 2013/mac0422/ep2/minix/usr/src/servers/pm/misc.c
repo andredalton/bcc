@@ -656,20 +656,29 @@ PUBLIC int do_get_sem()
 
 	if (qnt_sem == 128){
 		/* não há mais semáforos disponíveis */
+	}else {
+		/* procura um semáforo livre e o devolve */
+		printf("\nTeste: GET - %d\n", n);
+
 	}
-
-	printf("\nTeste: GET - %d\n", n);
-
 	return 3;
 }
 
 /*===========================================================================*
  *				do_p_sem				     *
  *===========================================================================*/
-PUBLIC int do_p_sem()
+
+
+/*  RECEBER O PID do processo que está querendo fazer um P no semaforo para ver se ele tem permissão de fazer isto ou nao (procurando na lista do semaforo */
+PUBLIC int do_p_sem() 
 {
 	int sid = m_in.m1_i1;
 
+	/* usar o sid como o indice do semáforo
+	if (
+	
+	
+	*/
 	printf("\nTeste: P - %d\n", sid);
 
 	return 0;
