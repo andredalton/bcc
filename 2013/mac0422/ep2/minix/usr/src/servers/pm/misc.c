@@ -634,14 +634,13 @@ struct pciinfo *pciinfo;
 /*??????????????????????????????????????????????????*/
 
 
-struct semaforo {
+typedef struct semaforo {
 	/* quantidade de processos que podem passar pelo semáforo */
 	unsigned int N;
 	/* lista de pids que estão dormindo esperando este semáforo ser liberado (olhar lista_ligada.[hc]) */
 	NO lista;
-}
+} SEM;
 
-typedef semaforo SEM;
 
 SEM vet_sem[128]; /* vetor de semaforos */
 
@@ -665,7 +664,7 @@ PUBLIC int do_get_sem()
 }
 
 /*===========================================================================*
- *				do_p_sem				     *
+ *				do_p_sem				    								 *
  *===========================================================================*/
 
 
@@ -673,7 +672,7 @@ PUBLIC int do_get_sem()
 PUBLIC int do_p_sem() 
 {
 	int sid = m_in.m1_i1;
-
+	
 	/* usar o sid como o indice do semáforo
 	if (
 	
@@ -691,7 +690,7 @@ PUBLIC int do_v_sem()
 {
 	int sid = m_in.m1_i1;
 
-	printf("\nTeste: V - %d\n", sid);
+	printf("\nRecebeu um V do processo %d para o semáforo %d \n", m_in.m_source, sid);
 
 	return 0;
 }

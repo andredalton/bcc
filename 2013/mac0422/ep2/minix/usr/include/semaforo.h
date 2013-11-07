@@ -18,13 +18,18 @@ PUBLIC int get_sem (int n) {
 PUBLIC int p_sem (int sid) {
 	message m;
 	m.m1_i1 = sid;
+
 	return (_syscall(PM_PROC_NR, P_SEM, &m) );
 }
 
 PUBLIC int v_sem (int sid) {
 	message m;
 	m.m1_i1 = sid;
-	return (_syscall(PM_PROC_NR, V_SEM, &m) );
+	printf ("V\n");
+	_syscall(PM_PROC_NR, V_SEM, &m);
+	printf ("vai dar um receive\n");
+	receive (PM_PROC_NR, &m);
+	printf ("recebeu mensagem\n");
 }
 
 PUBLIC int free_sem (int sid) {

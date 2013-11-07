@@ -13,7 +13,7 @@ typedef struct Fi {
 } fila;
 
 fila *novaFila();
-int insere( fila *f, int info );
+int entra( fila *f, int info );
 int proximo( fila *f );
 int fechou( fila *f );
 int tamanho( fila *f );

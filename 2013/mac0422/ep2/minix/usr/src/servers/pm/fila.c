@@ -14,7 +14,7 @@ fila *novaFila(void) {
 }
 
 /* Insere uma nova informação no fim da fila. */
-int insere( fila *f, int info ) {
+int entra ( fila *f, int info ) {
 	if ( f->n == 0 ) {
 		f->fim =  (nof*) malloc(sizeof(nof));
 		f->cabeca = f->fim;
