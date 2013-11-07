@@ -15,7 +15,7 @@ NO cria_lista (int pid);
 /************************************************
 *	Destrói todos os elementos da lista passada.
 ************************************************/
-void destroi_lista (NO lista);
+void destroi_lista (NO* lista);
 
 /**********************************************************
 *	Procura por <valor> em <lista>.
@@ -34,3 +34,10 @@ int pega_valor (NO lista);
 ************************************************/
 void insere (NO* lista, int pid);
 
+
+/****************************************************
+*		Procura na lista pelo nó cujo valor seja
+* igual a x.
+*		Se encontrar, remove-o. Senão, deixa a lista como está.
+*****************************************************/
+void remove (NO* lista, int x);

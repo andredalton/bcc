@@ -26,11 +26,11 @@ NO cria_lista (int pid){
 /************************************************
 *	Destrói todos os elementos da lista passada.
 ************************************************/
-void destroi_lista (NO lista){
-	if (lista){
-		destroi_lista (lista->prox);
-		free (lista);
-		lista = NULL;
+void destroi_lista (NO* lista){
+	if (*lista){
+		destroi_lista (&((*lista)->prox));
+		free (*lista);
+		*lista = NULL;
 	}
 }
 
