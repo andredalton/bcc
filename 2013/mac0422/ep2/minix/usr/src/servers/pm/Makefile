@@ -6,7 +6,7 @@
 
 
 PROG=	pm
-SRCS=	lista_ligada.c main.c forkexit.c break.c exec.c time.c timers.c alarm.c \
+SRCS=	fila.c lista_ligada.c main.c forkexit.c break.c exec.c time.c timers.c alarm.c \
 	signal.c utility.c table.c trace.c getset.c misc.c \
 	profile.c dma.c mcontext.c schedule.c
 
