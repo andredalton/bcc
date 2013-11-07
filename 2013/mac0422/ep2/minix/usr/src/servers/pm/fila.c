@@ -42,7 +42,7 @@ int proximo(fila *f) {
 	int info = f->cabeca->info;
 	nof *tmp = f->cabeca;
 
-	if ( f->cabeca == NULL )
+	if ( !f ||  !f->cabeca )
 		return -1;
 
 	f->cabeca = f->cabeca->prox;
@@ -68,6 +68,7 @@ int fechou(fila *f) {
 		atu = prox;
 	}
 	free(f);
+	f=NULL;
 
 	return 1;
 }

@@ -15,7 +15,7 @@ NO cria_lista (int pid);
 /************************************************
 *	Destrói todos os elementos da lista passada.
 ************************************************/
-void destroi_lista (NO lista);
+void destroi_lista (NO *lista);
 
 /**********************************************************
 *	Procura por <valor> em <lista>.

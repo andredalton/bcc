@@ -15,7 +15,7 @@
 
 /*??????????????????????????????????????????????????*/
 /*??????????????????????????????????????????????????*/
-
+#include "fila.h"
 #include "lista_ligada.h"
 /*??????????????????????????????????????????????????*/
 /*??????????????????????????????????????????????????*/
@@ -636,31 +636,57 @@ struct pciinfo *pciinfo;
 
 typedef struct semaforo {
 	/* quantidade de processos que podem passar pelo semáforo */
-	unsigned int N;
-	/* lista de pids que estão dormindo esperando este semáforo ser liberado (olhar lista_ligada.[hc]) */
-	NO lista;
+	unsigned int N;		/* Tamanho do semaforo. */
+	unsigned int ppid;	/* PID do processo que pediu este semaforo. */
+	NO lista;			/* Lista de pids que gtem permissao de acesso a este semaforo. */
+	fila *f;			/* Fila de acesso ao semaforo. */
 } SEM;
 
 
-SEM vet_sem[128]; /* vetor de semaforos */
+/* Declarando variaveis globais. */
+static SEM vet_sem[128];			/* Vetor de semaforos. */
+static short int qnt_sem = -1;		/* Quantidade de semáforos disponiveis. */
 
-unsigned short int qnt_sem = 0; /* quantidade de semáforos sendo utilizados */
+void inicializa_sem(void) {
+
+	printf("\n\afudeu");
+
+	for( qnt_sem=0; qnt_sem<128; qnt_sem++) {
+		vet_sem[qnt_sem].N = 0;
+		vet_sem[qnt_sem].lista = NULL;
+		vet_sem[qnt_sem].f = novaFila();
+	}
+}
 
 /*===========================================================================*
  *				do_get_sem				     *
  *===========================================================================*/
 PUBLIC int do_get_sem()
 {
-	int n = m_in.m1_i1;
+	int i;
+	int n = m_in.m1_i1;			/* Tamanho do semaforo. */
+	int pai = who_p;	/* Pid do pai.			*/
 
-	if (qnt_sem == 128){
-		/* não há mais semáforos disponíveis */
-	}else {
-		/* procura um semáforo livre e o devolve */
-		printf("\nTeste: GET - %d\n", n);
+	printf("\n\t|%d|", n);
 
+	/* Verificando se vetor de semaforos precisa ser inicializado. */
+	if ( qnt_sem == -1 ) inicializa_sem();
+
+	/* não há mais semáforos disponíveis */
+	if (qnt_sem==0 || n<=0){
+		return -1;
+	} else {
+		for( i=0; i<128; i++) {
+			if ( vet_sem[i].N == 0 ) {
+				qnt_sem--;
+				vet_sem[i].N = n;
+				vet_sem[i].ppid = pai;
+				insere (&vet_sem[i].lista, pai);
+				return i;
+			}
+		}
+		return -2;
 	}
-	return 3;
 }
 
 /*===========================================================================*
@@ -701,10 +727,17 @@ PUBLIC int do_v_sem()
 PUBLIC int do_free_sem()
 {
 	int sid = m_in.m1_i1;
+	int pai = who_p;
 
 	printf("\nTeste: FREE - %d\n", sid);
-
-	return 0;
+	if ( vet_sem[sid].ppid==pai ) {
+		vet_sem[qnt_sem].N = 0;
+		destroi_lista(&vet_sem[sid].lista);
+		fechou(vet_sem[sid].f);
+		qnt_sem++;
+		return 0;
+	}
+	return -1;
 }
 
 /*??????????????????????????????????????????????????*/
