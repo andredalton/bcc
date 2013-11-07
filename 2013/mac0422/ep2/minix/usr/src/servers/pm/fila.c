@@ -68,7 +68,6 @@ int fechou(fila *f) {
 		atu = prox;
 	}
 	free(f);
-	f=NULL;
 
 	return 1;
 }

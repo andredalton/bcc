@@ -648,11 +648,8 @@ static SEM vet_sem[128];			/* Vetor de semaforos. */
 static short int qnt_sem = -1;		/* Quantidade de semáforos disponiveis. */
 
 void inicializa_sem(void) {
-
-	printf("\n\afudeu");
-
 	for( qnt_sem=0; qnt_sem<128; qnt_sem++) {
-		vet_sem[qnt_sem].N = 0;
+		vet_sem[qnt_sem].ppid = -1;
 		vet_sem[qnt_sem].lista = NULL;
 		vet_sem[qnt_sem].f = novaFila();
 	}
@@ -665,9 +662,9 @@ PUBLIC int do_get_sem()
 {
 	int i;
 	int n = m_in.m1_i1;			/* Tamanho do semaforo. */
-	int pai = who_p;	/* Pid do pai.			*/
+	int ppid = who_p;			/* Pid do pai.			*/
 
-	printf("\n\t|%d|", n);
+	printf("\n\t%d => |%d|", ppid, n);
 
 	/* Verificando se vetor de semaforos precisa ser inicializado. */
 	if ( qnt_sem == -1 ) inicializa_sem();
@@ -677,11 +674,11 @@ PUBLIC int do_get_sem()
 		return -1;
 	} else {
 		for( i=0; i<128; i++) {
-			if ( vet_sem[i].N == 0 ) {
+			if ( vet_sem[i].ppid == -1 ) {
 				qnt_sem--;
 				vet_sem[i].N = n;
-				vet_sem[i].ppid = pai;
-				insere (&vet_sem[i].lista, pai);
+				vet_sem[i].ppid = ppid;
+				insere (&vet_sem[i].lista, ppid);
 				return i;
 			}
 		}
@@ -724,20 +721,37 @@ PUBLIC int do_v_sem()
 /*===========================================================================*
  *				do_free_sem				     *
  *===========================================================================*/
-PUBLIC int do_free_sem()
+int free_sem(int sid, int ppid)
 {
-	int sid = m_in.m1_i1;
-	int pai = who_p;
-
-	printf("\nTeste: FREE - %d\n", sid);
-	if ( vet_sem[sid].ppid==pai ) {
-		vet_sem[qnt_sem].N = 0;
+	if ( vet_sem[sid].ppid==ppid ) {
+		printf("\nTeste: FREE - %d\n", sid);
+		vet_sem[sid].ppid = -1;
 		destroi_lista(&vet_sem[sid].lista);
-		fechou(vet_sem[sid].f);
+		if ( fechou(vet_sem[sid].f) )
+			vet_sem[sid].f = NULL ;
+
 		qnt_sem++;
 		return 0;
 	}
 	return -1;
+}
+
+PUBLIC int do_free_sem()
+{
+	int sid = m_in.m1_i1;
+	int ppid = who_p;
+	return free_sem(sid, ppid);
+}
+
+void terminator(int ppid) {
+	int i;
+	for ( i=0; i<128; i++ ) {
+		if ( vet_sem[i].ppid == ppid ) {
+			printf("\nKILL THEM ALL!!!\n");
+			free_sem( i, ppid);
+
+		}
+	}
 }
 
 /*??????????????????????????????????????????????????*/
