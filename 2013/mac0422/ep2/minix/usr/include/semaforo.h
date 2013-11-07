@@ -9,10 +9,15 @@
 #include <minix/callnr.h>
 
 PUBLIC int get_sem (int n) {
+	int sid;
 	message m;
 	m.m1_i1 = n;
-	return (_syscall(PM_PROC_NR, GET_SEM, &m) );
 
+	sid = (_syscall(PM_PROC_NR, GET_SEM, &m) );
+
+	if ( sid==-1 ) exit(0);
+
+	return sid;
 }
 
 PUBLIC int p_sem (int sid) {
@@ -23,12 +28,13 @@ PUBLIC int p_sem (int sid) {
 }
 
 PUBLIC int v_sem (int sid) {
+	int rec;
 	message m;
 	m.m1_i1 = sid;
 	printf ("V\n");
 	_syscall(PM_PROC_NR, V_SEM, &m);
 	printf ("vai dar um receive\n");
-	receive (PM_PROC_NR, &m);
+	receive (PM_PROC_NR, &m, &rec);
 	printf ("recebeu mensagem\n");
 }
 

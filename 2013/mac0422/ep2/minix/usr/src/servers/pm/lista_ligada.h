@@ -26,8 +26,6 @@ NO esta_na_lista (NO lista, int valor);
 
 NO pega_prox (NO lista);
 
-int pega_valor (NO lista);
-
 /******************************************
 *	Insere um novo elemento no começo da
 * lista ligada passada.
@@ -41,3 +39,7 @@ void insere (NO* lista, int pid);
 *		Se encontrar, remove-o. Senão, deixa a lista como está.
 *****************************************************/
 void remove (NO* lista, int x);
+
+
+
+int pega_valor (NO lista);
