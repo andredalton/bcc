@@ -24,18 +24,17 @@ PUBLIC int p_sem (int sid) {
 	message m;
 	m.m1_i1 = sid;
 
-	return (_syscall(PM_PROC_NR, P_SEM, &m) );
+	/* pergunta se pode entrar */
+	_syscall(PM_PROC_NR, P_SEM, &m);
+	/* espera permissão para passar pelo semáforo */
+	receive (PM_PROC_NR, &m, &rec); 
 }
 
 PUBLIC int v_sem (int sid) {
 	int rec;
 	message m;
 	m.m1_i1 = sid;
-	printf ("V\n");
 	_syscall(PM_PROC_NR, V_SEM, &m);
-	printf ("vai dar um receive\n");
-	receive (PM_PROC_NR, &m, &rec);
-	printf ("recebeu mensagem\n");
 }
 
 PUBLIC int free_sem (int sid) {
