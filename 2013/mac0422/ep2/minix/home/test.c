@@ -3,14 +3,21 @@
 
 int main (void)
 {
-	int i;
-	int v[300];
+	int sid;
 
-	for (i=0; i<300; i++) {
-		v[i] = get_sem(i+1);
-		if ((i+1)%7==0)
-			free_sem(i-3);
-	}
+	sid = get_sem(3);
+	sid = get_sem(8);
+	sid = get_sem(2);
+
+	p_sem(sid);
+	p_sem(sid);
+
+	v_sem(sid);
+	v_sem(sid);
+
+	p_sem(sid);
+	p_sem(sid);
+	v_sem(sid);
 
 	return 0;
 }

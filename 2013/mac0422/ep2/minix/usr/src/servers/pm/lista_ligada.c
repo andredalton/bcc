@@ -82,7 +82,7 @@ void insere (NO* lista, int pid){
 * igual a x.
 *		Se encontrar, remove-o. Senão, deixa a lista como está.
 *****************************************************/
-void remove (NO* lista, int x){
+void remove_no (NO* lista, int x){
 	NO ant = NULL;
 	NO p = *lista;
 

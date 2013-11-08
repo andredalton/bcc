@@ -13,12 +13,18 @@
 #define brk _brk
 
 
-/*??????????????????????????????????????????????????*/
-/*??????????????????????????????????????????????????*/
-#include "fila.h"
-#include "lista_ligada.h"
-/*??????????????????????????????????????????????????*/
-/*??????????????????????????????????????????????????*/
+/*?????????????????????????????????????????????????????????????????????????????????????*/
+/*?????????????????????????????????????????????????????????????????????????????????????*/
+#define MAX_SEM 128                      /* Definindo o número máximo de semáforos.    */
+#define DB 1                             /* Define se está em modo de depuração.       */
+#define DEBUG if (DB)                    /* Monta condição de depuração.               */
+
+#include "fila.h"                        /* Inserção das funções de controle de fila.  */
+#include "lista_ligada.h"                /* Inserção das funções de controle de lista. */
+
+#include <string.h>
+/*?????????????????????????????????????????????????????????????????????????????????????*/
+/*?????????????????????????????????????????????????????????????????????????????????????*/
 
 #include "pm.h"
 #include <minix/callnr.h>
@@ -314,7 +320,7 @@ PUBLIC int do_getprocnr()
   	return(ESRCH);			
   } else if (m_in.namelen > 0) {	/* lookup process by name */
   	key_len = MIN(m_in.namelen, PROC_NAME_LEN);
- 	if (OK != (s=sys_datacopy(who_e, (vir_bytes) m_in.PMBRK_ADDR, 
+ 	if (OK != (s=sys_datacopy(who_e, (vir_bytes) m_in.PMBRK_ADDR,
  			SELF, (vir_bytes) search_key, key_len))) 
  		return(s);
  	search_key[key_len] = '\0';	/* terminate for safety */
@@ -492,7 +498,7 @@ PUBLIC int do_svrctl()
       size_t copy_len;
 
       /* Copy sysgetenv structure to PM. */
-      if (sys_datacopy(who_e, ptr, SELF, (vir_bytes) &sysgetenv, 
+      if (sys_datacopy(who_e, ptr, SELF, (vir_bytes) &sysgetenv,
               sizeof(sysgetenv)) != OK) return(EFAULT);  
 
       /* Set a param override? */
@@ -636,7 +642,8 @@ struct pciinfo *pciinfo;
 
 typedef struct semaforo {
 	/* quantidade de processos que podem passar pelo semáforo */
-	unsigned int N;		/* Tamanho do semaforo. */
+	int NMEM;           /* Tamanho do semaforo. */
+	int N;				/* Posicoes livres do semaforo. */
 	unsigned int ppid;	/* PID do processo que pediu este semaforo. */
 	NO lista;			/* Lista de pids que gtem permissao de acesso a este semaforo. */
 	fila *f;			/* Fila de acesso ao semaforo. */
@@ -644,15 +651,21 @@ typedef struct semaforo {
 
 
 /* Declarando variaveis globais. */
-static SEM vet_sem[128];			/* Vetor de semaforos. */
+static SEM vet_sem[MAX_SEM];			/* Vetor de semaforos. */
 static short int qnt_sem = -1;		/* Quantidade de semáforos disponiveis. */
 
 void inicializa_sem(void) {
+	DEBUG printf("\nIniciando os semaforos.\n");
 	for( qnt_sem=0; qnt_sem<128; qnt_sem++) {
-		vet_sem[qnt_sem].ppid = -1;
+		vet_sem[qnt_sem].ppid = NO_PID;
 		vet_sem[qnt_sem].lista = NULL;
 		vet_sem[qnt_sem].f = novaFila();
 	}
+}
+
+int ancestral (int ppid, int parent) {
+	int i, j;
+	printf( "\n\nname: %s\npid1: %d\npid2: %d\nparent = %s\n\n", mproc[ppid].mp_name, ppid, mproc[ppid].mp_pid, mproc[mp[ppid].mp_parent].mp_pid );
 }
 
 /*===========================================================================*
@@ -664,24 +677,26 @@ PUBLIC int do_get_sem()
 	int n = m_in.m1_i1;			/* Tamanho do semaforo. */
 	int ppid = who_p;			/* Pid do pai.			*/
 
-	printf("\n\t%d => |%d|", ppid, n);
-
 	/* Verificando se vetor de semaforos precisa ser inicializado. */
 	if ( qnt_sem == -1 ) inicializa_sem();
 
 	/* não há mais semáforos disponíveis */
 	if (qnt_sem==0 || n<=0){
+		DEBUG printf("\nSemaforos indisponiveis, matando o processo.\n");
 		return -1;
 	} else {
-		for( i=0; i<128; i++) {
-			if ( vet_sem[i].ppid == -1 ) {
+		DEBUG printf("\nProcurando por uma posicao livre no vetor de semaforos.\n");
+		for( i=0; i<MAX_SEM; i++) {
+			if ( vet_sem[i].ppid == NO_PID ) {
 				qnt_sem--;
 				vet_sem[i].N = n;
 				vet_sem[i].ppid = ppid;
 				insere (&vet_sem[i].lista, ppid);
+				DEBUG printf("\nAlocando espaço na posicao %d\n", i);
 				return i;
 			}
 		}
+		DEBUG printf("\nErro no vetor de semaforos.\n");
 		return -2;
 	}
 }
@@ -694,22 +709,22 @@ PUBLIC int do_get_sem()
 /*  RECEBER O PID do processo que está querendo fazer um P no semaforo para ver se ele tem permissão de fazer isto ou nao (procurando na lista do semaforo */
 PUBLIC int do_p_sem() 
 {
+	int ppid = who_p;			/* Pid do pai.			*/
 	int sid = m_in.m1_i1;
-	SEM sem = vet_sem[sid];
+	SEM *sem = vet_sem+sid;
 
-	if (S->N > 0){ /* se  puder passar */
-		S->N--;
-		
-		/* ----------------------------
-			avisa o processo que ele pode passar
-		  pelo semáforo.
+	DEBUG printf("\nProcesso %d tentando acessar o semaforo %d.\n", ppid, sid);
 
-		  SEND (m_in.m_source, 
-
-		 -------------------------------------------*/
+	--sem->N;
+	/* se  puder passar */
+	if (sem->N >= 0) {
+		DEBUG printf("\nProcesso %d acessando diretamente o semaforo %d.\n", ppid, sid);
+		return 1;
 	}
-	
-	return 0;
+
+	DEBUG printf("\nProcesso %d aguardando o semaforo %d.\n", ppid, sid);
+	entra ( vet_sem[sid].f , ppid );
+	return (SUSPEND);
 }
 
 /*===========================================================================*
@@ -717,23 +732,29 @@ PUBLIC int do_p_sem()
  *===========================================================================*/
 PUBLIC int do_v_sem()
 {
-	nof no;
+	int ppid;
 	int sid = m_in.m1_i1;
-	SEM sem = vet_sem[sid];
+	SEM *sem = vet_sem+sid;
 
-	printf("\nRecebeu um V do processo %d para o semáforo %d \n", m_in.m_source, sid);
+	DEBUG printf("\nProcesso %d liberando o semaforo %d.\n", _ENDPOINT_P(m_in.m_source), sid);
 
-	if (sem->N == 0 && tamanho (sem->f) > 0){
-		no = proximo (sem->f);
+	++sem->N;
 
-		/* --------------
-			envia a mensagem para algum processo que estava dormindo na fila 
-			do semáforo (ficou dormindo quando fez o P)
+	/* ancestral(who_p, 3); */
 
-			SEND (no, ) 
-		---------------- */
-	}else{
-		sem->N++;
+	/* Acordando o próximo a entrar no semaforo. */
+	if ( tamanho(sem->f) > 0){
+		ppid = proximo(sem->f);
+		DEBUG printf("\nProcesso %d acordando processo %d no semaforo %d.\n", _ENDPOINT_P(m_in.m_source), ppid, sid);
+		setreply (ppid, 1);
+	}
+	/* Liberando o pai caso ele esteja esperando a conclusao dos filhos. */
+	else {
+		while( sem->N<sem->NMEM && tamanho(sem->f)==0);
+		if ( tamanho(sem->f)==0 ) {
+			DEBUG printf("\nProcesso %d avisando pai % do final da fila do semaforo %d.\nPossiveis mensagens em buffer ainda podem ser exibidas.\n", _ENDPOINT_P(m_in.m_source), vet_sem[sid].ppid, sid);
+			setreply(vet_sem[sid].ppid, 1);
+		}
 	}
 
 	return 0;
@@ -745,8 +766,7 @@ PUBLIC int do_v_sem()
 int free_sem(int sid, int ppid)
 {
 	if ( vet_sem[sid].ppid==ppid ) {
-		printf("\nTeste: FREE - %d\n", sid);
-		vet_sem[sid].ppid = -1;
+		vet_sem[sid].ppid = NO_PID;
 		destroi_lista(&vet_sem[sid].lista);
 		if ( fechou(vet_sem[sid].f) )
 			vet_sem[sid].f = NULL ;
@@ -761,19 +781,30 @@ PUBLIC int do_free_sem()
 {
 	int sid = m_in.m1_i1;
 	int ppid = who_p;
+
+	DEBUG printf("\nProcesso %d pede cancelamento do semaforo %d.\n", ppid, sid);
+
 	return free_sem(sid, ppid);
 }
 
 void terminator(int ppid) {
 	int i;
-	for ( i=0; i<128; i++ ) {
+	for ( i=0; i<MAX_SEM; i++ ) {
 		if ( vet_sem[i].ppid == ppid ) {
-			printf("\nKILL THEM ALL!!!\n");
+			DEBUG printf("\nProcesso %d morreu, cancelando semaforo %d.\n", ppid, i);
 			free_sem( i, ppid);
-
 		}
 	}
 }
+
+PUBLIC int do_wait_sem(void) {
+	int ppid = who_p;
+	int sid = m_in.m1_i1;
+	if ( vet_sem[sid].ppid == ppid )
+		return (SUSPEND);
+	return -1;
+}
+
 
 /*??????????????????????????????????????????????????*/
 /*??????????????????????????????????????????????????*/

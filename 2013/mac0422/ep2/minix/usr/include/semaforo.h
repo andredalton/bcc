@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <minix/callnr.h>
+#include <minix/endpoint.h>
 
 PUBLIC int get_sem (int n) {
 	int sid;
@@ -24,10 +25,8 @@ PUBLIC int p_sem (int sid) {
 	message m;
 	m.m1_i1 = sid;
 
-	/* pergunta se pode entrar */
-	_syscall(PM_PROC_NR, P_SEM, &m);
-	/* espera permissão para passar pelo semáforo */
-	receive (PM_PROC_NR, &m, &rec); 
+	/* Faz a call e pode ser suspenso neste momento. */
+	return _syscall(PM_PROC_NR, P_SEM, &m);
 }
 
 PUBLIC int v_sem (int sid) {
@@ -41,6 +40,12 @@ PUBLIC int free_sem (int sid) {
 	message m;
 	m.m1_i1 = sid;
 	return (_syscall(PM_PROC_NR, FREE_SEM, &m) );
+}
+
+PUBLIC int wait_sem (int sid) {
+	message m;
+	m.m1_i1 = sid;
+	return (_syscall(PM_PROC_NR, WAIT_SEM, &m) );
 }
 
 /*??????????????????????????????????????????????????*/
