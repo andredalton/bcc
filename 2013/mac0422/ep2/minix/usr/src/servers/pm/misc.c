@@ -695,14 +695,20 @@ PUBLIC int do_get_sem()
 PUBLIC int do_p_sem() 
 {
 	int sid = m_in.m1_i1;
-	
-	/* usar o sid como o indice do semáforo
-	if (
-	
-	
-	*/
-	printf("\nTeste: P - %d\n", sid);
+	SEM sem = vet_sem[sid];
 
+	if (S->N > 0){ /* se  puder passar */
+		S->N--;
+		
+		/* ----------------------------
+			avisa o processo que ele pode passar
+		  pelo semáforo.
+
+		  SEND (m_in.m_source, 
+
+		 -------------------------------------------*/
+	}
+	
 	return 0;
 }
 
@@ -711,9 +717,24 @@ PUBLIC int do_p_sem()
  *===========================================================================*/
 PUBLIC int do_v_sem()
 {
+	nof no;
 	int sid = m_in.m1_i1;
+	SEM sem = vet_sem[sid];
 
 	printf("\nRecebeu um V do processo %d para o semáforo %d \n", m_in.m_source, sid);
+
+	if (sem->N == 0 && tamanho (sem->f) > 0){
+		no = proximo (sem->f);
+
+		/* --------------
+			envia a mensagem para algum processo que estava dormindo na fila 
+			do semáforo (ficou dormindo quando fez o P)
+
+			SEND (no, ) 
+		---------------- */
+	}else{
+		sem->N++;
+	}
 
 	return 0;
 }

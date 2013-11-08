@@ -77,28 +77,3 @@ void insere (NO* lista, int pid){
 
 }
 
-/****************************************************
-*		Procura na lista pelo nó cujo valor seja
-* igual a x.
-*		Se encontrar, remove-o. Senão, deixa a lista como está.
-*****************************************************/
-void remove (NO* lista, int x){
-	NO ant = NULL;
-	NO p = *lista;
-
-	while (p && p->pid != x){ /* lista não nula */
-		ant = p;
-		p = p->prox;
-	}
-	if (p){ /* se encontrou o nó que contém o valor x */
-		if (ant == NULL){ /* se o nó a ser removido é o primeiro */
-			*lista = p->prox;
-		}else {
-			ant->prox = p->prox;
-		}
-		free (p);
-	}
-}
-
-
-
