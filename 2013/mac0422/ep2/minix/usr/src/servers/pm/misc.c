@@ -645,7 +645,6 @@ typedef struct semaforo {
 	int NMEM;           /* Tamanho do semaforo. */
 	int N;				/* Posicoes livres do semaforo. */
 	unsigned int ppid;	/* PID do processo que pediu este semaforo. */
-	NO lista;			/* Lista de pids que gtem permissao de acesso a este semaforo. */
 	fila *f;			/* Fila de acesso ao semaforo. */
 } SEM;
 
@@ -658,22 +657,24 @@ void inicializa_sem(void) {
 	DEBUG printf("\nIniciando os semaforos.\n");
 	for( qnt_sem=0; qnt_sem<128; qnt_sem++) {
 		vet_sem[qnt_sem].ppid = NO_PID;
-		vet_sem[qnt_sem].lista = NULL;
 		vet_sem[qnt_sem].f = novaFila();
 	}
 }
 
-
+/* Funcão que retorna 1 caso parent seja ancestral de ppid. */
 int ancestral (int ppid, int parent) {
-	int i;
 	int prn = ppid;
-	int mem = 0;
+	int mem = NO_PID;
 
-	while ( mem!=prn && prn>0 ) {
-		printf( "\nname: %s\tpid1: %d\tpid2: %d\tparent: %d\n", mproc[prn].mp_name, prn, mproc[prn].mp_pid, mproc[prn].mp_parent );
+	DEBUG printf("\n");
+	while ( mem!=prn && prn>parent ) {
+		DEBUG printf("name: %s\tpid1: %d\tpid2: %d\tparent: %d\n", mproc[prn].mp_name, prn, mproc[prn].mp_pid, mproc[prn].mp_parent );
 		mem = prn;
 		prn = mproc[prn].mp_parent;
 	}
+	if (prn==parent)
+		return 1;
+	return 0;
 }
 
 /*===========================================================================*
@@ -684,11 +685,6 @@ PUBLIC int do_get_sem()
 	int i;
 	int n = m_in.m1_i1;			/* Tamanho do semaforo. */
 	int ppid = who_p;			/* Pid do pai.			*/
-
-	ancestral (who_p, 8);
-
-	return -1;
-
 
 	/* Verificando se vetor de semaforos precisa ser inicializado. */
 	if ( qnt_sem == -1 ) inicializa_sem();
@@ -704,7 +700,6 @@ PUBLIC int do_get_sem()
 				qnt_sem--;
 				vet_sem[i].N = n;
 				vet_sem[i].ppid = ppid;
-				insere (&vet_sem[i].lista, ppid);
 				DEBUG printf("\nAlocando espaço na posicao %d\n", i);
 				return i;
 			}
@@ -722,11 +717,16 @@ PUBLIC int do_get_sem()
 /*  RECEBER O PID do processo que está querendo fazer um P no semaforo para ver se ele tem permissão de fazer isto ou nao (procurando na lista do semaforo */
 PUBLIC int do_p_sem() 
 {
-	int ppid = who_p;			/* Pid do pai.			*/
-	int sid = m_in.m1_i1;
-	SEM *sem = vet_sem+sid;
+	int ppid = _ENDPOINT_P(m_in.m_source);       /* Pid de quem chamou a call.             */
+	int sid = m_in.m1_i1;                        /* Sid para a qual o proceso pede acesso. */
+	SEM *sem = vet_sem+sid;                      /* Auxiliar para o caminho do semaforo.   */
 
 	DEBUG printf("\nProcesso %d tentando acessar o semaforo %d.\n", ppid, sid);
+
+	if ( !ancestral(ppid, sem->ppid) ) {
+		DEBUG printf("\nProcesso %d acessando indevidamente semaforo %d. Matando processo. \n", ppid, sid);
+		return -1;
+	}
 
 	--sem->N;
 	/* se  puder passar */
@@ -745,15 +745,18 @@ PUBLIC int do_p_sem()
  *===========================================================================*/
 PUBLIC int do_v_sem()
 {
-	int ppid;
+	int ppid = _ENDPOINT_P(m_in.m_source);
 	int sid = m_in.m1_i1;
 	SEM *sem = vet_sem+sid;
 
-	DEBUG printf("\nProcesso %d liberando o semaforo %d.\n", _ENDPOINT_P(m_in.m_source), sid);
+	DEBUG printf("\nProcesso %d liberando o semaforo %d.\n", ppid, sid);
+
+	if ( !ancestral(ppid, sem->ppid) ) {
+		DEBUG printf("\nProcesso %d liberando indevidamente semaforo %d. Matando processo. \n", ppid, sid);
+		return -1;
+	}
 
 	++sem->N;
-
-	ancestral(who_e, 3);
 
 	/* Acordando o próximo a entrar no semaforo. */
 	if ( tamanho(sem->f) > 0){
@@ -780,7 +783,6 @@ int free_sem(int sid, int ppid)
 {
 	if ( vet_sem[sid].ppid==ppid ) {
 		vet_sem[sid].ppid = NO_PID;
-		destroi_lista(&vet_sem[sid].lista);
 		if ( fechou(vet_sem[sid].f) )
 			vet_sem[sid].f = NULL ;
 
