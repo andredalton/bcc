@@ -663,9 +663,17 @@ void inicializa_sem(void) {
 	}
 }
 
-int ancestral (int ppid) {
-	int i, j;
-	printf( "\n\nname: %s\npid1: %d\npid2: %d\nparent = %s\n\n", mproc[ppid].mp_name, ppid, mproc[ppid].mp_pid, mproc[mp[ppid].mp_parent].mp_pid );
+
+int ancestral (int ppid, int parent) {
+	int i;
+	int prn = ppid;
+	int mem = 0;
+
+	while ( mem!=prn && prn>0 ) {
+		printf( "\nname: %s\tpid1: %d\tpid2: %d\tparent: %d\n", mproc[prn].mp_name, prn, mproc[prn].mp_pid, mproc[prn].mp_parent );
+		mem = prn;
+		prn = mproc[prn].mp_parent;
+	}
 }
 
 /*===========================================================================*
@@ -676,6 +684,11 @@ PUBLIC int do_get_sem()
 	int i;
 	int n = m_in.m1_i1;			/* Tamanho do semaforo. */
 	int ppid = who_p;			/* Pid do pai.			*/
+
+	ancestral (who_p, 8);
+
+	return -1;
+
 
 	/* Verificando se vetor de semaforos precisa ser inicializado. */
 	if ( qnt_sem == -1 ) inicializa_sem();
@@ -732,7 +745,6 @@ PUBLIC int do_p_sem()
  *===========================================================================*/
 PUBLIC int do_v_sem()
 {
-	char tmp;
 	int ppid;
 	int sid = m_in.m1_i1;
 	SEM *sem = vet_sem+sid;
@@ -741,8 +753,7 @@ PUBLIC int do_v_sem()
 
 	++sem->N;
 
-	ancestral(who_p);
-	scanf ("%c", &tmp);
+	ancestral(who_e, 3);
 
 	/* Acordando o próximo a entrar no semaforo. */
 	if ( tamanho(sem->f) > 0){
@@ -754,7 +765,7 @@ PUBLIC int do_v_sem()
 	else {
 		while( sem->N<sem->NMEM && tamanho(sem->f)==0);
 		if ( tamanho(sem->f)==0 ) {
-			DEBUG printf("\nProcesso %d avisando pai %d o final da fila do semaforo %d.\nPossiveis mensagens em buffer ainda podem ser exibidas.\n", _ENDPOINT_P(m_in.m_source), vet_sem[sid].ppid, sid);
+			DEBUG printf("\nProcesso %d avisando pai %d do final da fila do semaforo %d.\nPossiveis mensagens em buffer ainda podem ser exibidas.\n", _ENDPOINT_P(m_in.m_source), vet_sem[sid].ppid, sid);
 			setreply(vet_sem[sid].ppid, 1);
 		}
 	}

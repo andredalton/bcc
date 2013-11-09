@@ -13,10 +13,8 @@ int main (int argc, char *argv[])
 			if ( !r ) {
 				printf("\nOla papai [%d].\n", i);
 				p_sem(sid);
-				printf ("\nO processo %d passou entrou\n", i);
 				sleep(i);
 				v_sem(sid);
-				printf ("\nO processo %d saiu entrou\n", i);
 				break;
 			}
 			else {
@@ -25,7 +23,7 @@ int main (int argc, char *argv[])
 		}
 	}
 
-	/* wait_sem(sid); */
+	wait_sem(sid);
 
 	return 0;
 }
