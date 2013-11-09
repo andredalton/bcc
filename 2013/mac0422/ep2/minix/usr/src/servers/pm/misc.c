@@ -16,13 +16,11 @@
 /*?????????????????????????????????????????????????????????????????????????????????????*/
 /*?????????????????????????????????????????????????????????????????????????????????????*/
 #define MAX_SEM 128                      /* Definindo o número máximo de semáforos.    */
-#define DB 1                             /* Define se está em modo de depuração.       */
+#define DB 0                             /* Define se está em modo de depuração.       */
 #define DEBUG if (DB)                    /* Monta condição de depuração.               */
 
 #include "fila.h"                        /* Inserção das funções de controle de fila.  */
 #include "lista_ligada.h"                /* Inserção das funções de controle de lista. */
-
-#include <string.h>
 /*?????????????????????????????????????????????????????????????????????????????????????*/
 /*?????????????????????????????????????????????????????????????????????????????????????*/
 
@@ -639,29 +637,40 @@ struct pciinfo *pciinfo;
 /*??????????????????????????????????????????????????*/
 /*??????????????????????????????????????????????????*/
 
-
+/*
+ * Definindo a estrutura do semaforo.
+ */
 typedef struct semaforo {
-	/* quantidade de processos que podem passar pelo semáforo */
-	int NMEM;           /* Tamanho do semaforo. */
-	int N;				/* Posicoes livres do semaforo. */
-	unsigned int ppid;	/* PID do processo que pediu este semaforo. */
-	fila *f;			/* Fila de acesso ao semaforo. */
+	/* quantidade de processos que podem passar pelo semáforo           */
+	int NMEM;           /* Tamanho do semaforo.                         */
+	int N;              /* Posicoes livres do semaforo.                 */
+	unsigned int ppid;  /* PID do processo que pediu este semaforo.     */
+	short int espera;   /* Processo pai esperando o termino dos filhos. */
+	fila *f;            /* Fila de acesso ao semaforo.                  */
 } SEM;
 
 
-/* Declarando variaveis globais. */
-static SEM vet_sem[MAX_SEM];			/* Vetor de semaforos. */
+/* Declarando variaveis globais.                                            */
+static SEM vet_sem[MAX_SEM];        /* Vetor de semaforos.                  */
 static short int qnt_sem = -1;		/* Quantidade de semáforos disponiveis. */
 
+/*
+ * Funcao utilizada para iniciar os semaforos na primeira vez que o sistema rodar.
+ * Para isso a variavel que contem os semaforos livres que foi iniciada com -1
+ * servira de contador para a inicializacao e terminara com MAX_SEM.
+ */
 void inicializa_sem(void) {
 	DEBUG printf("\nIniciando os semaforos.\n");
-	for( qnt_sem=0; qnt_sem<128; qnt_sem++) {
+	for( qnt_sem=0; qnt_sem<MAX_SEM; qnt_sem++) {
 		vet_sem[qnt_sem].ppid = NO_PID;
 		vet_sem[qnt_sem].f = novaFila();
+		vet_sem[qnt_sem].espera = 0;
 	}
 }
 
-/* Funcão que retorna 1 caso parent seja ancestral de ppid. */
+/*
+ * Funcão que retorna 1 caso parent seja ancestral de ppid.
+ */
 int ancestral (int ppid, int parent) {
 	int prn = ppid;
 	int mem = NO_PID;
@@ -672,19 +681,19 @@ int ancestral (int ppid, int parent) {
 		mem = prn;
 		prn = mproc[prn].mp_parent;
 	}
-	if (prn==parent)
-		return 1;
+	if (prn==parent) return 1;
 	return 0;
 }
 
-/*===========================================================================*
- *				do_get_sem				     *
- *===========================================================================*/
-PUBLIC int do_get_sem()
-{
-	int i;
-	int n = m_in.m1_i1;			/* Tamanho do semaforo. */
-	int ppid = who_p;			/* Pid do pai.			*/
+/*
+ * Funcao que retorna uma nova posicao de semaforo valida.
+ * Retorna -1 indicando erro quando o numero de semaforos
+ * maximo e alcancado.
+ */
+PUBLIC int do_get_sem() {
+    int i;
+    int n = m_in.m1_i1;     /* Tamanho do semaforo. */
+    int ppid = who_p;       /* Pid do pai.          */
 
 	/* Verificando se vetor de semaforos precisa ser inicializado. */
 	if ( qnt_sem == -1 ) inicializa_sem();
@@ -699,6 +708,7 @@ PUBLIC int do_get_sem()
 			if ( vet_sem[i].ppid == NO_PID ) {
 				qnt_sem--;
 				vet_sem[i].N = n;
+				vet_sem[i].NMEM = n;
 				vet_sem[i].ppid = ppid;
 				DEBUG printf("\nAlocando espaço na posicao %d\n", i);
 				return i;
@@ -709,12 +719,11 @@ PUBLIC int do_get_sem()
 	}
 }
 
-/*===========================================================================*
- *				do_p_sem				    								 *
- *===========================================================================*/
-
-
-/*  RECEBER O PID do processo que está querendo fazer um P no semaforo para ver se ele tem permissão de fazer isto ou nao (procurando na lista do semaforo */
+/*
+ * Funcao que faz um P para o semaforo, caso o processo que faz o pedido nao seja descendente
+ * do processo que pediu o semaforo sera -1 indicando erro. Caso tenha acesso garantido sera
+ * retornado 1 e caso seja necessario esperar retorna SUSPEND.
+ */
 PUBLIC int do_p_sem() 
 {
 	int ppid = _ENDPOINT_P(m_in.m_source);       /* Pid de quem chamou a call.             */
@@ -740,12 +749,16 @@ PUBLIC int do_p_sem()
 	return (SUSPEND);
 }
 
-/*===========================================================================*
- *				do_v_sem				     *
- *===========================================================================*/
+/*
+ * Funcao que faz o P do semaforo. Caso exista alguem esperando na fila de acesso acorda este processo.
+ * Se o processo gerador deste semaforo estiver esperando os filhos terminarem e o processo que chamou
+ * for o ultimo na fila avisa o processo gerador que pode terminar.
+ * Caso algum processo tente liberar um semaforo que nao e descendente retorna -1 indicando erro.
+ */
 PUBLIC int do_v_sem()
 {
 	int ppid = _ENDPOINT_P(m_in.m_source);
+	int npid;
 	int sid = m_in.m1_i1;
 	SEM *sem = vet_sem+sid;
 
@@ -757,18 +770,16 @@ PUBLIC int do_v_sem()
 	}
 
 	++sem->N;
-
 	/* Acordando o próximo a entrar no semaforo. */
-	if ( tamanho(sem->f) > 0){
-		ppid = proximo(sem->f);
-		DEBUG printf("\nProcesso %d acordando processo %d no semaforo %d.\n", _ENDPOINT_P(m_in.m_source), ppid, sid);
-		setreply (ppid, 1);
+	if ( tamanho(sem->f) > 0) {
+		npid = proximo(sem->f);
+		DEBUG printf("\nProcesso %d acordando processo %d no semaforo %d.\n", ppid, npid, sid);
+		setreply (npid, 1);
 	}
 	/* Liberando o pai caso ele esteja esperando a conclusao dos filhos. */
 	else {
-		while( sem->N<sem->NMEM && tamanho(sem->f)==0);
-		if ( tamanho(sem->f)==0 ) {
-			DEBUG printf("\nProcesso %d avisando pai %d do final da fila do semaforo %d.\nPossiveis mensagens em buffer ainda podem ser exibidas.\n", _ENDPOINT_P(m_in.m_source), vet_sem[sid].ppid, sid);
+		if ( sem->N==sem->NMEM && sem->espera ){
+			DEBUG printf("\nProcesso %d avisando pai %d do final da fila do semaforo %d.\n", ppid, vet_sem[sid].ppid, sid);
 			setreply(vet_sem[sid].ppid, 1);
 		}
 	}
@@ -776,22 +787,27 @@ PUBLIC int do_v_sem()
 	return 0;
 }
 
-/*===========================================================================*
- *				do_free_sem				     *
- *===========================================================================*/
+/*
+ * Funcao que libera um semaforo. Pode ser usada diretamente pelo processo gerador
+ * como quando o processo gerador morre. Caso um processo que nao tenha gerado este
+ * semaforo tente cancela-lo a funcao retorna -1 indicando erro.
+ */
 int free_sem(int sid, int ppid)
 {
 	if ( vet_sem[sid].ppid==ppid ) {
 		vet_sem[sid].ppid = NO_PID;
 		if ( fechou(vet_sem[sid].f) )
-			vet_sem[sid].f = NULL ;
-
+			vet_sem[sid].f = novaFila();
+		vet_sem[sid].espera = 0;
 		qnt_sem++;
 		return 0;
 	}
 	return -1;
 }
-
+/*
+ * Funcao que trata a call para liberar um semaforo.
+ * Apenas uma interface de acesso para a funcao free_sem().
+ */
 PUBLIC int do_free_sem()
 {
 	int sid = m_in.m1_i1;
@@ -802,6 +818,10 @@ PUBLIC int do_free_sem()
 	return free_sem(sid, ppid);
 }
 
+/*
+ * Funcao chamada pelo PM para verificar se um processo morto gerou algum semaforo.
+ * Se sim libera o semaforo para outros processos.
+ */
 void terminator(int ppid) {
 	int i;
 	for ( i=0; i<MAX_SEM; i++ ) {
@@ -812,14 +832,18 @@ void terminator(int ppid) {
 	}
 }
 
+/*
+ * Funcao que permite que o processo gerador do semaforo espere que todos os seus descendentes
+ * liberem o acesso para o semaforo.
+ */
 PUBLIC int do_wait_sem(void) {
 	int ppid = who_p;
 	int sid = m_in.m1_i1;
-	if ( vet_sem[sid].ppid == ppid )
+	if ( vet_sem[sid].ppid == ppid ) {
+		vet_sem[sid].espera = 1;
 		return (SUSPEND);
+	}
 	return -1;
 }
-
-
 /*??????????????????????????????????????????????????*/
 /*??????????????????????????????????????????????????*/
