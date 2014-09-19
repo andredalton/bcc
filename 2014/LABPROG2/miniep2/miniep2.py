@@ -3,23 +3,25 @@
 import getopt
 import sys
 import os
+import pprint
 
 def compara(chave, lst):
     dic = {}
+    ret = {}
     for line in lst:
-        if line[chave] not in dic:
-            dic[line[chave]] = [line['usuario']]
+        if chave == 'nome' and len(str.split(line['nome'])) > 1:
+            key = str.split(line['nome'])[0] + " " + str.split(line['nome'])[-1]
         else:
-            dic[line[chave]].append(line['usuario'])
-    '''
-    print(dic.keys)
-    sys.exit(2)
-    
-    for key in dic.keys:
-        if len(dic[key]) == 1:
-            dic.pop(key, None)
-    '''
-    return dic
+            key = line[chave]
+        if key not in dic:
+            dic[key] = [line['usuario']]
+        else:
+            dic[key].append(line['usuario'])
+    for key in dic.keys():
+        if len(dic[key]) > 1:
+            ret[key] = dic[key]
+
+    return ret
 
 def leitura():
     lst = []
@@ -30,14 +32,20 @@ def leitura():
         lst.append( dict(usuario=usr, uid=uid, nome=nome) ) 
     return lst
 
+def imprime(dic):
+    for key in dic.keys():
+        print(key + ": ", end="")
+        print(', '.join(dic[key]))
+
 def uso():
     uso = """
 Este programa procura por duplicações nos usuários do sistema.
-Para que funcione uma das seguintes opções deve ser passada como argumento em linha de comando.
+Para que funcione uma das seguintes opções deve ser passada
+como argumento em linha de comando.
 
-    -h --help                 Imprime isto
-    -a --nome                 Procura por nome diferenciando maiúscula de minúscula
-    -b --uid                  Procura por UIDs
+    -h --help       Imprime isto
+    -a --nome       Procura por nome diferenciando maiúscula de minúscula
+    -b --uid        Procura por UIDs
     """
     print(uso)
     
@@ -53,16 +61,16 @@ def main(argv):
             uso()
             sys.exit()
         elif o in ("-a", "--nome"):
-            print("Nome\n\n")
             lst = leitura()
             dic = compara('nome', lst)
-            print(dic)
+            pp = pprint.PrettyPrinter(indent=4)
+            imprime(dic)
         elif o in ("-b", "--uid"):
-            print("UID\n\n")
             lst = leitura()
+            dic = compara('uid', lst)
+            imprime(dic)
         else:
             assert False, "Opção inválida"
 
 if __name__ == "__main__":
     main(sys.argv[1:]) # [1:] slices off the first argument which is the name of the program
-
