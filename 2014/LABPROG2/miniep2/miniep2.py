@@ -3,9 +3,14 @@
 import getopt
 import sys
 import os
-import pprint
 
 def compara(chave, lst):
+    """Compara usuários da lista lst através da chave
+
+    A comparacão ocorre montando um dicionário de listas de usuário
+    temporáriamente em dic. Uma vez que todo o dicionário está montado
+    os índices do dicionário que contém mais do que um elemento são
+    copiados para o dicionário de retorno ret."""
     dic = {}
     ret = {}
     for line in lst:
@@ -20,10 +25,15 @@ def compara(chave, lst):
     for key in dic.keys():
         if len(dic[key]) > 1:
             ret[key] = dic[key]
-
     return ret
 
 def leitura():
+    """Lê um arquivo e o transforma em uma lista de dicionários.
+
+    O arquivo de entrada deve seguir o formado:
+    <usuário>:x:<UID>:<GID>:<Nome do usuário>:<home>:<shell> 
+    Desta maneira transformando o arquivo de texto em uma lista
+    com o usuário, UID e Nome do usuário de maneira apropriada."""
     lst = []
     for line in sys.stdin:
         usr = str.split(line, ':')[0]
@@ -33,11 +43,13 @@ def leitura():
     return lst
 
 def imprime(dic):
+    """Imprime o resultado no formato especificado."""
     for key in dic.keys():
         print(key + ": ", end="")
         print(', '.join(dic[key]))
 
 def uso():
+    """Imprime instruções de uso do programa."""
     uso = """
 Este programa procura por duplicações nos usuários do sistema.
 Para que funcione uma das seguintes opções deve ser passada
@@ -61,16 +73,15 @@ def main(argv):
             uso()
             sys.exit()
         elif o in ("-a", "--nome"):
-            lst = leitura()
-            dic = compara('nome', lst)
-            pp = pprint.PrettyPrinter(indent=4)
-            imprime(dic)
+            opt = 'nome'
         elif o in ("-b", "--uid"):
-            lst = leitura()
-            dic = compara('uid', lst)
-            imprime(dic)
+            opt = 'uid'
         else:
             assert False, "Opção inválida"
+            sys.exit(2)
+        lst = leitura()
+        dic = compara(opt, lst)
+        imprime(dic)
 
 if __name__ == "__main__":
-    main(sys.argv[1:]) # [1:] slices off the first argument which is the name of the program
+    main(sys.argv[1:])
