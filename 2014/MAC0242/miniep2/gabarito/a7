@@ -1,0 +1,31 @@
+: libuuid, messagebus, Debian-exim, statd, sshd, debian-spamd, libuuid, messagebus, Debian-exim, statd, sshd, debian-spamd, libuuid, messagebus, Debian-exim, statd, sshd, debian-spamd
+backup: backup, backup, backup
+RealtimeKit,,,: rtkit, rtkit, rtkit
+sync: sync, sync, sync
+Gnome Manager: Debian-gdm, Debian-gdm, Debian-gdm
+usbmux daemon,,,: usbmux, usbmux, usbmux
+Andre Vale,,,: avale, avale, avale
+uucp: uucp, uucp, uucp
+Avahi daemon,,,: avahi-autoipd, avahi, avahi-autoipd, avahi, avahi-autoipd, avahi
+lp: lp, lp, lp
+mail: mail, mail, mail
+HPLIP user,,,: hplip, hplip, hplip
+bin: bin, bin, bin
+games: games, games, games
+ircd: irc, irc, irc
+nobody: nobody, nobody, nobody
+colord daemon,,,: colord, colord, colord
+sys: sys, sys, sys
+Dovecot user,,,: dovenull, dovenull, dovenull
+Speech Dispatcher,,,: speech-dispatcher, speech-dispatcher, speech-dispatcher
+proxy: proxy, proxy, proxy
+news: news, news, news
+man: man, man, man
+daemon: daemon, daemon, daemon
+Dovecot server,,,: dovecot, dovecot, dovecot
+Mailing Manager: list, list, list
+PostgreSQL administrator,,,: postgres, postgres, postgres
+www-data: www-data, www-data, www-data
+PulseAudio daemon,,,: pulse, pulse, pulse
+Gnats (admin): gnats, gnats, gnats
+root: root, root, root

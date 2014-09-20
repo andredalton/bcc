@@ -1,0 +1,6 @@
+teste1:x:0:0:teste ttt teste1:/teste:/bin/bash
+teste2:x:1:1:teste aaa teste1:/teste:/bin/sh
+teste3:x:2:2:teste teste1:/teste:/bin/sh
+teste4:x:3:3:teste ttt teste2:/teste:/bin/bash
+teste5:x:4:4:teste aaa teste2:/teste:/bin/sh
+teste6:x:5:5:teste teste3:/teste:/bin/sh

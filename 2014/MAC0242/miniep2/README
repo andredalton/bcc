@@ -1,0 +1,19 @@
+Nome: André Meneghelli Vale
+NUSP: 4898948
+
+Opção escolhida: 1. Usuários duplicados
+
+Observações:
+
+Os módulos utilizados foram getopt e sys que estão contidos na instalação padrão do python.
+A lógica do programa foi baseada nas propriedades das estruturas de dados lista e dicionário.
+
+Teste:
+
+Para o teste foram gerados 7 arquivos de entrada distintos - contidos no diretório teste - e
+os respectivos gabaritos - cotidos no diretório gabarito com os prefixos a ou b - para cada
+um dos dois parâmetros de uso do programa respectivamente. Estes gabaritos foram conferidos
+manualmente. O script de teste - teste.sh - gera novos resultados e compara com os gabaritos.
+
+Este teste pode falhar dependendo da ordem do arquivo de entrada, para sanar este problema
+poderia criar um critério de ordenação para então realizar a comparação.

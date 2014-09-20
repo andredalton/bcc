@@ -1,0 +1,2 @@
+: libuuid, messagebus, Debian-exim, statd, sshd, debian-spamd
+Avahi daemon,,,: avahi-autoipd, avahi
