@@ -2,7 +2,6 @@
 
 import getopt
 import sys
-import os
 
 def compara(chave, lst):
     """Compara usuários da lista lst através da chave
@@ -62,6 +61,7 @@ como argumento em linha de comando.
     print(uso)
     
 def main(argv):
+    """ Função que trata a linha de comando e chama as funcões do programa."""
     try:
         opt, args = getopt.getopt(argv, "hab", ["help", "nome", "uid"])
     except (getopt.GetoptError):
@@ -79,6 +79,7 @@ def main(argv):
         else:
             assert False, "Opção inválida"
             sys.exit(2)
+        """ Usando as funcẽs desenvolvidas para o EP."""
         lst = leitura()
         dic = compara(opt, lst)
         imprime(dic)
