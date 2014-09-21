@@ -1,0 +1,23 @@
+﻿Aluno: André Meneghelli Vale
+Orientador: Marcel P. Jackowski
+
+Log 1.
+10/03: Conversa com o Prof. Marcel e definição inicial do plano de TCC.
+14/03: Reunião com o Prof. Marcel e apresentação aos outros grupos de pesquisa.
+14/03 - 21/03: Estudo inicial sobre protocolo DICOM. 
+21/03: Reunião com o Prof. Marcel e apresentação dos outros grupos de pesquisa.
+21/03 - 27/03: Estudo sobre o sistema XNAT.
+28/03: Reunião entre os grupos de pesquisa e após reunião com o Dr. Choukri, responsável pelo projeto em Nimes.
+04/04: Apresentação sobre prós e contras do uso do sistema XNAT como gerenciador de grupos de pesquisa e sistema de arquivamento de imagens.
+07/04: Reunião com o Prof. Marcel e definição de objetivos de pesquisa.
+07/04 - 28/04: Levantamento de requisitos do sistema levando em consideração o que podemos 
+28/04: Desenvolvimento de relatório preliminar.
+02/05: Reunião com o Dr. Choukri, Prof. Marcel e grupo de núvem. Início do estudo sobre o sistema galaxy [ara gerenciamento de workflow.
+13/05: Início do levantamento de requisitos para o sistema.
+30/05: Reunião com o Prof. Marcel e necessidade de pesquisar novos requisitos para o sistema.
+
+Log 2.
+09/06: Reunião com o Igor a respeito do sistema Galaxy.
+10/06: Reunião com o Prof. Marcel a respeito de possível visita ao HC.
+17/06: Visita ao HC para verificar necessidades do sistema junto aos usuários.
+18/06 - 28/06: Testes individuais com as ferramentas que formarão o sistema final.

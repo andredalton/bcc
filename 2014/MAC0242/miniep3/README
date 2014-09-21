@@ -1,0 +1,27 @@
+Nome: André Meneghelli Vale
+NUSP: 4898948
+
+MiniEP 3
+
+Opção escolhida: 1. Restauração de BSs.
+
+Observações:
+
+Os módulos utilizados foram re e sys que estão contidos na instalação padrão do python.
+A lógica do programa foi baseada em um automato de validação do arquivo de estrutura.
+Excluindo falhas quando instruções diferentes estão contidas na mesma linha.
+O programa também encontra problemas de referência circular e caso ocorra imprime
+as tabelas defeituosas, suas referências restantes e então a ordem de inclusão dos
+demais arquivos.
+Quando ocorre uma redefinicão da tabela esta é sobrescrita sem aviso e os cálculos
+são baseados na ultima ocorrência da mesma.
+
+Teste:
+
+Para o teste foram gerados 7 arquivos de entrada distintos - contidos no diretório teste - e
+os respectivos gabaritos - cotidos no diretório gabarito com os prefixos a ou b - para cada
+um dos dois parâmetros de uso do programa respectivamente. Estes gabaritos foram conferidos
+manualmente. O script de teste - teste.sh - gera novos resultados e compara com os gabaritos.
+
+Este teste pode falhar dependendo da ordem do arquivo de entrada, para sanar este problema
+poderia criar um critério de ordenação para então realizar a comparação.
