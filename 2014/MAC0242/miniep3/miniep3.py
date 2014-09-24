@@ -85,7 +85,7 @@ def procedencia(lst, verb):
     for p in lst:
         if status == 0 and create.match(p):
             status = 1
-        if status == 0 and delim.match(p):
+        elif status == 0 and delim.match(p):
             status = 7
         elif status == 1:
             if p.lower() == "table":
@@ -113,7 +113,7 @@ def procedencia(lst, verb):
             status = 3
         elif status == 7:
             delimitador = p
-            fim = re.compile(".*" + delimitador + ".*")
+            fim = re.compile(".*" + re.escape(delimitador) + ".*")
             status = 0
         elif fim.match(p):
             if create.match(p):

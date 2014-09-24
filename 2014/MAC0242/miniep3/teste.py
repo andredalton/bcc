@@ -40,9 +40,9 @@ def main(argv):
                         else:
                             carregadas.add(tabela)
                     if erro:
-                        print("O teste falhou! =(\t\t", filename)
+                        print("O teste falhou! =(\t\t", os.path.join(diretorio, filename))
                     else:
-                        print("O teste passou com sucesso!\t", filename)
+                        print("O teste passou com sucesso!\t", os.path.join(diretorio, filename))
                     
                 
 if __name__ == "__main__":
