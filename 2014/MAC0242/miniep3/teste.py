@@ -11,11 +11,12 @@ def main(argv):
     argumento."""
     diretorios = argv
     if len(argv) == 0:
-        diretorios = ["teste"]
+        diretorios = ["teste"] # Diretório padrão
     for diretorio in diretorios:
         for dirname, dirnames, filenames in os.walk(diretorio):
             for filename in filenames:
                 if filename.endswith(".sql"):
+                    """ Inicializa as variáveis para um novo teste, carrega o arquivo e gera a ordem adequada. """
                     ordem = []
                     carregadas = set()
                     erro = False
@@ -23,9 +24,13 @@ def main(argv):
                         text=myfile.read().split()
                     dic = miniep3.procedencia(text, False)
                     miniep3.procura(dic, ordem, False)
-                    if filename == "projetoBD.sql":
-                        dic = miniep3.procedencia(text, False)
+                    
+                    """ Recria o dicionário de procedência para poder comparar com a ordem de inserção."""
+                    dic = miniep3.procedencia(text, False)
                     for tabela in ordem:
+                        """ Se ocorrer uma inserção cujas referências já não tenham sido carregadas ou seja
+                        inexistente considera um erro e para a execução do diagnóstico. Caso contrário insere
+                        esta tabela entre as referências já processadas."""
                         if tabela not in dic:
                             erro = True
                             break
