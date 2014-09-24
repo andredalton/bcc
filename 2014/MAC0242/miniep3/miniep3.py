@@ -17,7 +17,7 @@ def imprime(dic):
         print(key + ": ", end="")
         print(', '.join(dic[key]))
 
-def procura(dic, ordem):
+def procura(dic, ordem, verb):
     if len(dic) == 0:
         return ordem
     lst = []
@@ -25,26 +25,42 @@ def procura(dic, ordem):
         if len(dic[table]) == 0:
             lst.append(table)
     if len(lst) == 0:
-        print("As tabelas a seguir possuem referência circular:")
-        imprime(dic)
-        print("\n\nO resultado obtido foi:\n")
+        if verb:
+            print("\nAs tabelas a seguir possuem referência circular ou inexistente:")
+            imprime(dic)
+            print("\nO resultado obtido foi:")
         return ordem
     for key in lst:
-        ordem.append(key + ".sql")
+        if verb:
+            ordem.append(key + ".sql")
+        else:
+            ordem.append(key)
         del(dic[key])
     for table in dic.keys():
         for key in lst:
-            if dic[table].count(key):
+            if key in dic[table]:
                 dic[table].remove(key)
-    procura(dic, ordem)
+    procura(dic, ordem, verb)
 
-def procedencia(lst):
+def procedencia(lst, verb):
     """Gera uma lista de procedencia para cada tabela.
     
     Inicialmente a função iria trabalhar com o arquivo separado por linhas,
     mas como o arquivo pode ser inteiro feito em apenas uma linha modifiquei
     a estratégia para uma varredura de estados. Não me preocupei com erros de
-    sintaxe"""
+    sintaxe.
+    
+    Lista de estados:
+    
+    0: Procurando por uma instrução CREATE
+    1: Verificando se é uma instrução de criação de tabela TABLE
+    2: Procurando o nome da tabela que está sendo criada, contando que diferente de ";"
+    3: Procurando se é uma referência a criação de chave estrangeira FOREIGN
+    4: Verificando se é uma referência a criação de chave estrangeira KEY
+    5: Procurando as referências REFERENCES
+    6: Procurando o nome da tabela de referência, contando que diferente de ";"
+    final: Caso ocorra uma instrução com o delimitador encerra a criação da tabela
+    """
     
     status = 0
     """Estado do autômato."""
@@ -68,7 +84,9 @@ def procedencia(lst):
                 status = 0
         elif status == 2 and p != ";":
             tabela = p.replace("`","")
-            proc[tabela] = []
+            if tabela in proc and verb:
+                print("TABELA " + tabela + " RECRIADA")
+            proc[tabela] = set()
             status = 3
         elif  status == 3 and p.lower() == "foreign":
             status = 4
@@ -81,7 +99,7 @@ def procedencia(lst):
             status = 6
         elif status == 6 and p != ";":
             ref = p.replace("`","")
-            proc[tabela].append(ref)
+            proc[tabela].add(ref)
             status = 3
         elif fim.match(p):
             if create.match(p):
@@ -97,10 +115,13 @@ def main(argv):
     """ Lista que irá conter a ordem de restauração dos arquivos. """
     if len(argv) > 0:
         for arquivo in argv:
+            ordem = []
+            if len(argv) > 1:
+                print("\nARQUIVO: " + arquivo)
             with open(arquivo, "r") as myfile:
                 text=myfile.read().split()
-            dic = procedencia(text)
-            procura(dic, ordem)
+            dic = procedencia(text, True)
+            procura(dic, ordem, True)
             print('\n'.join(ordem))
     else:
         uso()
