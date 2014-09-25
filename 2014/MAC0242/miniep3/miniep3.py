@@ -92,7 +92,7 @@ def procedencia(lst, verb):
                 status = 2
             else:
                 status = 0
-        elif status == 2 and p != ";":
+        elif status == 2 and p != delimitador and len(p.replace("`","")) > 0:
             tabela = p.replace("`","")
             if tabela in proc and verb:
                 print("TABELA " + tabela + " RECRIADA")
@@ -107,7 +107,7 @@ def procedencia(lst, verb):
                 status = 0
         elif  status == 5 and p.lower() == "references":
             status = 6
-        elif status == 6 and p != ";":
+        elif status == 6 and p != delimitador and len(p.replace("`","")) > 0:
             ref = p.replace("`","")
             proc[tabela].add(ref)
             status = 3
