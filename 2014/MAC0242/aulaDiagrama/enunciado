@@ -1,0 +1,10 @@
+Sua equipe recebeu a tarefa de fazer um sistema de empréstimos para a biblioteca da faculdade.
+A biblioteca realiza empréstimo dos seguintes itens: livros, periódicos, mídas e monografias.
+Os usuários comuns poderão pegar até 5 itens simultaneamente e devem devolvê-los em até 7 dias, já usuários especiais poderão pegar até 10 itens simultaneamente e devem devolvê-los em até 10 dias. Ambos os usuários poderão realizar até 3 renovações de empréstimos.
+Caso o usuário não entregue o livro no prazo, ele será penalizado em x dias por dia de atraso para cada item, sendo que x pode variar de acordo com o tipo do item emprestado.
+Caso não exista exemplares disponíveis, o usuário pode requisitar a reserva do item e deve ser comunicado assim que o item for devolvido, mantendo a reserva por x dias, sendo que x pode variar de acordo com o tipo do item emprestado.
+1. Desenhe um diagrama de classes.
+2. Desenhe um diagrama de implantação.
+3. Desenhe um diagrama de casos de usos (do ponto de vista do usuário).
+4. Escolha um caso de uso e desenhe, detalhadamente, um diagrama de sequencia.
+Envie um arquivo zipado contendo os quatro diagramas e um arquivo com nome e número USP de cada integrante do grupo.
