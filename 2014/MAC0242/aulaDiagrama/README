@@ -20,4 +20,9 @@ Aula de Diagramas
 
 Observações:
 
+A) Por facilidade escolhemos impedir o acesso de um usuário que possua punições por atrasos em devoluções.
 
+B) Também foi pensado que o sistema Web pode estar desacoplado do sistema de Bancos de dados.
+
+C) Os funcionários da biblioteca acessam um terminal seguro que só eles ten acesso e por isso não precisam
+ter sua identidade verificada por um processo de validação (terminais auditados e guardadas em cofre forte).
