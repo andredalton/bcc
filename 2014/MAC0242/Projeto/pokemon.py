@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 from tipo import blank, bug, dragon, eletric, fighting, fire, flying, ghost, grass, ground, ice, normal, poison, psychic, rock, water
-from habilidade import get_habilidade, add_habilidade, ataque
+from habilidade.ataque import Ataque
 
 class Pokemon():
     """ Pokemon."""
@@ -66,6 +66,8 @@ class Pokemon():
         self.tipo1 = globals()[fo.readline().strip().lower()]
         self.tipo2 = globals()[fo.readline().strip().lower()]
         n = self.SPC = int(fo.readline())
+        if n > 4:
+            n = 4
         for i in range(n):
             nomeh = fo.readline().strip()
             tipo = globals()[fo.readline().strip().lower()]
@@ -73,11 +75,18 @@ class Pokemon():
             power = int(fo.readline())
             pp = int(fo.readline())
 
-            hab = get_habilidade(nomeh)
-            if hab is None:
-                hab = add_habilidade(ataque.Ataque(nomeh, tipo, acuracia, power, pp))
-            self.__dict__["acao"+str(i+1)] = hab
+            self.__dict__["acao"+str(i+1)] = Ataque(nomeh, tipo, acuracia, power, pp)
         fo.close()
+
+    def print_ataque(self):
+        for i in range(4):
+            a = self.__dict__["acao"+str(i+1)]
+            if a is None:
+                break
+            params = {"n":i+1, "nome":a.get_nome(), "pp":a.get_pp(), "ppm":a.get_ppm()}
+
+            if a is not None:
+                print("%(n)d - %(nome)s (%(pp)d/%(ppm)d)" % params)
 
     def recebe_dano(self, dano):
         self.HP -= dano

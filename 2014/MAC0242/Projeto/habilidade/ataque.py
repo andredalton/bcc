@@ -1,11 +1,7 @@
 #! /usr/bin/env python3
 
 import random
-import os
-import sys
 
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-#import pokemon
 from habilidade import Habilidade
 
 class Ataque(Habilidade):
@@ -16,6 +12,13 @@ class Ataque(Habilidade):
         self.ACU = acuracia
         self.PWR = power
         self.PP = pp
+        self.PPM = pp
+
+    def get_pp(self):
+        return self.PP
+
+    def get_ppm(self):
+        return self.PPM
 
     def critical(self):
         return False
@@ -45,8 +48,12 @@ class Ataque(Habilidade):
         return d
 
     def acao(self, pokemonA, pokemonD):
+        if self.PP <= 0:
+            return False
         dano = self.calcula_dano(pokemonA, pokemonD)
         pokemonD.recebe_dano(dano)
+        self.PP -= 1
+        return True
 
 if __name__ == '__main__':
     pass
