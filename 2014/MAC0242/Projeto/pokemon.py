@@ -42,6 +42,18 @@ class Pokemon():
     def get_tipo2(self):
         return self.tipo2
 
+    def get_acao1(self):
+        return self.acao1
+
+    def get_acao2(self):
+        return self.acao2
+
+    def get_acao3(self):
+        return self.acao3
+
+    def get_acao4(self):
+        return self.acao4
+
     def carrega_arquivo(self,nome):
         fo = open(nome, "r")
         self.nome = fo.readline()
@@ -69,33 +81,6 @@ class Pokemon():
 
     def recebe_dano(self, dano):
         self.HP -= dano
-        print(self.tipo1.get_fraqueza("Water"))
-        print(self.tipo2.get_fraqueza("Water"))
     
 if __name__ == '__main__':
-    p = Pokemon()
-    b = Pokemon()
-    p.carrega_arquivo("billpc/ratata")
-    b.carrega_arquivo("billpc/ratata")
-    
-    print("p x b")
-    print(p)
-    print(b)
-    print("acao1")
-    print(p.acao1, " ", p.acao1.get_nome())
-    print(b.acao1, " ", b.acao1.get_nome())
-    print("acao2")
-    print(p.acao2, " ", p.acao2.get_nome())
-    print(b.acao2, " ", b.acao2.get_nome())
-    print("tipo1")
-    print(p.tipo1, " ", p.tipo1.get_nome())
-    print(b.tipo1, " ", b.tipo1.get_nome())
-    print("tipo2")
-    print(p.tipo2, " ", p.tipo2.get_nome())
-    print(b.tipo2, " ", b.tipo2.get_nome())
-    print("acao1.typ")
-    print(p.acao1.TYP, " ", p.acao1.TYP.get_nome())
-    print(b.acao1.TYP, " ", b.acao1.TYP.get_nome())
-    print("acao1.typ")
-    print(p.acao2.TYP, " ", p.acao2.TYP.get_nome())
-    print(b.acao2.TYP, " ", b.acao2.TYP.get_nome())
+    pass
