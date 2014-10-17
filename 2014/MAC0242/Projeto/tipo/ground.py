@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Ground(tipo.Tipo):
+class Ground(Tipo):
     """ Ground."""
     def __init__(self):
         self.nome = "Ground"

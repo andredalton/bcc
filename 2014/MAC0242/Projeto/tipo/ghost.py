@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Ghost(tipo.Tipo):
+class Ghost(Tipo):
     """ Ghost."""
     def __init__(self):
         self.nome = "Ghost"

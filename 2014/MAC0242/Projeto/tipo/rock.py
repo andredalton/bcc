@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Rock(tipo.Tipo):
+class Rock(Tipo):
     """ Rock."""
     def __init__(self):
         self.nome = "Rock"

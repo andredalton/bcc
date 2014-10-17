@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Water(tipo.Tipo):
+class Water(Tipo):
     """ Water."""
     def __init__(self):
         self.nome = "Water"

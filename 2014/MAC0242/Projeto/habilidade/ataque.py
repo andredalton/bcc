@@ -1,20 +1,21 @@
 #! /usr/bin/env python3
 
 import random
+import os
+import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-import pokemon
-import habilidade
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+#import pokemon
+from habilidade import Habilidade
 
-class Ataque(habilidade.Habilidade):
-	""" Ataque. """
-    def __init__(self):
-        self.nome = ""
-        self.TYP = ""
-        self.ACU = 0
-        self.PWR = 0
-        self.PP = 0
-        self.fraqueza = {}
+class Ataque(Habilidade):
+    """ Ataque. """
+    def __init__(self, nome, tipo, acuracia, power, pp):
+        self.nome = nome
+        self.TYP = tipo
+        self.ACU = acuracia
+        self.PWR = power
+        self.PP = pp
 
     def critical(self):
         return False
@@ -23,7 +24,7 @@ class Ataque(habilidade.Habilidade):
     def modifier(self, pokemonA, pokemonD):
         if pokemonA.get_tipo1 == self.TYP or pokemonA.get_tipo2 == self.TYP:
             m = 1.5
-        else
+        else:
             m = 1
 
         m *= self.TYP.get_fraqueza(pokemonD.get_tipo1().get_nome())

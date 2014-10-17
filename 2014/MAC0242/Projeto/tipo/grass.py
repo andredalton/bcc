@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Grass(tipo.Tipo):
+class Grass(Tipo):
     """ Grass."""
     def __init__(self):
         self.nome = "Grass"

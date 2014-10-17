@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Fire(tipo.Tipo):
+class Fire(Tipo):
     """ Fire."""
     def __init__(self):
         self.nome = "Fire"

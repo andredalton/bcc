@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Normal(tipo.Tipo):
+class Normal(Tipo):
     """ Normal."""
     def __init__(self):
         self.nome = "Normal"

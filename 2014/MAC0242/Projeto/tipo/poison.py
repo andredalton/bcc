@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Poison(tipo.Tipo):
+class Poison(Tipo):
     """ Poison."""
     def __init__(self):
         self.nome = "Poison"

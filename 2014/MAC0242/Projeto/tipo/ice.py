@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Ice(tipo.Tipo):
+class Ice(Tipo):
     """Ice."""
     def __init__(self):
         self.nome = "Ice"

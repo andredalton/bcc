@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import tipo
+from tipo import Tipo
 
-class Blank(tipo.Tipo):
+class Blank(Tipo):
     """ Blank."""
     def __init__(self):
         self.nome = ""
