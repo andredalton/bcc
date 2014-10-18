@@ -1,0 +1,14 @@
+#! /usr/bin/env python3
+
+from kind import Kind
+
+class Ice(Kind):
+    """Ice."""
+    def __init__(self):
+        self.name = "Ice"
+        self.effective = set(["Grass", "Ground", "Flying", "Dragon"])
+        self.not_effective = set(["Fire", "Water", "Ice"])
+        self.uneffective = set()
+        
+if __name__ == '__main__':
+    pass
