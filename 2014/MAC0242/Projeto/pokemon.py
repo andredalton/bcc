@@ -13,16 +13,18 @@ class Pokemon():
         self.ATK = 0
         self.DEF = 0
         self.SPD = 0
-        self.SPC = 0
+        self.SPAtt = 0
+        self.SPDef = 0
         self.tipo1 = blank
         self.tipo2 = blank
         self.acao1 = None
         self.acao2 = None
         self.acao3 = None
         self.acao4 = None
+        self.nataque = 0
 
-    def set_tipo(self, tipo):
-        pass
+    def get_nome(self):
+        return self.nome
 
     def get_nivel(self):
         return self.nivel
@@ -35,6 +37,15 @@ class Pokemon():
     
     def get_DEF(self):
         return self.DEF
+
+    def get_SPAtt(self):
+        return self.SPAtt
+
+    def get_SPDef(self):
+        return self.SPDef
+
+    def get_SPD(self):
+        return self.SPD
 
     def get_tipo1(self):
         return self.tipo1
@@ -56,13 +67,14 @@ class Pokemon():
 
     def carrega_arquivo(self,nome):
         fo = open(nome, "r")
-        self.nome = fo.readline()
+        self.nome = fo.readline().strip()
         self.nivel = int(fo.readline())
         self.HP = int(fo.readline())
         self.ATK = int(fo.readline())
         self.DEF = int(fo.readline())
         self.SPD = int(fo.readline())
-        self.SPC = int(fo.readline())
+        self.SPAtt = int(fo.readline())
+        self.SPDef = int(fo.readline())
         self.tipo1 = globals()[fo.readline().strip().lower()]
         self.tipo2 = globals()[fo.readline().strip().lower()]
         n = self.SPC = int(fo.readline())
@@ -76,6 +88,7 @@ class Pokemon():
             pp = int(fo.readline())
 
             self.__dict__["acao"+str(i+1)] = Ataque(nomeh, tipo, acuracia, power, pp)
+            self.nataque += 1
         fo.close()
 
     def print_ataque(self):
@@ -89,7 +102,13 @@ class Pokemon():
                 print("%(n)d - %(nome)s (%(pp)d/%(ppm)d)" % params)
 
     def recebe_dano(self, dano):
-        self.HP -= dano
+        if self.HP < dano:
+            self.HP = 0
+        else:
+            self.HP -= dano
+
+    def get_nataque(self):
+        return self.nataque
     
 if __name__ == '__main__':
     pass

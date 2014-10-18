@@ -11,19 +11,5 @@ class Habilidade():
     def acao(self, pokemonA, pokemonD):
         pass
 
-habilidades = {}
-
-def get_habilidade(nome):
-    global habilidades
-    try:
-        return habilidades[nome]
-    except KeyError:
-        return None
-
-def add_habilidade(hab):
-    global habilidades
-    habilidades[hab.get_nome()] = hab
-    return habilidades[hab.get_nome()]
-
 if __name__ == '__main__':
     pass
