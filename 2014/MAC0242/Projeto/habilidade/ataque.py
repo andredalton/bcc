@@ -20,6 +20,9 @@ class Ataque(Habilidade):
     def get_ppm(self):
         return self.PPM
 
+    def get_TYP(self):
+        return self.TYP
+
     def critical(self, pokemonA):
         if random.random() < pokemonA.get_SPD()/512:
             return (2*pokemonA.get_nivel()+5)/(pokemonA.get_nivel()+5)

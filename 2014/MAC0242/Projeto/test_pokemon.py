@@ -26,19 +26,31 @@ class TestPokemon(unittest.TestCase):
 
     def test_same_acao1(self):
         """ Verifica se as duas instâncias são idênticas."""
-        self.assertEqual( self.p1.get_acao1(), self.p2.get_acao1() )
+        if self.p1.get_acao1() is None:
+            self.assertEqual( self.p1.get_acao1(), self.p2.get_acao1() )
+        else:
+            self.assertEqual( self.p1.get_acao1().get_TYP(), self.p2.get_acao1().get_TYP() )
     
     def test_same_acao2(self):
         """ Verifica se as duas instâncias são idênticas."""
-        self.assertEqual( self.p1.get_acao2(), self.p2.get_acao2() )
+        if self.p1.get_acao2() is None:
+            self.assertEqual( self.p1.get_acao2(), self.p2.get_acao2() )
+        else:
+            self.assertEqual( self.p1.get_acao2().get_TYP(), self.p2.get_acao2().get_TYP() )
     
     def test_same_acao3(self):
         """ Verifica se as duas instâncias são idênticas."""
-        self.assertEqual( self.p1.get_acao3(), self.p2.get_acao3() )
+        if self.p1.get_acao3() is None:
+            self.assertEqual( self.p1.get_acao3(), self.p2.get_acao3() )
+        else:
+            self.assertEqual( self.p1.get_acao3().get_TYP(), self.p2.get_acao3().get_TYP() )
     
     def test_same_acao4(self):
         """ Verifica se as duas instâncias são idênticas."""
-        self.assertEqual( self.p1.get_acao4(), self.p2.get_acao4() )
+        if self.p1.get_acao4() is None:
+            self.assertEqual( self.p1.get_acao4(), self.p2.get_acao4() )
+        else:
+            self.assertEqual( self.p1.get_acao4().get_TYP(), self.p2.get_acao4().get_TYP() )
 
 
 if __name__ == '__main__':
