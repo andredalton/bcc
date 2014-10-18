@@ -2,11 +2,15 @@
 
 class Skill():
     """ Acao - Por enquanto apenas attack."""
-    def __init__(self):
-        self.name = ""
+    def __init__(self, name, owner):
+        self.name = name
+        self.owner = owner
 
     def get_name(self):
     	return self.name
+
+    def get_owner(self):
+    	return self.owner
 
     def action(self, pokemonA, pokemonD):
         pass

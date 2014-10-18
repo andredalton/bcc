@@ -12,7 +12,7 @@ class Attack(Skill):
         self.PWR = power
         self.PP = pp
         self.PPM = pp
-        self.pokemon = pokemon
+        self.owner = pokemon
 
     def get_pp(self):
         return self.PP
@@ -25,9 +25,9 @@ class Attack(Skill):
 
     def critical(self):
         """ Retorna o multiplicador de critical hit. """
-        if random.random() < self.pokemon.get_SPD()/512:
+        if random.random() < self.owner.get_SPD()/512:
             print("Critical hit!")
-            return (2*self.pokemon.get_level()+5)/(self.pokemon.get_level()+5)
+            return (2*self.owner.get_level()+5)/(self.owner.get_level()+5)
         return 1
 
     def special(self):
@@ -43,7 +43,7 @@ class Attack(Skill):
         m *= self.TYP.get_weakness(pokemonD.get_kind2().get_name())
         if m > 1:
             print("It's super effective!")
-        if self.pokemon.get_kind1 == self.TYP or self.pokemon.get_kind2 == self.TYP:
+        if self.owner.get_kind1 == self.TYP or self.owner.get_kind2 == self.TYP:
             m *= 1.5
         m *= random.uniform(0.85, 1)
         return m
@@ -53,9 +53,9 @@ class Attack(Skill):
         m = self.modifier(pokemonD)
         c = self.critical()
         if self.special():
-            d = ((2*self.pokemon.get_level()+10)/250*self.pokemon.get_SPC()/pokemonD.get_SPC()*self.PWR+2)*m*c
+            d = ((2*self.owner.get_level()+10)/250*self.owner.get_SPC()/pokemonD.get_SPC()*self.PWR+2)*m*c
         else:
-            d = ((2*self.pokemon.get_level()+10)/250*self.pokemon.get_ATK()/pokemonD.get_DEF()*self.PWR+2)*m*c
+            d = ((2*self.owner.get_level()+10)/250*self.owner.get_ATK()/pokemonD.get_DEF()*self.PWR+2)*m*c
         return d
 
     def action(self, pokemonD):
@@ -63,11 +63,11 @@ class Attack(Skill):
         if self.PP <= 0:
             return False
         if self.ACU > random.random():
-            print("%(name)s used %(attack)s!" % {"name": self.pokemon.get_name(), "attack": self.name})
+            print("%(name)s used %(attack)s!" % {"name": self.owner.get_name(), "attack": self.name})
             d = self.damage(pokemonD)
             pokemonD.get_damage(d)
         else:
-            print("%(name)s used %(attack)s, but it failed!" % {"name": self.pokemon.get_name(), "attack": self.name})
+            print("%(name)s used %(attack)s, but it failed!" % {"name": self.owner.get_name(), "attack": self.name})
         self.PP -= 1
         return True
 

@@ -2,6 +2,8 @@
 
 import os
 from subprocess import call
+
+from duel import duel
 from pokemon import Pokemon
 
 def clear(int=None):  
@@ -66,6 +68,8 @@ if __name__ == '__main__':
                 print("Digite um número entre 1 e", pokemons[p2].get_nattack())
         
         print()
+        duel(a1, a2)
+        """
         if pokemons[p1].get_SPD() > pokemons[p2].get_SPD():
             a1.action(pokemons[p2])
             if pokemons[p2].get_HP()==0:
@@ -76,6 +80,7 @@ if __name__ == '__main__':
             if pokemons[p1].get_HP()==0:
                 break
             a1.action(pokemons[p2])
+        """
 
     print("\nBatalha encerrada!")
     params = {
