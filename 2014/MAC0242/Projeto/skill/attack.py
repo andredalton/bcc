@@ -5,13 +5,14 @@ from skill import Skill
 
 class Attack(Skill):
     """ Attack. """
-    def __init__(self, name, typ, acuracia, power, pp):
+    def __init__(self, name, typ, acu, power, pp, pokemon):
         self.name = name
         self.TYP = typ
-        self.ACU = acuracia
+        self.ACU = acu
         self.PWR = power
         self.PP = pp
         self.PPM = pp
+        self.pokemon = pokemon
 
     def get_pp(self):
         return self.PP
@@ -22,10 +23,11 @@ class Attack(Skill):
     def get_TYP(self):
         return self.TYP
 
-    def critical(self, pokemonA):
+    def critical(self):
         """ Retorna o multiplicador de critical hit. """
-        if random.random() < pokemonA.get_SPD()/512:
-            return (2*pokemonA.get_level()+5)/(pokemonA.get_level()+5)
+        if random.random() < self.pokemon.get_SPD()/512:
+            print("Critical hit!")
+            return (2*self.pokemon.get_level()+5)/(self.pokemon.get_level()+5)
         return 1
 
     def special(self):
@@ -34,33 +36,38 @@ class Attack(Skill):
             return True
         return False
 
-    def modifier(self, pokemonA, pokemonD):
+    def modifier(self, pokemonD):
         """ Retorna o modificador do cálculo do dano entre dois pokemons. """
-        if pokemonA.get_kind1 == self.TYP or pokemonA.get_kind2 == self.TYP:
-            m = 1.5
-        else:
-            m = 1
-        m *= self.TYP.get_fraqueza(pokemonD.get_kind1().get_name())
-        m *= self.TYP.get_fraqueza(pokemonD.get_kind2().get_name())
+        m = 1
+        m *= self.TYP.get_weakness(pokemonD.get_kind1().get_name())
+        m *= self.TYP.get_weakness(pokemonD.get_kind2().get_name())
+        if m > 1:
+            print("It's super effective!")
+        if self.pokemon.get_kind1 == self.TYP or self.pokemon.get_kind2 == self.TYP:
+            m *= 1.5
         m *= random.uniform(0.85, 1)
         return m
 
-    def damage(self, pokemonA, pokemonD):
-        """ Retorna o dano deste attack entre dois pokemons. """
-        m = self.modifier(pokemonA, pokemonD)
-        c = self.critical(pokemonA)
+    def damage(self, pokemonD):
+        """ Retorna o dano deste ataque entre dois pokemons. """
+        m = self.modifier(pokemonD)
+        c = self.critical()
         if self.special():
-            d = ((2*pokemonA.get_level()+10)/250*pokemonA.get_SPAtt()/pokemonD.get_SPDef()*self.PWR+2)*m*c
+            d = ((2*self.pokemon.get_level()+10)/250*self.pokemon.get_SPC()/pokemonD.get_SPC()*self.PWR+2)*m*c
         else:
-            d = ((2*pokemonA.get_level()+10)/250*pokemonA.get_ATK()/pokemonD.get_DEF()*self.PWR+2)*m*c
+            d = ((2*self.pokemon.get_level()+10)/250*self.pokemon.get_ATK()/pokemonD.get_DEF()*self.PWR+2)*m*c
         return d
 
-    def action(self, pokemonA, pokemonD):
-        """ Realiza um attack caso ainda possua PP. """
+    def action(self, pokemonD):
+        """ Realiza um ataque caso ainda possua PP. """
         if self.PP <= 0:
             return False
-        d = self.damage(pokemonA, pokemonD)
-        pokemonD.get_damage(d)
+        if self.ACU > random.random():
+            print("%(name)s used %(attack)s!" % {"name": self.pokemon.get_name(), "attack": self.name})
+            d = self.damage(pokemonD)
+            pokemonD.get_damage(d)
+        else:
+            print("%(name)s used %(attack)s, but it failed!" % {"name": self.pokemon.get_name(), "attack": self.name})
         self.PP -= 1
         return True
 

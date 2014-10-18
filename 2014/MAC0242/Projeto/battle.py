@@ -1,7 +1,13 @@
 #! /usr/bin/env python3
 
 import os
+from subprocess import call
 from pokemon import Pokemon
+
+def clear(int=None):  
+    call('clear')
+    if int == 0:
+       exit()
 
 if __name__ == '__main__':
     print("Bem vindo a maior batalha pokemon de todos os tempos!")
@@ -31,43 +37,52 @@ if __name__ == '__main__':
         except ValueError:
             print("Digite um número entre 1 e", len(pokemons))
 
-    if pokemons[p1].get_SPD() > pokemons[p2].get_SPD():
-        pa = p2
-        pd = p1
-    else:
-        pa = p1
-        pd = p2
-
     while pokemons[p1].get_HP() > 0 and pokemons[p2].get_HP() > 0:
-        pm = pa
-        pa = pd
-        pd = pa
-
         params = {
             "name1":pokemons[p1].get_name(),
             "name2":pokemons[p2].get_name(),
             "hp1":pokemons[p1].get_HP(),
             "hp2":pokemons[p2].get_HP(),
-            "turno1": "<<<<" if pa == p1 else "",
-            "turno2": "<<<<" if pa == p2 else "",
         }
-        print("\n%(hp1)d\t- %(name1)s %(turno1)s" % params)
-        print("%(hp2)d\t- %(name2)s %(turno2)s\n" % params)
-        pokemons[pa].print_attack()
-        a = None
-        while a is None:
+        print("\n%(hp1)d\t- %(name1)s" % params)
+        print("%(hp2)s\t- %(name2)s\n" % params)
+        
+        print("\nAtaques de", pokemons[p1].get_name())
+        pokemons[p1].print_attack()
+        a1 = None
+        while a1 is None:
             try:
-                a = pokemons[pa].__dict__["action"+str(int(input("Digite o número do attack selecionado: ")))]
+                a1 = pokemons[p1].__dict__["action"+str(int(input("Selecione um ataque para " + pokemons[p1].get_name() + ": ")))]
             except ValueError:
-                print("Digite um número entre 1 e", pokemons[pa].get_nattack())
-        a.action(pokemons[pa], pokemons[pd])
+                print("Digite um número entre 1 e", pokemons[p1].get_nattack())
+        
+        print("\nAtaques de", pokemons[p2].get_name())
+        pokemons[p2].print_attack()
+        a2 = None
+        while a2 is None:
+            try:
+                a2 = pokemons[p2].__dict__["action"+str(int(input("Selecione um ataque para " + pokemons[p2].get_name() + ": ")))]
+            except ValueError:
+                print("Digite um número entre 1 e", pokemons[p2].get_nattack())
+        
+        print()
+        if pokemons[p1].get_SPD() > pokemons[p2].get_SPD():
+            a1.action(pokemons[p2])
+            if pokemons[p2].get_HP()==0:
+                break
+            a2.action(pokemons[p1])
+        else:
+            a2.action(pokemons[p1])
+            if pokemons[p1].get_HP()==0:
+                break
+            a1.action(pokemons[p2])
 
     print("\nBatalha encerrada!")
     params = {
         "name1":pokemons[p1].get_name(),
         "name2":pokemons[p2].get_name(),
-        "vit1": "win" if pa == p1 else "fainted",
-        "vit2": "win" if pa == p2 else "fainted",
+        "vit1": "win" if pokemons[p2].get_HP() == 0 else "fainted",
+        "vit2": "win" if pokemons[p1].get_HP() == 0 else "fainted",
     }
     print("\n%(name1)s %(vit1)s" % params)
     print("%(name2)s %(vit2)s\n" % params)

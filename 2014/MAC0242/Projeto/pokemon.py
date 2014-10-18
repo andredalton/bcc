@@ -13,8 +13,7 @@ class Pokemon():
         self.ATK = 0
         self.DEF = 0
         self.SPD = 0
-        self.SPAtt = 0
-        self.SPDef = 0
+        self.SPC = 0
         self.kind1 = blank
         self.kind2 = blank
         self.action1 = None
@@ -38,11 +37,8 @@ class Pokemon():
     def get_DEF(self):
         return self.DEF
 
-    def get_SPAtt(self):
-        return self.SPAtt
-
-    def get_SPDef(self):
-        return self.SPDef
+    def get_SPC(self):
+        return self.SPC
 
     def get_SPD(self):
         return self.SPD
@@ -73,21 +69,29 @@ class Pokemon():
         self.ATK = int(fo.readline())
         self.DEF = int(fo.readline())
         self.SPD = int(fo.readline())
-        self.SPAtt = int(fo.readline())
-        self.SPDef = int(fo.readline())
-        self.kind1 = globals()[fo.readline().strip().lower()]
-        self.kind2 = globals()[fo.readline().strip().lower()]
+        self.SPC = int(fo.readline())
+        try:
+            self.kind1 = globals()[fo.readline().strip().lower()]
+        except KeyError:
+            self.kind1 = globals()["blank"]
+        try:
+            self.kind2 = globals()[fo.readline().strip().lower()]
+        except KeyError:
+            self.kind2 = globals()["blank"]
         n = self.SPC = int(fo.readline())
         if n > 4:
             n = 4
         for i in range(n):
             nameh = fo.readline().strip()
-            tp = globals()[fo.readline().strip().lower()]
+            try:
+                tp = globals()[fo.readline().strip().lower()]
+            except KeyError:
+                tp = globals()["blank"]
             acc = float(fo.readline())
             power = int(fo.readline())
             pp = int(fo.readline())
 
-            self.__dict__["action"+str(i+1)] = Attack(nameh, tp, acc, power, pp)
+            self.__dict__["action"+str(i+1)] = Attack(nameh, tp, acc, power, pp, self)
             self.nattack += 1
         fo.close()
 
@@ -105,7 +109,7 @@ class Pokemon():
         if self.HP < dano:
             self.HP = 0
         else:
-            self.HP -= dano
+            self.HP -= int(dano)
 
     def get_nattack(self):
         return self.nattack

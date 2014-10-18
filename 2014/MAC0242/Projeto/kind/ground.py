@@ -6,9 +6,9 @@ class Ground(Kind):
     """ Ground."""
     def __init__(self):
         self.name = "Ground"
-        self.effective = set(["Fire", "Eletric", "Poison", "Rock"])
-        self.not_effective = set(["Grass", "Bug"])
-        self.uneffective = set(["Flying"])
+        self.very_effective = set(["Fire", "Eletric", "Poison", "Rock"])
+        self.not_very_effective = set(["Grass", "Bug"])
+        self.not_effective = set(["Flying"])
         
 if __name__ == '__main__':
     pass

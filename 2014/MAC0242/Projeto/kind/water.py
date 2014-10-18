@@ -6,9 +6,9 @@ class Water(Kind):
     """ Water."""
     def __init__(self):
         self.name = "Water"
-        self.effective = set(["Fire", "Ground", "Rock"])
-        self.not_effective = set(["Water", "Grass", "Dragon"])
-        self.uneffective = set()
+        self.very_effective = set(["Fire", "Ground", "Rock"])
+        self.not_very_effective = set(["Water", "Grass", "Dragon"])
+        self.not_effective = set()
         
 if __name__ == '__main__':
     pass
