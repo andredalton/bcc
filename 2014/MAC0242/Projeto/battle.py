@@ -77,7 +77,7 @@ if __name__ == '__main__':
                     print("Digite um número entre 1 e", pokemons[p2].get_nattack())
         else:
             print("%(name)s has no moves left!" % {"name": pokemons[p2].get_name()})
-            a1 = pokemons[p2].select_attack("struggle")
+            a2 = pokemons[p2].select_attack("struggle")
         
         print()
         duel(a1, a2)
