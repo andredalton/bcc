@@ -1,20 +1,21 @@
 #! /usr/bin/env python3
 
 import random
-from skill import Attack
-import kind
+from skill.attack import Attack
 
 class Struggle(Attack):
-    def __init__(self, typ, acu, pokemon):
+    def __init__(self, typ, pokemon):
         self.name = "Struggle"
-        self.TYP = normal
+        self.TYP = typ
         self.ACU = 1
         self.PWR = 50
         self.owner = pokemon
 
     def action(self, pokemonD):
         """ Realiza um Struggle. """
-        print("%(name)s used %(attack)s!" % {"name": self.owner.get_name(), "attack": self.name})
+        param = {"name": self.owner.get_name(), "attack": self.name}
+        print("%(name)s used %(attack)s!" % param)
         d = self.damage(pokemonD)
         pokemonD.get_damage(d)
         self.owner.get_damage(d/2)
+        print("%(name)s's hit with recoil!" % param)

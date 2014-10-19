@@ -1,20 +1,25 @@
 Rattata
-65
-121
-165
-90
-200
-130
+9
+26
+16
+12
+20
+10
 Normal
-Poison 
-2
-Bola de Fogo
-Fire
+Blank 
+3
+Tackle
+Normal
 0.7
 46
 20
-Kamehameha
-Poison
+Tail Whip
+Normal
+0.4
+90 
+40
+Quick Attack
+Normal
 0.4
 90 
 40
