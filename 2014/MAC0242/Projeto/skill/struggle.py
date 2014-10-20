@@ -10,12 +10,14 @@ class Struggle(Attack):
         self.ACU = 1
         self.PWR = 50
         self.owner = pokemon
+        self.target = None
 
-    def action(self, pokemonD):
+
+    def action(self):
         """ Realiza um Struggle. """
         param = {"name": self.owner.get_name(), "attack": self.name}
         print("%(name)s used %(attack)s!" % param)
-        d = self.damage(pokemonD)
-        pokemonD.get_damage(d)
+        d = self.damage()
+        self.target.get_damage(d)
         self.owner.get_damage(d/2)
         print("%(name)s's hit with recoil!" % param)

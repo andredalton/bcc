@@ -5,15 +5,19 @@ class Skill():
     def __init__(self, name, owner):
         self.name = name
         self.owner = owner
+        self.target = None
 
     def get_name(self):
-    	return self.name
+        return self.name
 
     def get_owner(self):
-    	return self.owner
+        return self.owner
 
-    def action(self, pokemonA, pokemonD):
-        pass
+    def prepare(self, target):
+        self.target = target
+
+    def action(self):
+        self.target = None
 
 if __name__ == '__main__':
     pass

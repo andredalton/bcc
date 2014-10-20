@@ -2,6 +2,7 @@
 
 from kind import blank, bug, dragon, eletric, fighting, fire, flying, ghost, grass, ground, ice, normal, poison, psychic, rock, water
 from skill.attack import Attack
+from skill.counter import Counter
 from skill.struggle import Struggle
 
 class Pokemon():
@@ -23,6 +24,8 @@ class Pokemon():
         self.action4 = None
         self.nattack = 0
         self.struggle = Struggle( globals()["normal"], self)
+        self.last_hit = 0
+        self.nhits = 0
 
     def get_name(self):
         return self.name
@@ -134,7 +137,10 @@ class Pokemon():
             power = int(fo.readline())
             pp = int(fo.readline())
 
-            self.__dict__["action"+str(i+1)] = Attack(nameh, tp, acc, power, pp, self)
+            if nameh == "Counter":
+                self.__dict__["action"+str(i+1)] = Counter(tp, pp, self)
+            else:
+                self.__dict__["action"+str(i+1)] = Attack(nameh, tp, acc, power, pp, self)
             self.nattack += 1
         fo.close()
 
@@ -152,14 +158,21 @@ class Pokemon():
         return False
 
     def get_damage(self, dano):
-        print(self.HP, int(dano), self.HP - int(dano), self.name)
         if self.HP < dano:
             self.HP = 0
         else:
             self.HP -= int(dano)
+        self.last_hit = dano
+        self.nhits += 1
 
     def get_nattack(self):
         return self.nattack
+
+    def get_last_hit(self):
+        return self.last_hit
+
+    def get_nhits(self):
+        return self.nhits
     
 if __name__ == '__main__':
     pass
