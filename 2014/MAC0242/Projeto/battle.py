@@ -64,7 +64,7 @@ if __name__ == '__main__':
             print("%(name)s has no moves left!" % {"name": pokemons[p1].get_name()})
             a1 = pokemons[p1].select_attack("struggle")
         
-        if pokemons[p1].left_pp() > 0:
+        if pokemons[p2].left_pp() > 0:
             print("\nAtaques de", pokemons[p2].get_name())
             pokemons[p2].print_attack()
             a2 = None
