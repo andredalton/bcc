@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import os, random, unittest
-from pokemon import Pokemon
+from pokemon.pokemon import Pokemon
 
 class TestPokemon(unittest.TestCase):
     def setUp(self):

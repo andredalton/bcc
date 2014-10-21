@@ -3,15 +3,17 @@
 import os
 from subprocess import call
 
-from duel import duel
-from pokemon import Pokemon
+from pokemon.duel import Duel
+from pokemon.pokemon import Pokemon
 
-def clear(int=None):  
+def clear(int=None):
     call('clear')
     if int == 0:
        exit()
 
 if __name__ == '__main__':
+    d = Duel()
+
     print("Bem vindo a maior batalha pokemon de todos os tempos!")
     print("Temos os seguintes pokemons disponíveis:")
 
@@ -80,6 +82,6 @@ if __name__ == '__main__':
             a2 = pokemons[p2].select_attack("struggle")
         
         print()
-        duel(a1, a2)
+        d.duel(a1, a2)
 
     print("\nBatalha encerrada!")

@@ -1,6 +1,4 @@
-#! /usr/bin/env python3
-
-from kind import Kind
+from .kind import Kind
 
 class Rock(Kind):
     """ Rock."""
@@ -9,6 +7,3 @@ class Rock(Kind):
         self.very_effective = set(["Fire", "Ice", "Flying", "Bug"])
         self.not_very_effective = set(["Fighting", "Ground"])
         self.not_effective = set()
-        
-if __name__ == '__main__':
-    pass

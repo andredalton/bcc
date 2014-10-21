@@ -1,12 +1,11 @@
-#! /usr/bin/env python3
-
 import random
-from skill.attack import Attack
+from .attack import Attack
+from ..kind import fighting
 
 class Counter(Attack):
-    def __init__(self, typ, pp, pokemon):
+    def __init__(self, pp, pokemon):
         self.name = "Counter"
-        self.TYP = typ
+        self.TYP = fighting
         self.PP = pp
         self.PPM = pp
         self.owner = pokemon

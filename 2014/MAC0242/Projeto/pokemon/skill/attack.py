@@ -1,7 +1,5 @@
-#! /usr/bin/env python3
-
 import random
-from skill import Skill
+from .skill import Skill
 
 class Attack(Skill):
     """ Attack. """
@@ -73,6 +71,3 @@ class Attack(Skill):
             return True
         self.target = None
         return False
-
-if __name__ == '__main__':
-    pass

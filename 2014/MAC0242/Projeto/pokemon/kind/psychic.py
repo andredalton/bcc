@@ -1,6 +1,4 @@
-#! /usr/bin/env python3
-
-from kind import Kind
+from .kind import Kind
 
 class Psychic(Kind):
     """ Psychic."""
@@ -9,6 +7,3 @@ class Psychic(Kind):
         self.very_effective = set(["Fighting", "Poison"])
         self.not_very_effective = set(["Psychic"])
         self.not_effective = set()
-        
-if __name__ == '__main__':
-    pass

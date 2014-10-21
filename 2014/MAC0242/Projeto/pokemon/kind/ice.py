@@ -1,6 +1,4 @@
-#! /usr/bin/env python3
-
-from kind import Kind
+from .kind import Kind
 
 class Ice(Kind):
     """Ice."""
@@ -9,6 +7,3 @@ class Ice(Kind):
         self.very_effective = set(["Grass", "Ground", "Flying", "Dragon"])
         self.not_very_effective = set(["Fire", "Water", "Ice"])
         self.not_effective = set()
-        
-if __name__ == '__main__':
-    pass

@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 class Skill():
     """ Acao - Por enquanto apenas attack."""
     def __init__(self, name, owner):
@@ -18,6 +16,3 @@ class Skill():
 
     def action(self):
         self.target = None
-
-if __name__ == '__main__':
-    pass

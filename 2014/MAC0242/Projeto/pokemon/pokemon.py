@@ -1,9 +1,7 @@
-#! /usr/bin/env python3
-
-from kind import blank, bug, dragon, eletric, fighting, fire, flying, ghost, grass, ground, ice, normal, poison, psychic, rock, water
-from skill.attack import Attack
-from skill.counter import Counter
-from skill.struggle import Struggle
+from .kind import blank, bug, dragon, eletric, fighting, flying, fire, ghost, grass, ground, ice, normal, poison, psychic, rock, water
+from .skill.attack import Attack
+from .skill.counter import Counter
+from .skill.struggle import Struggle
 
 class Pokemon():
     """ Pokemon."""
@@ -23,7 +21,7 @@ class Pokemon():
         self.action3 = None
         self.action4 = None
         self.nattack = 0
-        self.struggle = Struggle( globals()["normal"], self)
+        self.struggle = Struggle(self)
         self.last_hit = 0
         self.nhits = 0
 
@@ -138,7 +136,7 @@ class Pokemon():
             pp = int(fo.readline())
 
             if nameh == "Counter":
-                self.__dict__["action"+str(i+1)] = Counter(tp, pp, self)
+                self.__dict__["action"+str(i+1)] = Counter(pp, self)
             else:
                 self.__dict__["action"+str(i+1)] = Attack(nameh, tp, acc, power, pp, self)
             self.nattack += 1
@@ -173,6 +171,3 @@ class Pokemon():
 
     def get_nhits(self):
         return self.nhits
-    
-if __name__ == '__main__':
-    pass
