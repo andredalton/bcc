@@ -7,7 +7,6 @@ class Pokemon():
     """ Pokemon."""
     def __init__(self):
         self.name = ""
-        self.classe = ""
         self.level = 0
         self.HP = 0
         self.ATK = 0
@@ -141,6 +140,41 @@ class Pokemon():
                 self.__dict__["action"+str(i+1)] = Attack(nameh, tp, acc, power, pp, self)
             self.nattack += 1
         fo.close()
+
+    def load(self):
+        self.name = input().strip()
+        self.level = int(input())
+        self.HP = int(input())
+        self.ATK = int(input())
+        self.DEF = int(input())
+        self.SPD = int(input())
+        self.SPC = int(input())
+        try:
+            self.kind1 = globals()[input().strip().lower()]
+        except KeyError:
+            self.kind1 = globals()["blank"]
+        try:
+            self.kind2 = globals()[input().strip().lower()]
+        except KeyError:
+            self.kind2 = globals()["blank"]
+        n = self.SPC = int(input())
+        if n > 4:
+            n = 4
+        for i in range(n):
+            nameh = input().strip()
+            try:
+                tp = globals()[input().strip().lower()]
+            except KeyError:
+                tp = globals()["blank"]
+            acc = float(input())
+            power = int(input())
+            pp = int(input())
+
+            if nameh == "Counter":
+                self.__dict__["action"+str(i+1)] = Counter(pp, self)
+            else:
+                self.__dict__["action"+str(i+1)] = Attack(nameh, tp, acc, power, pp, self)
+            self.nattack += 1
 
     def print_attack(self):
         if self.left_pp() > 0:

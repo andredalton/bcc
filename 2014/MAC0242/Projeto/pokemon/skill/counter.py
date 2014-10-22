@@ -9,6 +9,7 @@ class Counter(Attack):
         self.PP = pp
         self.PPM = pp
         self.owner = pokemon
+        self.target = None
         self.nhit = 0
 
     def prepare(self, target):

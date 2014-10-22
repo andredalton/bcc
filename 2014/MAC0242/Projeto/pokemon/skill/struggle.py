@@ -11,7 +11,6 @@ class Struggle(Attack):
         self.owner = pokemon
         self.target = None
 
-
     def action(self):
         """ Realiza um Struggle. """
         param = {"name": self.owner.get_name(), "attack": self.name}
