@@ -1,15 +1,17 @@
 Nome: André Meneghelli Vale
 NUSP: 4898948
 
-MiniEP 4
+Nome: Tais Pinheiro
+NUSP: 7580421 
 
 Observações:
 
-Os módulos utilizados foram random, math e unittest que estão contidos na instalação padrão do python.
-Apenas a classe TestMathFunction foi criada.
-Funções adicionais que não faziam sentido estarem dentro da classe foram criadas externamente.
-A ordem de testes foi feita pensando na reutilização das próprias funções testadas.
+Os módulos utilizados foram random, unittest, os, sys e getopt que estão contidos na instalação padrão do python.
+O módulo pokemon utiliza apenas o módulo random, sendo que todos os outros módulos adicionais foram utilizados em battle.py.
+Embora a classe Duel tenha apenas uma associação simples com a classe Skill, ela foi pensada desta maneira de modo a simplificar futuras implementações.
 
-
-Para facilitar a execução do código foi inserido o shebang "#! /usr/bin/env python3", talvez isso tenha
+Para facilitar a execução do código foi inserido o shebang "#! /usr/bin/env python3" em battle.py, talvez isso tenha
 que ser alterado caso o computador de teste não responda ao comando python3
+
+Para verificar todos os modos de execução possíveis utilize o comando:
+./battle.py --help
