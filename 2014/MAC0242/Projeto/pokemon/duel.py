@@ -22,7 +22,6 @@ class Duel():
         else:
             self.faint_message(skill1, skill2)
 
-
     def set_target(self, skill1, skill2):
         skill1.prepare(skill2.get_owner())
         skill2.prepare(skill1.get_owner())

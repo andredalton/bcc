@@ -3,14 +3,14 @@ from .skill import Skill
 
 class Attack(Skill):
     """ Attack. """
-    def __init__(self, name, typ, acu, power, pp, pokemon):
+    def __init__(self, name, typ, acu, power, pp, owner):
         self.name = name
         self.TYP = typ
         self.ACU = acu
         self.PWR = power
         self.PP = pp
         self.PPM = pp
-        self.owner = pokemon
+        self.owner = owner
         self.target = None
 
     def get_pp(self):

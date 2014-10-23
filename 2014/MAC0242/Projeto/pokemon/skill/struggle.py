@@ -3,12 +3,12 @@ from .attack import Attack
 from ..kind import normal
 
 class Struggle(Attack):
-    def __init__(self, pokemon):
+    def __init__(self, owner):
         self.name = "Struggle"
         self.TYP = normal
         self.ACU = 1
         self.PWR = 50
-        self.owner = pokemon
+        self.owner = owner
         self.target = None
 
     def action(self):
