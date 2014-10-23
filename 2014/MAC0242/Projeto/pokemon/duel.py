@@ -1,3 +1,5 @@
+import random
+
 class Duel():
     def __init__(self):
         self.priority_table = {"Switching out": 6, "item": 6, "escaping": 6, "Quick Attack": 1, "Counter": -5}
@@ -33,7 +35,11 @@ class Duel():
         self.set_target(skill1, skill2)
 
         if p1 == p2:
-            if skill1.get_owner().get_SPD() >= skill2.get_owner().get_SPD():
+            if skill1.get_owner().get_SPD() > skill2.get_owner().get_SPD():
+                self.execute_duel(skill1, skill2)
+            elif skill1.get_owner().get_SPD() < skill2.get_owner().get_SPD():
+                self.execute_duel(skill2, skill1)
+            elif random.random() > 0.5:
                 self.execute_duel(skill1, skill2)
             else:
                 self.execute_duel(skill2, skill1)
