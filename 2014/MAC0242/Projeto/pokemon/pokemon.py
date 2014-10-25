@@ -22,6 +22,7 @@ class Pokemon():
         self.nattack = 0
         self.struggle = Struggle(self)
         self.last_hit = 0
+        self.last_kind_hit = blank
         self.nhits = 0
 
     def get_name(self):
@@ -189,19 +190,29 @@ class Pokemon():
             return True
         return False
 
-    def get_damage(self, dano):
-        if self.HP < dano:
+    def get_recoil(self, damage):
+        if self.HP < damage:
             self.HP = 0
         else:
-            self.HP -= int(dano)
-        self.last_hit = dano
+            self.HP -= int(damage)
+
+    def get_damage(self, damage, kind):
+        if self.HP < damage:
+            self.HP = 0
+        else:
+            self.HP -= int(damage)
+        self.last_hit = damage
         self.nhits += 1
+        self.last_kind_hit = kind
 
     def get_nattack(self):
         return self.nattack
 
     def get_last_hit(self):
         return self.last_hit
+
+    def get_last_kind_hit(self):
+        return self.last_kind_hit
 
     def get_nhits(self):
         return self.nhits

@@ -63,7 +63,7 @@ class Attack(Skill):
             if self.ACU > random.random():
                 print("%(name)s used %(attack)s!" % {"name": self.owner.get_name(), "attack": self.name})
                 d = self.damage()
-                self.target.get_damage(d)
+                self.target.get_damage(d, self.TYP)
             else:
                 print("%(name)s used %(attack)s, but it failed!" % {"name": self.owner.get_name(), "attack": self.name})
             self.PP -= 1

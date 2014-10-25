@@ -16,6 +16,6 @@ class Struggle(Attack):
         param = {"name": self.owner.get_name(), "attack": self.name}
         print("%(name)s used %(attack)s!" % param)
         d = self.damage()
-        self.target.get_damage(d)
-        self.owner.get_damage(d/2)
+        self.target.get_damage(d, self.TYP)
+        self.owner.get_recoil(d/2)
         print("%(name)s's hit with recoil!" % param)
