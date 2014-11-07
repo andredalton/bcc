@@ -1,0 +1,63 @@
+Nome: André Meneghelli Vale
+NUSP: 4898948
+
+MiniEP 5
+
+Observações:
+
+Foram utilizados os módulos padrão do python sys, readline, atexit e o módulo extra ply,
+como está registrado no arquivo requeriments.txt.
+
+É possível utilizar qualquer número do tipo float neste programa, 1.2e-15 por exemplo.
+
+Foi utilizado o shebang "#! /usr/bin/env python3", perimitindo que o miniep5 e o
+teste possam ser executados diretamente sem precisar passar como
+parâmetro para o interpretador python.
+
+Caso não exista resposta ao python3 no SO é necessário arrumar adequadamente ou enviar o
+arquivo ao interpretador python adequado.
+
+Não foi considerada a implementação do tratamento de números negativos, já que gera
+ambiguidade na notação posfixa. Caso seja necessário realizar um teste deste tipo basta
+substituir o número do zero, 0 3 - geraria o número -3.
+
+Modos de execução:
+a) Linha de comando:
+    É possível executar o programa diretamente pela linha de comando:
+    ./miniep.py "expressao"
+
+b) Modo iterativo:
+    É possível acessar o modo iterativo caso nenhum parâmetro seja passado via linha de
+    comando. Uma vez que se esteja neste modo será possível visualizar "calc > " onde se
+    espera a entrada de uma expressão manualmente pelo usuário. Para sair deste modo basta
+    pressionar ctrl+c ou ctrl+d.
+    
+    Durante a execução do modo iterativo é gerado um histórico das expressões passadas pelo
+    usuário no arquivo .history. O objetivo disto é facilitar os testes.
+    
+    Também é possível atribuir expressões a variáveis neste modo:
+    a = 3 2 -
+
+    Uma vez que a variável esteja inicializada é possível utilizá-la em outras expressões,
+    a 42 * resultaria em 42 neste caso.
+
+Teste:
+
+Os módulos utilizados no teste foram os, random, unittest, subprocess que estão contidos
+na instalação padrão do python.
+
+Como o analisador imprime o resultado da anáise ao invés de retorná-lo, resolvi tratar
+todos os erros comuns e imprimir uma mensagem adequada, desta maneira foi mais simples
+capturar o output do programa rodando em linha de comando.
+
+Os testes se basearam em envio de expressões para testar algumas das propriedades dos operadores,
+bem como a divisão por zero e a não comutatividade da subtração e da divisão.
+
+A sintaxe também foi testada utilizando um gerador de expressões. Existe três testes para erros
+de sintaxe e um para sintaxe correta.
+
+O último teste verifica a utilização de variáveis não inicializada.
+
+Clean:
+
+Para facilitar também foi gerado o shell script clean.sh que realiza a limpeza adequada do diretório.
