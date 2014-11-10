@@ -3,9 +3,6 @@
 # Apenas para poder manipular a linha de comando
 import sys
 
-# Para poder verificar se é uma expressão vazia.
-import re
-
 # Manipulacao do historico de comandos para facilitar os testes.
 import readline
 histfile = ".history"
@@ -32,9 +29,8 @@ class Calc:
 
     def analisar(self, s):
         self.resposta = None
-        # Só realiza a busca se exitir algum caracter não branco.
-        if re.search("[^\s]", s) is not None:
-            yacc.parse(s)
+        self.nao_vazio = False
+        yacc.parse(s)
         return self.resposta
 
     # Definicao dos tokens
@@ -43,15 +39,35 @@ class Calc:
         'SOM','SUB', 'MUL','DIV','ATRIB',
         )
 
-    t_SOM     = r'\+'
-    t_SUB     = r'-'
-    t_MUL     = r'\*'
-    t_DIV     = r'/'
-    t_ATRIB   = r'='
+    def t_SOM(self, t):
+        r'\+'
+        self.nao_vazio = True
+        return t
+
+    def t_SUB(self, t):
+        r'-'
+        self.nao_vazio = True
+        return t
+
+    def t_MUL(self, t):
+        r'\*'
+        self.nao_vazio = True
+        return t
+
+    def t_DIV(self, t):
+        r'/'
+        self.nao_vazio = True
+        return t
+
+    def t_ATRIB(self, t):
+        r'='
+        self.nao_vazio = True
+        return t
+
     
     def t_NOME(self, t):
         r'[a-zA-Z_][a-zA-Z0-9_]*'
-        print(t.value)
+        self.nao_vazio = True
         try:
             self.names[t.value]
         except KeyError:
@@ -60,7 +76,7 @@ class Calc:
 
     def t_NUMERO(self, t):
         r'\d+\.?\d*[eE][+\-]?\d+|\d+\.?\d*'
-        print(t.value)
+        self.nao_vazio = True
         try:
             t.value = float(t.value)
         except ValueError:
@@ -70,10 +86,9 @@ class Calc:
         return t
 
     # Ignorando tabulacoes
-    t_ignore = " \t"
+    t_ignore = " \t\v"
 
     def t_error(self, t):
-        print("t_error", t.value)
         if self.transmite_erros: raise TypeError
         print("Caracter incorreto '%s'" % t.value)
         t.lexer.skip(1)
@@ -85,7 +100,6 @@ class Calc:
 
     def p_expressao(self, p):
         'statement : expression'
-        print("p_expressao", p[1])
         self.resposta = p[1]
 
     def p_expressao_dupla(self, p):
@@ -96,7 +110,6 @@ class Calc:
                    | expression expression DIV
                    | NOME expression ATRIB
         """
-        print("p_expressao_dupla", p[1], p[2], p[3])
         if p[1] is not None and p[2] is not None:
             if p[3]   == '=': p[0] = self.names[p[1]] = p[2]
             elif p[3] == '+': p[0] = p[1] + p[2]
@@ -109,9 +122,27 @@ class Calc:
                     if self.transmite_erros: raise
                     print("Divisao por zero!")
 
+    def p_expressao_dupla2(self, p):
+        """
+        expression : NOME expression SOM
+                   | NOME expression SUB
+                   | NOME expression MUL
+                   | NOME expression DIV
+        """
+        if p[1] is not None and p[2] is not None:
+            if p[3] == '+': p[0] = self.names[p[1]] + p[2]
+            elif p[3] == '-': p[0] = self.names[p[1]] - p[2]
+            elif p[3] == '*': p[0] = self.names[p[1]] * p[2]
+            elif p[3] == '/':
+                try:
+                    p[0] = self.names[p[1]] / p[2]
+                except ZeroDivisionError:
+                    if self.transmite_erros: raise
+                    print("Divisao por zero!")
+
+
     def p_nome(self, p):
         'expression : NOME'
-        print("p_nome", p[1])
         p[0] = self.names[p[1]]
         if self.names[p[1]] is None:
             if self.transmite_erros: raise KeyError
@@ -119,13 +150,12 @@ class Calc:
 
     def p_numero(self, p):
         'expression : NUMERO'
-        print("p_numero", p[1])
         p[0] = p[1]
 
     def p_error(self, p):
-        print("p_erro")
-        if self.transmite_erros: raise LookupError
-        print("Erro de sintaxe!")
+        if self.nao_vazio:
+            if self.transmite_erros: raise LookupError
+            print("Erro de sintaxe!", p)
 
 if __name__ == '__main__':
     s = ' '.join(sys.argv[1:])
@@ -134,7 +164,8 @@ if __name__ == '__main__':
     while 1:
         r = calc.analisar(s)
         if r is not None:
-            print("%f" % r)
+            print("%.4g" % r)
+            pass
         if f: break
         try:
             s = input('calc > ')
