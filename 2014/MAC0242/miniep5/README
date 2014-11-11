@@ -21,6 +21,10 @@ Não foi considerada a implementação do tratamento de números negativos, já 
 ambiguidade na notação posfixa. Caso seja necessário realizar um teste deste tipo basta
 substituir o número do zero, 0 3 - geraria o número -3.
 
+Também foi desenvolvida a atribuição, que atribui o resultado de uma expressão a um NOME:
+a 2 = a a * +
+Atribui 2 à variável a e então calcula o restante da expressão.
+
 Modos de execução:
 a) Linha de comando:
     É possível executar o programa diretamente pela linha de comando:
@@ -34,29 +38,23 @@ b) Modo iterativo:
     
     Durante a execução do modo iterativo é gerado um histórico das expressões passadas pelo
     usuário no arquivo .history. O objetivo disto é facilitar os testes.
-    
-    Também é possível atribuir expressões a variáveis neste modo:
-    a = 3 2 -
 
-    Uma vez que a variável esteja inicializada é possível utilizá-la em outras expressões,
-    a 42 * resultaria em 42 neste caso.
+    Váriáveis inicializadas previamente podem ser reutilizadas em outras análises.
 
 Teste:
 
-Os módulos utilizados no teste foram os, random, unittest, subprocess que estão contidos
+Os módulos utilizados no teste foram os, random, unittest que estão contidos
 na instalação padrão do python.
 
-Como o analisador imprime o resultado da anáise ao invés de retorná-lo, resolvi tratar
-todos os erros comuns e imprimir uma mensagem adequada, desta maneira foi mais simples
-capturar o output do programa rodando em linha de comando.
+Ao implementar o modo de repasse de exceções foi possível utilizar .
 
 Os testes se basearam em envio de expressões para testar algumas das propriedades dos operadores,
 bem como a divisão por zero e a não comutatividade da subtração e da divisão.
 
-A sintaxe também foi testada utilizando um gerador de expressões. Existe três testes para erros
-de sintaxe e um para sintaxe correta.
-
-O último teste verifica a utilização de variáveis não inicializada.
+A sintaxe também foi testada utilizando um gerador de expressões. Existe quatro testes para
+de sintaxe: sintaxe correta, pilha maior que 1, operador utilizado em pilha com menos de dois
+elementos, utilização de variável não inicializada, calculo conhecido com variável aleatória e
+calculo aleatório com variávels.
 
 Clean:
 

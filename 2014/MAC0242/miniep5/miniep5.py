@@ -20,14 +20,15 @@ import ply.yacc as yacc
     
 class Calc:
     def __init__(self, transmite_erros=False):
-        self.transmite_erros = transmite_erros
-        self.ctokens = 0
-        self.resposta = None
-        self.names = { }
+        """ Inicializador, pode receber True como segundo argumento permitindo o não tratamento de erros. """
+        self.transmite_erros = transmite_erros  # Caso queira rodar por linha de comando os erros são repassados ao invés de tratados.
+        self.resposta = None                    # Resposta 
+        self.names = { }                        # Nomes de variáveis
         lex.lex(module=self)
         yacc.yacc(module=self)
 
     def analisar(self, s):
+        """ Inicializa uma análise """
         self.resposta = None
         self.nao_vazio = False
         yacc.parse(s)

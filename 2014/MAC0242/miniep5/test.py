@@ -5,28 +5,75 @@ import os, random, unittest, subprocess
 from miniep5 import Calc
 
 def gera_var():
+    """ Funcao que gera um nome de variavel aleatorio com 1 a 10 caracteres. """
     p = ""
     for i in range(random.randint(1,10)):
         p += random.choice(["a", "e", "i", "o", "u"])
     return p
 
-def gera_teste(num, op):
+def gera_teste(num, op, vr=0):
+    """
+    Funcao que gera um teste aleatorio onde:
+    num: Numeros de floats e variaveis gerado
+    op:  Numero de operadores gerados
+    vr:  Probabilidade de inserir uma nova variavel
+    """
     lst = []
-    i = 0
-    j = 0
-    p = random.random() # Probabilidade de um operador ser inserido no início da expressao
+    var = []
+    var_atrr = set()
+    i = 0                   # Numero de floats e variáveis
+    j = 0                   # Numero de operadores
+    p = random.random()     # Probabilidade de um operador ser inserido no início da expressao
+    pws = random.random()   # Probabilidade de insercao de espacos em branco
+    pvr = vr                # Probabilidade de ocorrencia de variáveis
+    patr = random.random()  # Probabilidade de atribuição em uma variável.
     tokens = ["+", "-", "*", "/"]
     while i < num:
         r = random.random()
-        if i > j + 1 and r < p:
-            lst.append( random.choice(tokens) )
-            j += 1
-        lst.append( str(random.random()*10**random.randint(-30,30)) )
+        if r < pws:
+            # Inserindo espacos em branco
+            lst.append( random.choice([" ", "\t"]) * random.randint(1, 30) )
+        if r < patr:
+            if len(var) > 0 and var[-1]['num']==1:
+                # Atribuindo a uma variavel
+                v = var.pop()
+                var_atrr.add(v['nome'])
+                lst.append("=")
+                if len(var)>0:
+                    var[-1]['num'] += 1
+                j += 1
+            elif i > j + 1 + len(var) + len(var_atrr):
+                # Inserindo um operador.
+                if len(var) == 0 or ( len(var)>0 and var[-1]['num']>0 ):
+                    if len(var) > 0:
+                        var[-1]['num'] -= 1
+                    lst.append( random.choice(tokens) )
+                    j += 1
+        if i < num-1 and r < pvr:
+            # Inserindo uma variavel.
+            v = gera_var()
+            var.append({'nome': v, 'num': 0})
+            lst.append(v)
+        else:
+            # Inserindo numero
+            if len(var) > 0:
+                var[-1]['num'] += 1
+            lst.append( str(random.random()*10**random.randint(-30,30)) )
         i += 1
+    while len(var)>0:
+        if var[-1]['num'] <= 1:
+            var.pop()
+            lst.append("=")
+            if len(var) > 0:
+                var[-1]['num'] += 1    
+        else:
+            lst.append( random.choice(tokens) )
+            var[-1]['num'] -= 1
+        j += 1
     for j in range(j, op):
         lst.append( random.choice(tokens) )
     return " ".join(lst)
-    
+
 class Test(unittest.TestCase):
     def setUp(self):
         """ Inicializa a calculadora."""
@@ -129,7 +176,7 @@ class Test(unittest.TestCase):
         Verifica sintaxe quando existem numeros = operações - 1.
         Queria comparar com o não erro, mas não encontrei a maneira adequada de se fazer isso.
         """
-        n = random.randint(1, 1000)
+        n = random.randint(1, 10000)
         s = gera_teste(n, n-1)
         try:            
             out = float(self.calc.analisar(s))
@@ -140,13 +187,13 @@ class Test(unittest.TestCase):
 
     def test_erro_sintaxe1(self):
         """ Verifica erros de sintaxe quando existem mais numeros do que operações - 1."""
-        n = random.randint(1, 1000)
+        n = random.randint(1, 10000)
         s = gera_teste(n + random.randint(2, 100), n)
         self.assertRaises(LookupError, self.calc.analisar, s)
 
-    def test_erro_sintaxe1(self):
+    def test_erro_sintaxe2(self):
         """ Verifica erros de sintaxe quando existem menos numeros do que operações - 1."""
-        n = random.randint(1, 1000)
+        n = random.randint(1, 10000)
         s = gera_teste(n, n + random.randint(0, 100))
         self.assertRaises(LookupError, self.calc.analisar, s)
 
@@ -154,9 +201,30 @@ class Test(unittest.TestCase):
         """ Verifica a ocorrencia de erro quando se utiliza um caracter não especificado."""
         self.assertRaises(TypeError, self.calc.analisar, random.choice(["!", "@", "$", "?"]) )
 
+    # Teste com variaveis.
     def test_variavel_nao_inicializada(self):
         """ Verifica a ocorrencia de erro quando se utiliza uma variável não inicializa."""
         self.assertRaises(KeyError, self.calc.analisar, gera_var())
+
+    def test_sintaxe_atribuicao(self):
+        """
+        Verifica sintaxe quando existem numeros + variaveis = operações - 1.
+        Queria comparar com o não erro, mas não encontrei a maneira adequada de se fazer isso.
+        """
+        n = random.randint(1, 10000)
+        s = gera_teste(n, n-1, 0.3)
+        try:            
+            out = float(self.calc.analisar(s))
+            conv = True
+        except ValueError:
+            conv = False
+        self.assertTrue(conv)
+
+    def test_atribuicao(self):
+        """ Verifica a ocorrencia de erro ao se atribuir o valor de uma variavel e reutiliza-lo na mesma expressao."""
+        a = random.random()
+        dic = {'a': a, 'v': gera_var()}
+        self.assertEqual(a*a+a, self.calc.analisar("%(v)s %(a).100f = %(v)s %(v)s * +" % dic))
 
 if __name__ == '__main__':
     unittest.main()
