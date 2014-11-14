@@ -3,6 +3,7 @@ from .kind import Kind
 class Rock(Kind):
     """ Rock."""
     def __init__(self):
+        self.id = 5
         self.name = "Rock"
         self.very_effective = set(["Fire", "Ice", "Flying", "Bug"])
         self.not_very_effective = set(["Fighting", "Ground"])

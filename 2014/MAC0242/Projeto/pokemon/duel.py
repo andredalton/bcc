@@ -28,7 +28,7 @@ class Duel():
         skill1.prepare(skill2.get_owner())
         skill2.prepare(skill1.get_owner())
 
-    def duel(self, skill1, skill2):
+    def priority_duel(self, skill1, skill2):
         p1 = self.priority(skill1)
         p2 = self.priority(skill2)
 
@@ -47,3 +47,16 @@ class Duel():
             self.execute_duel(skill1, skill2)
         else:
             self.execute_duel(skill2, skill1)
+
+    def duel(self, skill1, skill2):
+        self.set_target(skill1, skill2)
+        if skill1.get_owner().get_SPD() > skill2.get_owner().get_SPD():
+            s1 = skill1
+            s2 = skill2
+        else:
+            s2 = skill1
+            s1 = skill2
+        s1.action()
+        if s2.get_owner().get_HP() > 0 and s1.get_owner().get_HP() > 0:
+            s2.action()
+        self.faint_message(skill1, skill2)

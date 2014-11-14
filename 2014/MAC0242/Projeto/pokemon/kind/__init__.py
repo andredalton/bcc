@@ -33,3 +33,20 @@ poison = Poison()
 psychic = Psychic()
 rock = Rock()
 water = Water()
+bird = None
+
+kind_list = [
+            normal, fighting, flying, poison,
+            ground, rock, bird, bug, ghost,
+            fire, water, grass, eletric, psychic,
+            ice, dragon, blank
+            ]
+
+kind_dict = {
+            'blank': blank, 'bug': bug, 'dragon': dragon,
+            'eletric': eletric, 'fighting': fighting,
+            'fire': fire, 'flying': flying, 'ghost': ghost,
+            'grass': grass, 'ground': ground, 'ice': ice,
+            'normal': normal, 'poison': poison,
+            'psychic': psychic, 'rock': rock, 'water': water, 
+            }

@@ -3,10 +3,15 @@ class Kind():
     
     def __init__(self):
         """ A classe kind contém um name e suas respectivas efetividades agrupadas. """
+        self.id = None
         self.name = ""
         self.very_effective = set()
         self.not_very_effective = set()
         self.not_effective = set()
+        
+    def get_id(self):
+        """ Retorna id do kind. """
+        return self.id
         
     def get_name(self):
         """ Retorna name do kind. """

@@ -2,8 +2,27 @@
 
 import os, sys, getopt
 
+import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import Element, SubElement, Comment, tostring
+from xml.etree import ElementTree
+from xml.dom import minidom
+
 from pokemon.duel import Duel
 from pokemon.pokemon import Pokemon
+
+def printXML(top):
+    rough_string = ElementTree.tostring(top, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    print(reparsed.toprettyxml(indent="  "))
+
+def make_battle_state(pk1, pk2=None):
+    top = Element('battle_state')
+    x1 = pk1.make_xml()
+    top.append(x1)
+    if pk2 is not None:
+        x2 = pk2.make_xml()
+        top.append(x2)
+    printXML(top)
 
 def load_billpc(dir):
     print("Temos os seguintes pokemons disponíveis:")
@@ -13,6 +32,10 @@ def load_billpc(dir):
     for file in os.listdir(dir):
         pokemons.append(Pokemon())
         pokemons[-1].load_file(dir+file)
+        # print(dir+file)
+        # tree = ET.parse(dir+file)
+        # root = tree.getroot()
+        # pokemons[-1].load_xml(root)
 
     for i in range(len(pokemons)):
         params = {"n":i+1,"name":pokemons[i].get_name(), "level": pokemons[i].get_level()}
@@ -69,7 +92,7 @@ def battle(p1, p2):
                     print("Digite um número entre 1 e", p1.get_nattack())
         else:
             print("%(name)s has no moves left!" % {"name": p1.get_name()})
-            a1 = p1.select_attack("struggle")
+            a1 = p1.select_attack(0)
         
         if p2.left_pp() > 0:
             print("\nAtaques de", p2.get_name())
@@ -84,7 +107,7 @@ def battle(p1, p2):
                     print("Digite um número entre 1 e", p2.get_nattack())
         else:
             print("%(name)s has no moves left!" % {"name": p2.get_name()})
-            a2 = p2.select_attack("struggle")
+            a2 = p2.select_attack(0)
         
         print()
         d.duel(a1, a2)
@@ -140,10 +163,17 @@ def main(argv):
     if p1 is None or p2 is None:
         uso(sys.argv[0])
         sys.exit(2)
-    battle(p1, p2)    
+    """
 
-def teste():
-    return ("bla", "ahhh")
+    f = open('xml/rattata',"r")
+    xml = f.read()
+    
+    p1 = Pokemon()
+    p1.load_xml(xml)
+    print(p1.get_name())
+    # make_battle_state(p1)    
+    """
+    battle(p1, p2)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
