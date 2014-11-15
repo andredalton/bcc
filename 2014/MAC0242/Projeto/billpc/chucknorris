@@ -1,20 +1,32 @@
-Chuck Norris
-8001
-8001
-8001
-10
-400
-323
-Fighting
-Rock
-2
-Roundhouse kick
-Fighting
-100
-100
-20
-sudo
-Bug
-80
-42
-10
+<?xml version="1.0" ?>
+<battle_state>
+  <pokemon>
+    <name>Chuck Norris</name>
+    <level>8001</level>
+    <attributes>
+      <health>8001</health>
+      <attack>8001</attack>
+      <defense>10</defense>
+      <speed>400</speed>
+      <special>2</special>
+    </attributes>
+    <type>Fighting</type>
+    <type>Rock</type>
+    <attacks>
+      <id>0</id>
+      <name>Roundhouse kick</name>
+      <type>Fighting</type>
+      <power>100</power>
+      <accuracy>1.0</accuracy>
+      <power_points>20</power_points>
+    </attacks>
+    <attacks>
+      <id>1</id>
+      <name>sudo</name>
+      <type>Bug</type>
+      <power>42</power>
+      <accuracy>0.8</accuracy>
+      <power_points>10</power_points>
+    </attacks>
+  </pokemon>
+</battle_state>

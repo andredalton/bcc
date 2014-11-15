@@ -1,9 +1,14 @@
 # Usado pra receber arquivos XML
+
+# Usado para exportar - por enquanto
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import Element, SubElement, Comment, tostring
 from xml.etree import ElementTree
 from xml.dom import minidom
 
+# Usado para validar e importar
+from lxml import etree
+from lxml.etree import XMLSyntaxError
 
 from .kind import kind_list, kind_dict, blank, bug, dragon, eletric, fighting, flying, fire, ghost, grass, ground, ice, normal, poison, psychic, rock, water
 
@@ -20,8 +25,7 @@ class Pokemon():
         self.DEF = 0
         self.SPD = 0
         self.SPC = 0
-        self.kind1 = kind_dict['blank']
-        self.kind2 = kind_dict['blank']
+        self.kinds = []        
         self.attacks = [Struggle(self), None, None, None, None]
         self.nattack = 0
         
@@ -46,14 +50,20 @@ class Pokemon():
     def get_SPD(self):
         return self.SPD
 
-    def get_kind1(self):
-        return self.kind1
-    
-    def get_kind2(self):
-        return self.kind2
+    def get_kind(self, n):
+        return self.kinds[n]
 
     def get_attack(self, n):
         return self.attacks[n]
+    
+    def get_damage(self, damage):
+        if self.HP < damage:
+            self.HP = 0
+        else:
+            self.HP -= int(damage)
+
+    def get_nattack(self):
+        return self.nattack
 
     def left_pp(self):
         pp = 0
@@ -70,65 +80,40 @@ class Pokemon():
                 print("No PP left for this move!")
         return None
 
-    def load_xml(self, root):
-        import xml.etree.ElementTree as ET
-
-        print("\npk\n")
-        ty  = 1
-        nameh = ""
-        for pok in root.iter("pokemon"):
-            for tp in pok.iter():
-                if tp.tag == "attacks":
-                    self.nattack += 1
-                    if self.nattack > 1:
-                        if nameh == "Counter":
-                            self.__dict__["action"+idd] = Counter(pp, self)
-                        else:
-                            self.__dict__["action"+idd] = Attack(nameh, typ, acc, power, pp, self)
-                    print()
-                    continue
-                if self.nattack > 0:
-                    print("att>  ", tp.tag, tp.text)
-                    if tp.tag == "id":
-                        idd = tp.text
-                    if tp.tag == "name":
-                        nameh = tp.text
-                    if tp.tag == "type":
-                        try:
-                            typ = globals()[tp.text.strip().lower()]
-                        except KeyError:
-                            typ = globals()["blank"]
-                    if tp.tag == "power":
-                        power = int(tp.text)
-                    if tp.tag == "accuracy":
-                        acc = int(tp.text)/100
-                    if tp.tag == "power_points":
-                        pp = int(tp.text)
-                elif tp.tag != "pokemon" and tp.tag != "attributes":
-                    if tp.tag == "name":
-                        self.name = tp.text
-                    if tp.tag == "level":
-                        self.level = int(tp.text)
-                    if tp.tag == "health":
-                        self.HP = int(tp.text)
-                    if tp.tag == "attack":
-                        self.ATK = int(tp.text)
-                    if tp.tag == "defense":
-                        self.DEF = int(tp.text)
-                    if tp.tag == "speed":
-                        self.SPD = int(tp.text)
-                    if tp.tag == "special":
-                        self.SPC = int(tp.text)
-                    if tp.tag == "type":
-                        self.__dict__["kind"+str(ty)] = globals()[tp.text.strip().lower()]
-                        ty += 1
-                    print(tp.tag, tp.text)
-            if self.nattack > 0:
-                if nameh == "Counter":
-                    self.__dict__["action"+idd] = Counter(pp, self)
-                else:
-                    self.__dict__["action"+idd] = Attack(nameh, typ, acc, power, pp, self)
-        pass
+    def load_xml(self, pk):
+        """ Recebe um lxml.etree com um pokemon já validado e inicializa o objeto. """
+        atb = pk.find("attributes")
+        kinds = pk.findall("type")
+        attacks = pk.findall("attacks")
+        self.name = pk.find("name").text
+        self.level = int(pk.find("level").text)
+        self.HP = int(atb.find("health").text)
+        self.ATK = int(atb.find("attack").text)
+        self.DEF = int(atb.find("defense").text)
+        self.SPD = int(atb.find("speed").text)
+        self.SPC = int(atb.find("special").text)
+        for tp in pk.findall("type"):
+            try:
+                try:
+                    self.kinds.append(kind_list[int(tp.text)])
+                except KeyError:
+                    self.kinds.append(kind_dict["blank"])
+            except IndexError:
+                pass
+        if len(self.kinds)<2:
+            self.kinds.append(kind_dict["blank"])
+        for att in attacks:
+            ida = int(att.find("id").text)
+            namea = att.find("name").text
+            try:
+                tp = kind_list[int(att.find("type").text)]
+            except KeyError:
+                tp = kind_dict["blank"] 
+            power = int(att.find("power").text)
+            acc = int(att.find("accuracy").text)
+            pp = int(att.find("power_points").text)
+            self.attacks[ida] = Attack(namea, tp, acc, power, pp, self)
+            self.nattack += 1
 
     def make_xml(self):
         """ Método que gera um nó XML para este pokemon. """
@@ -173,73 +158,6 @@ class Pokemon():
                 attacks[i]['power_points'].text = str(att.get_pp())
         return pokemon
 
-    def load_file(self,name):
-        fo = open(name, "r")
-        self.name = fo.readline().strip()
-        self.level = int(fo.readline())
-        self.HP = int(fo.readline())
-        self.ATK = int(fo.readline())
-        self.DEF = int(fo.readline())
-        self.SPD = int(fo.readline())
-        self.SPC = int(fo.readline())
-        try:
-            self.kind1 = kind_dict[fo.readline().strip().lower()]
-        except KeyError:
-            self.kind1 = kind_dict["blank"]
-        try:
-            self.kind2 = kind_dict[fo.readline().strip().lower()]
-        except KeyError:
-            self.kind2 = kind_dict["blank"]
-        n = self.SPC = int(fo.readline())
-        if n > 4:
-            n = 4
-        for i in range(1, n+1):
-            nameh = fo.readline().strip()
-            try:
-                tp = kind_dict[fo.readline().strip().lower()]
-            except KeyError:
-                tp = kind_dict["blank"]
-            acc = int(fo.readline())
-            power = int(fo.readline())
-            pp = int(fo.readline())
-
-            self.attacks[i] = Attack(nameh, tp, acc, power, pp, self)
-            self.nattack += 1
-        fo.close()
-
-    def load(self):
-        """ Método para carregar um pokemon da linha de comando. """
-        self.name = input().strip()
-        self.level = int(input())
-        self.HP = int(input())
-        self.ATK = int(input())
-        self.DEF = int(input())
-        self.SPD = int(input())
-        self.SPC = int(input())
-        try:
-            self.kind1 = kind_dict[input().strip().lower()]
-        except KeyError:
-            self.kind1 = kind_dict["blank"]
-        try:
-            self.kind2 = kind_dict[input().strip().lower()]
-        except KeyError:
-            self.kind2 = kind_dict["blank"]
-        n = self.SPC = int(input())
-        if n > 4:
-            n = 4
-        for i in range(1, n+1):
-            nameh = input().strip()
-            try:
-                tp = kind_dict[input().strip().lower()]
-            except KeyError:
-                tp = kind_dict["blank"]
-            acc = int(input())
-            power = int(input())
-            pp = int(input())
-
-            self.attacks[i] = Attack(nameh, tp, acc, power, pp, self)
-            self.nattack += 1
-
     def print_attack(self):
         """ Método que imprime as opções de ataque deste pokemon. """
         if self.left_pp() > 0:
@@ -253,12 +171,3 @@ class Pokemon():
                     print("%(n)d - %(name)s (%(pp)d/%(ppm)d)" % params)
             return True
         return False
-
-    def get_damage(self, damage, kind):
-        if self.HP < damage:
-            self.HP = 0
-        else:
-            self.HP -= int(damage)
-
-    def get_nattack(self):
-        return self.nattack

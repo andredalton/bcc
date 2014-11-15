@@ -1,25 +1,40 @@
-Rattata
-9
-26
-16
-12
-20
-10
-Normal
-Blank 
-3
-Tackle
-Normal
-70
-46
-20
-Tail Whip
-Normal
-40
-90 
-40
-Quick Attack
-Normal
-40
-90 
-40
+<?xml version="1.0" ?>
+<battle_state>
+  <pokemon>
+    <name>Rattata</name>
+    <level>9</level>
+    <attributes>
+      <health>26</health>
+      <attack>16</attack>
+      <defense>12</defense>
+      <speed>20</speed>
+      <special>3</special>
+    </attributes>
+    <type>0</type>
+    <type>2</type>
+    <attacks>
+      <id>1</id>
+      <name>Tackle</name>
+      <type>0</type>
+      <power>46</power>
+      <accuracy>70</accuracy>
+      <power_points>20</power_points>
+    </attacks>
+    <attacks>
+      <id>2</id>
+      <name>Tail Whip</name>
+      <type>0</type>
+      <power>90</power>
+      <accuracy>40</accuracy>
+      <power_points>40</power_points>
+    </attacks>
+    <attacks>
+      <id>3</id>
+      <name>Quick Attack</name>
+      <type>0</type>
+      <power>90</power>
+      <accuracy>40</accuracy>
+      <power_points>40</power_points>
+    </attacks>
+  </pokemon>
+</battle_state>

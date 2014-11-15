@@ -23,7 +23,6 @@ class Attack:
 
     def prepare(self, target):
         self.target = target
-
         
     def get_pp(self):
         return self.PP
@@ -39,6 +38,10 @@ class Attack:
 
     def get_TYP(self):
         return self.TYP
+
+    def decrease_pp(self):
+        if self.pp > 0:
+            self.pp -= 1
 
     def critical(self):
         """ Retorna o multiplicador de critical hit. """
@@ -56,11 +59,11 @@ class Attack:
     def modifier(self):
         """ Retorna o modificador do cálculo do dano entre dois pokemons. """
         m = 1
-        m *= self.TYP.get_weakness(self.target.get_kind1().get_name())
-        m *= self.TYP.get_weakness(self.target.get_kind2().get_name())
+        m *= self.TYP.get_weakness(self.target.get_kind(0).get_name())
+        m *= self.TYP.get_weakness(self.target.get_kind(1).get_name())
         if m > 1:
             print("It's super effective!")
-        if self.owner.get_kind1 == self.TYP or self.owner.get_kind2 == self.TYP:
+        if self.owner.get_kind(0) == self.TYP or self.owner.get_kind(1) == self.TYP:
             m *= 1.5
         m *= random.uniform(0.85, 1)
         return m
@@ -81,7 +84,7 @@ class Attack:
             if self.ACU < random.random()*100:
                 print("%(name)s used %(attack)s!" % {"name": self.owner.get_name(), "attack": self.name})
                 d = self.damage()
-                self.target.get_damage(d, self.TYP)
+                self.target.get_damage(d)
             else:
                 print("%(name)s used %(attack)s, but it failed!" % {"name": self.owner.get_name(), "attack": self.name})
             self.PP -= 1

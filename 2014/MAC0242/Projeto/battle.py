@@ -7,8 +7,14 @@ from xml.etree.ElementTree import Element, SubElement, Comment, tostring
 from xml.etree import ElementTree
 from xml.dom import minidom
 
+from lxml import etree
+from lxml.etree import XMLSyntaxError
+
 from pokemon.duel import Duel
 from pokemon.pokemon import Pokemon
+
+# Battle state schema file
+bss = 'battle_state.xsd'
 
 def printXML(top):
     rough_string = ElementTree.tostring(top, 'utf-8')
@@ -26,16 +32,20 @@ def make_battle_state(pk1, pk2=None):
 
 def load_billpc(dir):
     print("Temos os seguintes pokemons disponíveis:")
+    bsv = open(bss, "r").read()
+    schema_root = etree.XML(bsv)
+    schema = etree.XMLSchema(schema_root)
+    parser = etree.XMLParser(schema = schema)
 
     pokemons = []
-
     for file in os.listdir(dir):
+        try:
+            root = etree.fromstring(open(dir+file, "r").read(), parser)
+        except XMLSyntaxError:
+            print("Formato XML incorreto!")
+            continue
         pokemons.append(Pokemon())
-        pokemons[-1].load_file(dir+file)
-        # print(dir+file)
-        # tree = ET.parse(dir+file)
-        # root = tree.getroot()
-        # pokemons[-1].load_xml(root)
+        pokemons[-1].load_xml(root.find("pokemon"))
 
     for i in range(len(pokemons)):
         params = {"n":i+1,"name":pokemons[i].get_name(), "level": pokemons[i].get_level()}
@@ -49,12 +59,14 @@ def load_billpc(dir):
             p1 = int(input("Digite o número do primeiro pokemon selecionado: ")) -1
         except ValueError:
             print("Digite um número entre 1 e", len(pokemons))
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return (None, None)
     while not (p2 >= 0 and p2 < len(pokemons)):
         try:
             p2 = int(input("Digite o número do segundo pokemon selecionado: ")) -1
         except ValueError:
             print("Digite um número entre 1 e", len(pokemons))
-
     return (pokemons[p1], pokemons[p2])
 
 def load_keyboard():
@@ -110,7 +122,7 @@ def battle(p1, p2):
             a2 = p2.select_attack(0)
         
         print()
-        d.duel(a1, a2)
+        d.priority_duel(a1, a2)
 
     print("\nBatalha encerrada!")
 
@@ -160,20 +172,8 @@ def main(argv):
     else:
         (p1, p2) = load_keyboard()
 
-    if p1 is None or p2 is None:
-        uso(sys.argv[0])
-        sys.exit(2)
-    """
-
-    f = open('xml/rattata',"r")
-    xml = f.read()
-    
-    p1 = Pokemon()
-    p1.load_xml(xml)
-    print(p1.get_name())
-    # make_battle_state(p1)    
-    """
-    battle(p1, p2)
+    if p1 is not None and p2 is not None:
+        battle(p1, p2)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

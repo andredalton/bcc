@@ -1,20 +1,32 @@
-Metapod
-5
-21
-7
-10
-8
-8
-Bug
-Blank
-2
-Harden
-Ice
-100
-0
-3
-Counter
-Fighting
-100
-0
-6
+<?xml version="1.0" ?>
+<battle_state>
+  <pokemon>
+    <name>Metapod</name>
+    <level>5</level>
+    <attributes>
+      <health>21</health>
+      <attack>7</attack>
+      <defense>10</defense>
+      <speed>8</speed>
+      <special>2</special>
+    </attributes>
+    <type>5</type>
+    <attacks>
+      <id>1</id>
+      <name>Harden</name>
+      <type>7</type>
+      <power>0</power>
+      <accuracy>100</accuracy>
+      <power_points>0</power_points>
+    </attacks>
+    <attacks>
+      <id>2</id>
+      <name>Counter</name>
+      <type>4</type>
+      <power>10</power>
+      <accuracy>100</accuracy>
+      <power_points>1</power_points>
+    </attacks>
+  </pokemon>
+</battle_state>
+

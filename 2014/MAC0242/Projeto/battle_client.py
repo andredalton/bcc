@@ -5,10 +5,35 @@ import os, sys, getopt
 from battle import load_keyboard, printXML
 from pokemon.pokemon import Pokemon
 
+from lxml import etree
+from lxml.etree import XMLSyntaxError
+
+
 def main(args):
     p1 = Pokemon()
-    p1.load()
-    printXML(p1.make_xml())
+    
+#    parser = etree.XMLParser(dtd_validation=True)
+
+    s = open('battle_state.xsd', "r").read()
+    p = open('billpc/rattata', "r").read()
+
+
+    schema_root = etree.XML(s)
+    schema = etree.XMLSchema(schema_root)
+
+    parser = etree.XMLParser(schema = schema)
+
+    try:
+        root = etree.fromstring(p, parser)
+    except XMLSyntaxError:
+        print("Formato XML incorreto!")
+
+
+    p1.load_xml(root.find("pokemon"))
+
+    print(p1.kinds[0].get_name())
+    print(p1.kinds[1].get_name())
+    print(len(p1.kinds))
 
 if __name__ == '__main__':
     main(sys.argv[1:])
