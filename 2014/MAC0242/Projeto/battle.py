@@ -1,25 +1,18 @@
 #! /usr/bin/env python3
 
+# Para manipular a linha de comando
 import os, sys, getopt
 
-import xml.etree.ElementTree as ET
-from xml.etree.ElementTree import Element, SubElement, Comment, tostring
-from xml.etree import ElementTree
-from xml.dom import minidom
-
+# Para manipular e validar arquivos XML
 from lxml import etree
-from lxml.etree import XMLSyntaxError
+from lxml.etree import XMLSyntaxError, Element
 
+# Quem é este pokemon?
 from pokemon.duel import Duel
 from pokemon.pokemon import Pokemon
 
 # Battle state schema file
 bss = 'battle_state.xsd'
-
-def printXML(top):
-    rough_string = ElementTree.tostring(top, 'utf-8')
-    reparsed = minidom.parseString(rough_string)
-    print(reparsed.toprettyxml(indent="  "))
 
 def make_battle_state(pk1, pk2=None):
     top = Element('battle_state')
@@ -28,7 +21,7 @@ def make_battle_state(pk1, pk2=None):
     if pk2 is not None:
         x2 = pk2.make_xml()
         top.append(x2)
-    printXML(top)
+    print( etree.tostring(top, xml_declaration=True, pretty_print=True, encoding="UTF-8").decode("utf-8"))
 
 def load_billpc(dir):
     print("Temos os seguintes pokemons disponíveis:")

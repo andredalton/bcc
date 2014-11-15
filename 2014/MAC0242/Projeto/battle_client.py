@@ -29,7 +29,9 @@ def main(args):
 
     p1.load_xml(root.find("pokemon"))
 
-    print(etree.tostring(root, xml_declaration=True, pretty_print=True))
+    pk = p1.make_xml()
+
+    print(etree.tostring(pk, xml_declaration=True, pretty_print=True, encoding="UTF-8").decode("utf-8"))
 
     # print(p1.kinds[0].get_name())
     # print(p1.kinds[1].get_name())

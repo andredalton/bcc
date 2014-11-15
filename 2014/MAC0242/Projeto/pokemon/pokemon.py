@@ -1,17 +1,15 @@
 # Usado pra receber arquivos XML
 
-# Usado para exportar - por enquanto
-import xml.etree.ElementTree as ET
-from xml.etree.ElementTree import Element, SubElement, Comment, tostring
-from xml.etree import ElementTree
-from xml.dom import minidom
-
-# Usado para validar e importar
+# Usado para validar e manipular XML
 from lxml import etree
-from lxml.etree import XMLSyntaxError
+from lxml.etree import XMLSyntaxError, Element, SubElement
 
-from .kind import kind_list, kind_dict, blank, bug, dragon, eletric, fighting, flying, fire, ghost, grass, ground, ice, normal, poison, psychic, rock, water
+# Os tipos foram ordenados em kind_list e kind_dict é utilizado para retornar o objeto através de um nome.
+from .kind import   kind_list, kind_dict, blank, bug, dragon,\
+                    eletric, fighting, flying, fire, ghost,\
+                    grass, ground, ice, normal, poison, psychic, rock, water
 
+# Agora existe apenas o Attack e uma especialização para o Struggle
 from .attack.attack import Attack
 from .attack.struggle import Struggle
 
@@ -117,7 +115,7 @@ class Pokemon():
 
     def make_xml(self):
         """ Método que gera um nó XML para este pokemon. """
-        pokemon = Element('pokemon')
+        pokemon = Element("pokemon")
         name = SubElement(pokemon, 'name')
         name.text = self.name
         level = SubElement(pokemon, 'level')
@@ -134,10 +132,10 @@ class Pokemon():
         special = SubElement(attributes, 'special')
         special.text = str(self.SPC)
         type1 = SubElement(pokemon, 'type')
-        type1.text = str(kind_list.index(self.kind1))
-        if self.kind2 != blank and self.kind2 is not None:
+        type1.text = str(kind_list.index(self.kinds[0]))
+        if self.kinds[1] != blank and self.kinds[1] is not None:
             type2 = SubElement(pokemon, 'type')
-            type2.text = str(kind_list.index(self.kind2))
+            type2.text = str(kind_list.index(self.kinds[1]))
         attacks = []
         for i in range(4):
             att = self.attacks[i+1]
