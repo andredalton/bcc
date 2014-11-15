@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:element name="battle_state">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="pokemon" minOccurs="1" maxOccurs="2">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+
+            <xs:element name="level" minOccurs="1" maxOccurs="1">
+              <xs:simpleType>
+                <xs:restriction base="xs:integer">
+                  <xs:minInclusive value="1"/>
+                  <xs:maxInclusive value="99"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="attributes" minOccurs="1" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+
+                  <xs:element name="health" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="255"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+
+                  <xs:element name="attack" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="255"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+
+                  <xs:element name="defense" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="255"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+
+                  <xs:element name="speed" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="255"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+
+                  <xs:element name="special" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="255"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="type" minOccurs="1" maxOccurs="2">
+              <xs:simpleType>
+                <xs:restriction base="xs:integer">
+                  <xs:minInclusive value="0"/>
+                  <xs:maxInclusive value="16"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="attacks" minOccurs="1" maxOccurs="4">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="id" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="1"/>
+                        <xs:maxInclusive value="4"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+
+                  <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+
+                  <xs:element name="type" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="16"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+
+                  <xs:element name="power" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="100"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+
+                  <xs:element name="accuracy" minOccurs="1" maxOccurs="1">
+                    <xs:simpleType>
+                      <xs:restriction base="xs:integer">
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="100"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+
+                  <xs:element name="power_points" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+</xs:schema>

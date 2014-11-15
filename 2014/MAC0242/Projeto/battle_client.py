@@ -8,7 +8,6 @@ from pokemon.pokemon import Pokemon
 from lxml import etree
 from lxml.etree import XMLSyntaxError
 
-
 def main(args):
     p1 = Pokemon()
     
@@ -28,12 +27,13 @@ def main(args):
     except XMLSyntaxError:
         print("Formato XML incorreto!")
 
-
     p1.load_xml(root.find("pokemon"))
 
-    print(p1.kinds[0].get_name())
-    print(p1.kinds[1].get_name())
-    print(len(p1.kinds))
+    print(etree.tostring(root, xml_declaration=True, pretty_print=True))
+
+    # print(p1.kinds[0].get_name())
+    # print(p1.kinds[1].get_name())
+    # print(len(p1.kinds))
 
 if __name__ == '__main__':
     main(sys.argv[1:])
