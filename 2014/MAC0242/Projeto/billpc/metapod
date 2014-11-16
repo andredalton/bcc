@@ -25,7 +25,7 @@
       <type>4</type>
       <power>10</power>
       <accuracy>100</accuracy>
-      <power_points>1</power_points>
+      <power_points>0</power_points>
     </attacks>
   </pokemon>
 </battle_state>

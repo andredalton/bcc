@@ -80,6 +80,8 @@ class Pokemon():
 
     def load_xml(self, pk):
         """ Recebe um lxml.etree com um pokemon já validado e inicializa o objeto. """
+        if pk is None:
+            return None
         atb = pk.find("attributes")
         kinds = pk.findall("type")
         attacks = pk.findall("attacks")
@@ -112,6 +114,7 @@ class Pokemon():
             pp = int(att.find("power_points").text)
             self.attacks[ida] = Attack(namea, tp, acc, power, pp, self)
             self.nattack += 1
+        return True
 
     def make_xml(self):
         """ Método que gera um nó XML para este pokemon. """
@@ -143,7 +146,7 @@ class Pokemon():
                 attacks.append({})
                 attacks[i]['top'] = SubElement(pokemon, 'attacks')
                 attacks[i]['id'] = SubElement(attacks[i]['top'], 'id')
-                attacks[i]['id'].text = str(i)
+                attacks[i]['id'].text = str(i+1)
                 attacks[i]['name'] = SubElement(attacks[i]['top'], 'name')
                 attacks[i]['name'].text = str(att.get_name())
                 attacks[i]['type'] = SubElement(attacks[i]['top'], 'type')
