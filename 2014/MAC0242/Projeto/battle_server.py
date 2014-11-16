@@ -4,7 +4,6 @@ import os, sys, getopt
 
 from battle import validate, simple_duel, make_battle_state
 
-from pokemon.duel import Duel
 from pokemon.pokemon import Pokemon
 
 app = Flask(__name__)
@@ -62,6 +61,7 @@ def attack(n):
         # Retorna o battle_state atual em XML
         battle_state = make_battle_state(pserver, pclient)
         resp = Response(battle_state, status=200, mimetype='application/xml')
+        # Recarrega o pokemon do servidor se a batalha tiver terminado.
         if pclient.get_HP()==0 or pserver.get_HP()==0:
             pclient = None
             client_turn = False
@@ -76,4 +76,3 @@ if __name__ == '__main__':
         if pserver.load_xml(validate(serverxml)[0]) is not None:
             print("Pokemon %s carregado com sucesso" % pserver.get_name())
             app.run(host='0.0.0.0')
-            #app.run(host='0.0.0.0', debug=True)

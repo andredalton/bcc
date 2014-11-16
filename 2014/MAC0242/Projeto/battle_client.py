@@ -1,9 +1,6 @@
 #! /usr/bin/env python3
 
-import os, sys, getopt, re
-
-
-import requests
+import os, sys, getopt, re, requests
 
 from battle import validate, make_battle_state, simple_duel
 from pokemon.pokemon import Pokemon
