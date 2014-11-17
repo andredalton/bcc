@@ -1,10 +1,10 @@
-from flask import Flask, abort, request, Response
+import sys
+from flask import Flask, request, Response
 
-import os, sys, getopt
-
-from battle import validate, simple_duel, make_battle_state
-
+# Carregando a classe Pokemon
 from pokemon.pokemon import Pokemon
+# Tarefas comuns para o servidor e o cliente ficaram no módulo battle.py
+from battle import validate, simple_duel, make_battle_state, command_line
 
 app = Flask(__name__)
 pserver = None
@@ -23,12 +23,14 @@ def battle():
     global client_turn
     global serverxml
     if pserver is None or pclient is not None:
-        abort(423)
+        resp = Response("", status=423, mimetype='text/plain')
+        return resp
     else:
         # Aqui é carregado o XML!
         pclient = Pokemon()
         p = request.form['pokemon']
         pclient.load_xml(validate(p)[0])
+
         # Define a ordem da batalha
         if pserver.get_SPD() > pclient.get_SPD():
             simple_duel(pserver, pclient)
@@ -52,11 +54,13 @@ def attack(n):
     global pclient
     global client_turn
     if pserver is None or pclient is None or not client_turn:
-        abort(423)
+        resp = Response("", status=423, mimetype='text/plain')
+        return resp
     else:
         # Realiza o ataque do cliente e do servidor em sequencia.
         simple_duel(pclient, pserver, n)
-        simple_duel(pserver, pclient)
+        if pserver.get_HP() > 0:
+            simple_duel(pserver, pclient)
 
         # Retorna o battle_state atual em XML
         battle_state = make_battle_state(pserver, pclient)
@@ -67,12 +71,15 @@ def attack(n):
             client_turn = False
             if pserver.load_xml(validate(serverxml)[0]) is not None:
                 print("Pokemon %s recarregado com sucesso" % pserver.get_name())
+            else:
+                print("Falha ao recarregar pokemon no servidor!")
         return resp
 
 if __name__ == '__main__':
-    pserver = Pokemon()
-    if len(sys.argv)==2:
-        serverxml = open(sys.argv[1], "r").read()
-        if pserver.load_xml(validate(serverxml)[0]) is not None:
-            print("Pokemon %s carregado com sucesso" % pserver.get_name())
-            app.run(host='0.0.0.0')
+    pserver = command_line(sys.argv[1:])
+    if pserver is not None:
+        print("Pokemon %s carregado com sucesso" % pserver.get_name())
+        serverxml = make_battle_state(pserver)
+        app.run(host='0.0.0.0')
+    else:
+        print("Pokemon passado incorretamente.\nPrograma encerrado.")

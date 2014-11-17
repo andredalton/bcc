@@ -11,7 +11,53 @@ from pokemon.pokemon import Pokemon
 # Battle state schema file
 bss = 'battle_state.xsd'
 
+def usage():
+    """Imprime instruções de uso do programa."""
+    uso = """
+Este programa carrega um pokemon para uso como cliente ou servidor.
+
+    -h --help       Imprime isto
+    -f --file       Carrega as informações de um arquivo separado por linhas.
+    -x --xml        Carrega as informações de um arquivo xml.
+    """
+    print(uso)
+
+def command_line(argv):
+    """ Faz o tratamento da entrada de dados. """
+    p = Pokemon()
+    
+    if len(argv) > 0:
+        try:
+            opts, args = getopt.getopt(argv, "hf:x:", ["help", "file=", "xml="])
+        except getopt.GetoptError as err:
+            print(err)
+            usage()
+            sys.exit(2)
+        for o, a in opts:
+            if o in ("-h", "--help"):
+                usage()
+                sys.exit()
+            elif o in ("-f", "--file"):
+                f = open(a, "r")
+                p.load(f)
+                return p
+            elif o in ("-x", "--xml"):
+                try:
+                    s = open(a, "r").read()
+                except FileNotFoundError:
+                    print("Arquivo nao encontrado!")
+                    sys.exit()
+                p.load_xml(validate(s)[0])
+                return(p)
+            else:
+                assert False, "unhandled option"
+    else:
+        p.load()
+        return p
+    return None
+
 def validate(s):
+    """ Faz a validação de um battle_state. """
     bsv = open(bss, "r").read()
     xml = re.sub("encoding=['\"].*['\"]", "", s)
     schema_root = etree.XML(bsv)
@@ -22,10 +68,10 @@ def validate(s):
     except XMLSyntaxError:
         print("Formato XML incorreto!")
         return None
-
     return root.findall("pokemon")
 
 def make_battle_state(pk1, pk2=None):
+    """ Gera um battle_state. """
     top = Element('battle_state')
     x1 = pk1.make_xml()
     top.append(x1)
@@ -35,6 +81,7 @@ def make_battle_state(pk1, pk2=None):
     return etree.tostring(top, xml_declaration=True, pretty_print=True, encoding="UTF-8").decode("utf-8")
 
 def simple_duel(patt, pdef, n=None, run=True):
+    """ Resolve um duelo simples. """
     an = None
     if patt.get_HP() > 0 and pdef.get_HP() > 0:
         params = {

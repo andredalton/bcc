@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<battle_state>
+  <pokemon>
+    <name>Charmander</name>
+    <level>60</level>
+    <attributes>
+      <health>141</health>
+      <attack>165</attack>
+      <defense>90</defense>
+      <speed>200</speed>
+      <special>2</special>
+    </attributes>
+    <type>11</type>
+    <attacks>
+      <id>1</id>
+      <name>SCRATCH</name>
+      <type>0</type>
+      <power>46</power>
+      <accuracy>70</accuracy>
+      <power_points>20</power_points>
+    </attacks>
+    <attacks>
+      <id>2</id>
+      <name>GROWL</name>
+      <type>4</type>
+      <power>90</power>
+      <accuracy>40</accuracy>
+      <power_points>40</power_points>
+    </attacks>
+  </pokemon>
+</battle_state>
