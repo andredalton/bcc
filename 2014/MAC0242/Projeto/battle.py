@@ -81,7 +81,13 @@ def make_battle_state(pk1, pk2=None):
     return etree.tostring(top, xml_declaration=True, pretty_print=True, encoding="UTF-8").decode("utf-8")
 
 def simple_duel(patt, pdef, n=None, run=True):
-    """ Resolve um duelo simples. """
+    """ Resolve um duelo simples. 
+
+    patt: Pokemon atacante
+    pdef: Pokemon defensor
+    n:    Número do ataque
+    run:  Para realizar o ataque
+    """
     an = None
     if patt.get_HP() > 0 and pdef.get_HP() > 0:
         params = {
