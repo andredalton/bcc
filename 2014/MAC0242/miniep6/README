@@ -1,0 +1,7 @@
+Este foi o primeiro codigo em python que eu fiz, para realizar um gravador de eventos de mouse e teclado um pouco melhor que os que existem por ai.
+
+Funciona de maneira bem pratica, mas esta cheio de problemas e tudo funciona em apenas um codigo.
+
+Por enquanto estou modularizando as coisas e mantive o codigo original na pasta original/.
+
+Provavelmente o melhor padrao para este projeto seja o mediator.

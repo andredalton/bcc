@@ -6,12 +6,8 @@ NUSP: 7580421
 
 Observações:
 
-Os módulos utilizados foram random, unittest, os, sys e getopt que estão contidos na instalação padrão do python.
-O módulo pokemon utiliza apenas o módulo random, sendo que todos os outros módulos adicionais foram utilizados em battle.py.
-Embora a classe Duel tenha apenas uma associação simples com a classe Skill, ela foi pensada desta maneira de modo a simplificar futuras implementações.
-
-Para facilitar a execução do código foi inserido o shebang "#! /usr/bin/env python3" em battle.py, talvez isso tenha
-que ser alterado caso o computador de teste não responda ao comando python3
+Os módulos extras utilizados estão listados em requeriments.txt.
 
 Para verificar todos os modos de execução possíveis utilize o comando:
-./battle.py --help
+python battle_server.py --help
+python battle_client.py --help

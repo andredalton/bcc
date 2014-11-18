@@ -1,6 +1,6 @@
 # Usado pra receber arquivos XML
 
-import sys, termios
+import sys
 
 # Usado para validar e manipular XML
 from lxml import etree
@@ -191,40 +191,6 @@ class Pokemon():
             acc = int(f.readline())
             power = int(f.readline())
             pp = int(f.readline())
-
-            self.attacks[i+1] = Attack(nameh, tp, acc, power, pp, self)
-            self.nattack += 1
-
-    def load_bkp(self):
-        self.name = input().strip()
-        self.level = int(input())
-        self.HP = int(input())
-        self.ATK = int(input())
-        self.DEF = int(input())
-        self.SPD = int(input())
-        self.SPC = int(input())
-        tp1 = input().strip().lower()
-        tp2 = input().strip().lower()
-        try:
-            self.kinds.append(kind_dict[tp1])
-        except (KeyError):
-                self.kinds.append(kind_dict["blank"])
-        try:
-            self.kinds.append(kind_dict[tp2])
-        except (KeyError):
-                self.kinds.append(kind_dict["blank"])
-        self.nattack = int(input())
-        if self.nattack > 4:
-            self.nattack = 4
-        for i in range(self.nattack):
-            nameh = input().strip()
-            try:
-                tp = kind_dict[input().strip().lower()]
-            except KeyError:
-                tp = kind_dict["blank"]
-            acc = int(input())
-            power = int(input())
-            pp = int(input())
 
             self.attacks[i+1] = Attack(nameh, tp, acc, power, pp, self)
             self.nattack += 1
