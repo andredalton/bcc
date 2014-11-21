@@ -1,55 +1,114 @@
-from evdev import InputDevice, ecodes, UInput
+from keymap import KeyMap
+from listener import Listener
 
-from select import select
+from device import get_devices, flush_input
 
-import threading
+from evdev import  ecodes
+import sys, getopt
+import pickle
 
-from device import get_devices
-
-class KMLogger(threading.Thread):
+class KMLoger:
+    """ Classe principal """
     def __init__(self):
-        threading.Thread.__init__(self)
         self.devices = get_devices()
-        self.listeners = {}
+        self.keymap = KeyMap(self.devices)
+        self.listener = Listener(self.devices)
+        self.keyfile = ".keymap"    # Arquivo padrão para o mapa de caracteres
+        self.listen()
 
-    def add_listener(self, name, tp, code, fun, *args):
-        self.listeners[name] = {'type': tp, 'code': code, 'fun': fun, 'args': args}
+    def listen(self):
+        self.listener.add_listener("quit", ecodes.EV_KEY, self.keymap.get_key_by_func("quit"), self.listener.exit)
+        self.listener.add_listener("redefine", ecodes.EV_KEY, self.keymap.get_key_by_func("redefine"), self.change_keys)
+        
+        self.listener.add_listener("save", ecodes.EV_KEY, self.keymap.get_key_by_func("save"), print, "\nsave")
+        self.listener.add_listener("load", ecodes.EV_KEY, self.keymap.get_key_by_func("load"), print, "\nload")
+        self.listener.add_listener("run", ecodes.EV_KEY, self.keymap.get_key_by_func("run"), print, "\nrun")
+        self.listener.add_listener("stop", ecodes.EV_KEY, self.keymap.get_key_by_func("stop"), print, "\nstop")
+        self.listener.add_listener("pause", ecodes.EV_KEY, self.keymap.get_key_by_func("pause"), print, "\npause")
+        self.listener.add_listener("rec", ecodes.EV_KEY, self.keymap.get_key_by_func("rec"), print, "\nrec")
+        self.listener.add_listener("run_forever", ecodes.EV_KEY, self.keymap.get_key_by_func("run_forever"), print, "\nrun_forever")                   
 
-    def get_listeners(self):
-        return self.listeners.keys()
+    def start(self):
+        self.listener.start()
+        self.listener.join()
 
-    def del_listener(self, name):
-        self.listeners.pop(name, None)
+    def save_key_map(self):
+        """ Salva o mapa de caracteres no arquivo padrão. """
+        pickle.dump( self.keymap, open(self.keyfile, 'wb'), -1)
+        
+    def load_key_map(self):
+        """ Carrega o mapa de caracteres do arquivo padrão. """
+        try:
+            self.keymap = pickle.load(open(self.keyfile, 'rb'))
+        except FileNotFoundError:
+            self.save_key_map()
+        self.listen()
 
-    def run(self):
-        flag = True
-        while flag:
-            r,w,x = select(self.devices, [], [])
-            for fd in r:
-                print(fd)
-                for event in self.devices[fd].read():
-                    for l in self.listeners.values():
-                        if event.type == l["type"] and event.value == 00 and event.code == l["code"]:
-                            print(l['args'])
-                            l['fun'](l['args'])
-                    if event.type == ecodes.EV_KEY and event.value == 00 and event.code == ecodes.KEY_ESC:
-                        print("\rBye!")
-                        flag = False
+    def change_keys(self):
+        print("\nAhhhhh\n")
+        self.listener.del_all_listener()
+        self.keymap.setup()
+        self.listen()
+        self.save_key_map()
+        sys.exit()
 
-def ppp():
-    print("Upa lele")
+    def print_keys(self):
+        self.keymap.print_keymap()
 
-def soma(a,b):
-    print(a+b)
+
+def usage():
+    """Imprime instruções de uso do programa."""
+    uso = """
+Bem vindo ao kmlogger, o objetivo de uso deste programa é gravar e executar históricos
+dos eventos de mouse e teclado do sistema operacional.
+
+    -h --help       Imprime isto.
+    -H --history    Carrega um histórico salvo em um arquivo.
+    -a --auto       Executa automaticamente o histórico quantas vezes
+                    foi passado pelo argumento ou infinatas caso 0.
+    """
+    print(uso)
+
+def main(argv):
+    """ Faz o tratamento da linha de commando. """
+    km = KMLoger()
+    km.load_key_map()
+    km.print_keys()
+    # km.change_keys()
+    km.start()
+    sys.exit()
+
+    if len(argv) > 0:
+        try:
+            opts, args = getopt.getopt(argv, "hH:a:", ["help", "history=", "auto="])
+        except getopt.GetoptError as err:
+            print(err)
+            usage()
+            sys.exit(2)
+        for o, a in opts:
+            if o in ("-h", "--help"):
+                usage()
+                sys.exit()
+            elif o in ("-H", "--history"):
+                print("Load history.")
+            elif o in ("-a", "--auto"):
+                try:
+                    n = int(a)
+                    if n < 0:
+                        print("Impossível executar o histórico %d vezes!" % n)
+                        sys.exit(2)
+                    elif n == 0:
+                        print("Executando infinitas vezes!")
+                    else:
+                        print("Autoplay: %d" % n)
+                except ValueError:
+                    print("O argumento \"%s\" nao e um numero inteiro!" % a)
+                    usage()
+                    sys.exit(2)
+            else:
+                assert False, "Opcao nao tratada"
+    else:
+        print("Voce esta sem argumentos!")
 
 if __name__ == '__main__':
-    d = KMLogger()
-    d.start()
-    d.add_listener("bla", ecodes.EV_KEY, ecodes.KEY_DELETE, print, soma, ppp)
-    print(d.get_listeners())
-    # d.del_listener("bla")
-    # print(d.get_listeners())
-
-    d.join()
-    print("ble")
-    
+    main(sys.argv[1:])

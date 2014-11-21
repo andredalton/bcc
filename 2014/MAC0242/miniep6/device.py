@@ -1,5 +1,15 @@
 from evdev import InputDevice, ecodes
 
+# Funcao para dar flush no buffer de entrada
+def flush_input():
+    try:
+        import msvcrt
+        while msvcrt.kbhit():
+            msvcrt.getch()
+    except ImportError:
+        import sys, termios
+        termios.tcflush(sys.stdin, termios.TCIOFLUSH)
+
 def get_devices():
     devicesList = []
     for i in range(0, 20):
