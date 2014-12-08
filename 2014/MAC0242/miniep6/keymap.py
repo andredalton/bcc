@@ -4,6 +4,8 @@ from device import get_devices, flush_input
 
 from select import select
 
+import sys
+
 class KeyMap:
     """ Classe que trata as teclas. """
     def __init__(self, devices):
@@ -29,16 +31,20 @@ class KeyMap:
     def setup(self):
         kmem = []
         i = 0
+        for k in self.keys:
+            k['print'] = False
         while i < len(self.keys):
-            print(i)
-            print("\r                                                                             ", end="")
-            print("\r%s" % self.keys[i]["msg"], end="")
+            if not self.keys[i]['print']:
+                sys.stdout.write(" "*80)
+                sys.stdout.write("\r%s" % self.keys[i]["msg"])
+                sys.stdout.flush()
+                self.keys[i]['print'] = True
             code = self.get_key_code()
             flush_input()
             if code not in kmem:
                 kmem.append(code)
                 self.keys[i]["code"] = code
-                print(ecodes.KEY[code].replace("KEY_", ""))
+                print("\r%s" % self.keys[i]["msg"] + " %s" % ecodes.KEY[code].replace("KEY_", "") + " "*70)
                 i += 1
 
     def get_key_code(self):
