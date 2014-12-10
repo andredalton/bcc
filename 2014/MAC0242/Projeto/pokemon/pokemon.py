@@ -1,5 +1,4 @@
 # Usado pra receber arquivos XML
-
 import sys
 
 # Usado para validar e manipular XML
@@ -208,3 +207,6 @@ class Pokemon():
                     print("%(n)d - %(name)s (%(pp)d/%(ppm)d)" % params)
             return True
         return False
+
+    def on_my_own(self):
+        print("Bla")
