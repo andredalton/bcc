@@ -39,14 +39,21 @@ class Attack:
     def get_TYP(self):
         return self.TYP
 
+    def set_ppm(self, ppm):
+        self.PPM = ppm
+
     def decrease_pp(self):
         if self.pp > 0:
             self.pp -= 1
 
-    def critical(self):
-        """ Retorna o multiplicador de critical hit. """
+    def critical(self, pr=False):
+        """
+        Retorna o multiplicador de critical hit.
+
+        pr: Flag que indica se deve ou nao imprimir as mensagens.
+        """
         if random.random() < self.owner.get_SPD()/512:
-            print("Critical hit!")
+            if pr: print("Critical hit!")
             return (2*self.owner.get_level()+5)/(self.owner.get_level()+5)
         return 1
 
@@ -56,22 +63,26 @@ class Attack:
             return True
         return False
 
-    def modifier(self):
-        """ Retorna o modificador do cálculo do dano entre dois pokemons. """
+    def modifier(self, pr=False):
+        """
+        Retorna o modificador do cálculo do dano entre dois pokemons.
+
+        pr: Flag que indica se deve ou nao imprimir as mensagens.
+        """
         m = 1
         m *= self.TYP.get_weakness(self.target.get_kind(0).get_name())
         m *= self.TYP.get_weakness(self.target.get_kind(1).get_name())
         if m > 1:
-            print("It's super effective!")
+            if pr: print("It's super effective!")
         if self.owner.get_kind(0) == self.TYP or self.owner.get_kind(1) == self.TYP:
             m *= 1.5
         m *= random.uniform(0.85, 1)
         return m
 
-    def damage(self):
+    def damage(self, pr=False):
         """ Retorna o dano deste ataque entre dois pokemons. """
-        m = self.modifier()
-        c = self.critical()
+        m = self.modifier(pr)
+        c = self.critical(pr)
         if self.special():
             d = ((2*self.owner.get_level()+10)/250*self.owner.get_SPC()/self.target.get_SPC()*self.PWR+2)*m*c
         else:
@@ -83,7 +94,7 @@ class Attack:
         if self.PP > 0:
             if self.ACU < random.random()*100:
                 print("%(name)s used %(attack)s!" % {"name": self.owner.get_name(), "attack": self.name})
-                d = self.damage()
+                d = self.damage(True)
                 self.target.get_damage(d)
             else:
                 print("%(name)s used %(attack)s, but it failed!" % {"name": self.owner.get_name(), "attack": self.name})

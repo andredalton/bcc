@@ -27,6 +27,8 @@ class Pokemon():
         self.kinds = []        
         self.attacks = [Struggle(self), None, None, None, None]
         self.nattack = 0
+        self.auto = False
+        self.auto_attack = None
         
     def get_name(self):
         return self.name
@@ -63,6 +65,12 @@ class Pokemon():
 
     def get_nattack(self):
         return self.nattack
+
+    def set_auto(self):
+        self.auto = True
+
+    def get_auto(self):
+        return self.auto
 
     def left_pp(self):
         pp = 0
@@ -192,21 +200,45 @@ class Pokemon():
             pp = int(f.readline())
 
             self.attacks[i+1] = Attack(nameh, tp, acc, power, pp, self)
-            self.nattack += 1
 
-    def print_attack(self):
+    def print_attack(self, ppm=None):
         """ Método que imprime as opções de ataque deste pokemon. """
         if self.left_pp() > 0:
             for i in range(4):
                 a = self.attacks[i+1]
                 if a is None:
                     break
-                params = {"n":i+1, "name":a.get_name(), "pp":a.get_pp(), "ppm":a.get_ppm()}
+                if ppm is not None:
+                    params = {"n":i+1, "name":a.get_name(), "pp":a.get_pp(), "ppm":ppm[i+1]}
+                else:
+                    params = {"n":i+1, "name":a.get_name(), "pp":a.get_pp(), "ppm":a.get_ppm()}
 
                 if a is not None:
                     print("%(n)d - %(name)s (%(pp)d/%(ppm)d)" % params)
             return True
         return False
 
-    def on_my_own(self):
-        print("Bla")
+    def on_my_own(self, other):
+        """
+        Método que calcula qual o melhor ataque para este pokémon contra o other.
+        É calculado apenas no ínicio da batalha.
+        """
+        if self.auto_attack is None:
+            d = 0  # Dano
+            a = 0  # Numero do ataque
+            for i in range(1, self.nattack+1):
+                if self.attacks[i] is None:
+                    break
+                if self.attacks[i].get_pp() == 0:
+                    continue
+                self.attacks[i].prepare(other)
+                dt = 0  # Dano temporário
+                for j in range(1000):
+                    dt += self.attacks[i].damage()
+                # Calculando o dano médio deste ataque levando em consideração a acurácia
+                dt *= self.attacks[i].get_ACU()/100000
+                if d < dt:
+                    d = dt
+                    a = i
+            self.auto_attack = a
+        return self.auto_attack
