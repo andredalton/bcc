@@ -1,0 +1,5 @@
+Para o relatório podem ser utilizados um dos formatos que estão disponíveis no diretório latex ou OO (libreoffice) ou o formato de artigo da SBC (Sociedade Brasileira de Computação).
+
+Formato SBC: http://www.sbc.org.br/index.php?option=com_jdownloads&Itemid=195&task=view.download&cid=38
+
+Relatório no formato PDF.
