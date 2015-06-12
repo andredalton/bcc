@@ -1,0 +1,130 @@
+\documentclass[12pt]{article}
+\usepackage[brazil]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{setspace}
+\usepackage{boxedminipage}
+\usepackage{latexsym}
+\usepackage{multirow}
+\usepackage[pdftex]{graphicx}
+\usepackage{float}
+\usepackage{url}
+%\setlength{\parskip}{0.1cm}
+\setlength{\paperheight}{29.7cm}
+\setlength{\textheight}{23.0cm}
+\setlength{\textwidth}{16.5cm}
+\setlength{\oddsidemargin}{0.0cm}
+\setlength{\topmargin}{-1.0cm}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+{\sf {\large Visão e Processamento de Imagens - Avaliação única -
+    Parte II}}
+
+\textbf{Preste atenção para as regras da prova}
+\end{center}
+1- O fonte latex (.tex) da prova será disponibilizado para facilitar
+que você não tenha que copiar o enunciado das questões. Todas as questões
+devem ser respondidas no mesmo arquivo.
+
+\noindent 2- A prova é \textbf{individual}.  É permitido a consulta a
+livros, apontamentos ou Internet, desde que devidamente referenciada.
+Não é permitida a consulta a colegas, amigos, família, cachorro,
+papagaio e etc. 
+
+\noindent 3- A prova deve ser entregue diretamente no Paca, assim como
+todos os códigos e imagens devem ser entregues no mesmo arquivo
+comprimido.  \textbf{Duração da prova: 14 dias}.  
+
+\noindent 4- Cada questão vale 20 pontos (pois são apenas 3 questões)
+para a graduação e 15 pontos para a pós-graduação (pois são 4 questões). 
+\bigskip
+
+\begin{itemize}
+\item[{\bf Q1.}] Para fazer esta questão, leia primeiro o artigo abaixo:
+\begin{itemize}
+\item \url{http://www.eecs.berkeley.edu/Pubs/TechRpts/2015/EECS-2015-85.pdf}
+\end{itemize} 
+\begin{itemize}
+\item Faça um resumo do artigo de acordo com as indicações que deixei
+  no paca (artigos sobre como fazer um resumo).
+\item Implemente o método ELA (Error Level Analysis) em Python (apresente o 
+\textbf{algoritmo} na prova e anexe o código em Python no arquivo zip).
+\item Teste seu algoritmo com as imagens que deixei no paca para este exercício. 
+Quantas imagens seriam consideradas modificadas por esse método? Comente o resultado,
+comparando com a sua intuição.
+\end{itemize}
+%
+%
+%
+\item[{\bf Q2.}] Esta questão refere-se à transformada de Fourier.
+\begin{itemize}
+\item Encontre a transformada de Fourier da função:
+\begin{eqnarray*}
+f(x) = \left\{ \begin{array}{rl} 
+ 7 &\mbox{ if $-5 < x < 5$} \\
+ 0 &\mbox{ caso contrário}
+       \end{array} \right.
+\end{eqnarray*}
+\item Encontre a transformada de Fourier da função $ g(x) = f(x)\cos
+   \omega_0 x$, sabendo que a transformada de Fourier de $f(x)$ é dada
+   por $F(\omega)$
+\item Ache a inversa da transformada de Fourier de $G(\omega) =
+  20\frac{\sin 5\omega}{5\omega}e^{-3\omega i}$
+\item Calcule a DFT do sinal $f = \{1,3,5,3,1\}$
+\end{itemize}
+%
+%
+%
+\item[{\bf Q3.}] 
+\begin{itemize}
+\item Calcule (apresente os cálculos) dos descritores de Fourier das
+  figuras 1a e 1b. Lembre-se que os pontos da
+  borda do quadrado serão representados por pontos no plano de
+  Argand-Gauss. Isto é, cada ponto no plano passa a ser um número
+  complexo e a borda passa a ser um vetor de pontos complexos, como
+  num sinal, mas com valores complexos.
+\item Para confirmar que seus cálculos estão corretos, implemente um
+  programa em Python que receba como entrada um vetor de números
+  complexos (que são as coordenadas das bordas) e retorne os
+  descritores de Fourier do vetor de entrada. Você pode usar as
+  funções fornecidas pela biblioteca NUMPY para facilitar a
+  programação. 
+\item Para reconstruir a curva, faça uma função que receba um vetor
+  com os descritores de Fourier, um número $N$ de descritores a serem
+  usados e grafique os pontos num plano cartesiano (para fazer a mesma 
+figura que fizemos nos slides das aulas 15 e 16.
+\end{itemize}
+\begin{figure}[htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+	\centering
+        \includegraphics[scale=0.2]{Q3Images/square1.jpg} 
+	\centerline{\label{fig1a} \small (1a) Quadrado de lado 1}
+\end{minipage}
+\begin{minipage}[b]{0.45\textwidth}
+	\centering
+        \includegraphics[scale=0.3]{Q3Images/square3.jpg} 
+	\centerline{\label{fig1b} \small (1b) Quadrado de lado 3}
+\end{minipage}
+\end{figure}
+
+%
+%
+%
+\item[{\bf Q4.}] \textbf{Apenas para os alunos de pós-graduação} 
+\begin{itemize}
+\item Leia o artigo do Torre e do Poggio
+  \url{ftp://publications.ai.mit.edu/ai-publications/pdf/AIM-768.pdf}
+  e faça um resumo de acordo com as indicações que deixei no
+  paca (artigos sobre como fazer um resumo). 
+\item O que é um problema mal-posto?
+\item O que é regularização? 
+\item Qual a importância do teorema apresentado no artigo?
+\item O que são filtros de banda limitada? Qual a sua importância no
+  artigo?
+\item Quais são os métodos de encontrar borda apresentados no artigo?
+\end{itemize}
+\end{itemize}
+\end{document}
