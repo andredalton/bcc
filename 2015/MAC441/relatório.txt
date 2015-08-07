@@ -1,0 +1,10 @@
+Aspéctos positivos:
+	Apresentação abrangete às tecnicas de Orientação à Objetos
+	Grande foco em padrões de projeto
+	Aprendizado de SmallTalk
+	Apresentação de tópicos diversificados nos seminários
+	Presença obrigatória foi muito melhor do que prova
+
+Aspéctos negativos:
+	Sem contato efetivo com orientação à objetos em linguagens atuais
+	Poderiam haver tarefas menores por semana, visando aplicação do conteúdo visto em aula
