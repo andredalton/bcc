@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Aluno:  André Meneghelli Vale,      Núm. USP: 4898948
+ * Curso: Bacharelado em Ciências da Computação
+ * Aula 1 - Desafio A
+ * MAC0327 -- 08/07/2015 -- IME/USP, -- Prof. Cristina Gomes Fernandes
+ ******************************************************************************/
+
 #include <stdio.h>
 
 int main() {

@@ -1,5 +1,11 @@
+/*******************************************************************************
+ * Aluno:  André Meneghelli Vale,      Núm. USP: 4898948
+ * Curso: Bacharelado em Ciências da Computação
+ * Aula 1 - Desafio B
+ * MAC0327 -- 08/07/2015 -- IME/USP, -- Prof. Cristina Gomes Fernandes
+ ******************************************************************************/
+
 #include <stdio.h>
-#include <stdlib.h>
 
 #define SIZE 1000
 
