@@ -23,7 +23,7 @@ int walk(char maze[][MAX], int lin, int col, int n) {
             else if (maze[lin+1][col]!=2)
                 walls += walk(maze, lin+1, col, n);
         }
-        else if (lin>0)  {
+        if (lin>0)  {
             if (maze[lin-1][col]==1) walls++;
             else if (maze[lin-1][col]!=2)
                 walls += walk(maze, lin-1, col, n);
@@ -33,15 +33,15 @@ int walk(char maze[][MAX], int lin, int col, int n) {
             else if (maze[lin][col+1]!=2)
                 walls += walk(maze, lin, col+1, n);
         }
-        else if (col>0)  {
+        if (col>0)  {
             if (maze[lin][col-1]==1) walls++;
             else if (maze[lin][col-1]!=2)
                 walls += walk(maze, lin, col-1, n);
         }
-        if (lin==0 && col!=0) walls += 1;
-        else if (lin==n-1 && col!=n-1) walls += 1;
-        if (col==0 && lin!=0) walls += 1;
-        else if (col==n-1 && lin!=n-1) walls += 1;
+        if (lin==0 && col!=0) walls++;
+        else if (lin==n-1 && col!=n-1) walls++;
+        if (col==0 && lin!=0) walls++;
+        else if (col==n-1 && lin!=n-1) walls++;
     }
     return walls;
 }
@@ -63,10 +63,6 @@ int main() {
         }
     }
 
-    printf("\n%d %d\n", maze[0][0], maze[n-1][n-1]);
-
     printf("%d", 9*(walk(maze, 0, 0, n)+walk(maze, n-1, n-1, n)));
-
-    printf("\n%d %d\n", maze[0][0], maze[n-1][n-1]);
     return 0;
 }
