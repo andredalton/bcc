@@ -20,22 +20,22 @@ int walk(char maze[][MAX], int lin, int col, int n) {
 
         if (lin<n-1) {
             if (maze[lin+1][col]==1) walls++;
-            else if (maze[lin+1][col]!=2)
+            else if (!maze[lin+1][col])
                 walls += walk(maze, lin+1, col, n);
         }
         if (lin>0)  {
             if (maze[lin-1][col]==1) walls++;
-            else if (maze[lin-1][col]!=2)
+            else if (!maze[lin-1][col])
                 walls += walk(maze, lin-1, col, n);
         }
         if (col<n-1) {
             if (maze[lin][col+1]==1) walls++;
-            else if (maze[lin][col+1]!=2)
+            else if (!maze[lin][col+1])
                 walls += walk(maze, lin, col+1, n);
         }
         if (col>0)  {
             if (maze[lin][col-1]==1) walls++;
-            else if (maze[lin][col-1]!=2)
+            else if (!maze[lin][col-1])
                 walls += walk(maze, lin, col-1, n);
         }
         if (lin==0 && col!=0) walls++;
@@ -47,22 +47,22 @@ int walk(char maze[][MAX], int lin, int col, int n) {
 }
 
 int main() {
-    char buffer[MAX+1],
-         maze[MAX][MAX],
-         n;
-    int
-         lin,
-         col;
+    char buffer,
+         maze[MAX][MAX];
+    int n,
+        lin,
+        col;
 
-    fgets(buffer, 10, stdin);
-    n = atoi(buffer);
-    for ( lin=0; lin<n; lin++) {
-        fgets(buffer, MAX+1, stdin);
-        for ( col=0; col<n; col++) {
-            maze[lin][col] = buffer[col]=='#';
+    if ( scanf("%d", &n) ) {
+        for ( lin=0; lin<n; lin++) {
+            for ( col=0; col<n; col++) {
+                while(scanf("%c", &buffer) && buffer == '\n');
+                maze[lin][col] = buffer=='#';
+            }
         }
+
+        printf("%d\n", 9*(walk(maze, 0, 0, n)+walk(maze, n-1, n-1, n)));
     }
 
-    printf("%d", 9*(walk(maze, 0, 0, n)+walk(maze, n-1, n-1, n)));
     return 0;
 }
