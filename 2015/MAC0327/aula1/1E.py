@@ -6,7 +6,7 @@ __author__ = 'andre'
  * Aluno:  André Meneghelli Vale,      Núm. USP: 4898948
  * Curso: Bacharelado em Ciências da Computação
  * Aula 1 - Desafio E
- * MAC0327 -- 08/07/2015 -- IME/USP, -- Prof. Cristina Gomes Fernandes
+ * MAC0327 -- 12/07/2015 -- IME/USP, -- Prof. Cristina Gomes Fernandes
  ******************************************************************************/
 """
 
@@ -42,10 +42,15 @@ def main():
         for part in filter(lambda x: x['start'] >= actors[i]['start'] and x['end'] <= actors[i]['end'], parts):
             part['actors'].append(actors[i])
 
-    if posibilities < nparts:
+    parts.sort(key=lambda x: len(x['actors']))
+    for part in parts:
+        part['actors'].sort(key=lambda x: x['end']-x['start'])
+
+    if posibilities < nparts or len(parts[0]['actors']) == 0:
         print "NO"
     else:
         if backtrack(0, parts):
+            parts.sort(key=lambda x: x['index'])
             print "YES"
             print " ".join(map(lambda x: str(x['actor']), parts))
         else:
