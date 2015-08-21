@@ -10,37 +10,26 @@ __author__ = 'andre'
  ******************************************************************************/
 """
 
-from itertools import combinations, permutations, chain
-
-def all_factors(n):
-    remainder = n
-    factors = {}
-    divider = 2
-    while remainder > 1:
-        if remainder % divider == 0:
-            if divider in factors:
-                factors[divider] += 1
-            else:
-                factors[divider] = 1
-            remainder /= divider
-        else:
-            divider += 1
-    return factors
-
-def all_dividers(factors):
-    if len(factors) == 1:
-        for i in range(factors[0][1]+1):
-            yield factors[0][0]**i
-    else:
-        for i in range(factors[0][1]+1):
-            for item in all_dividers(factors[1:]):
-                yield item*factors[0][0]**i
-
 def main():
     raw_input()
     results = map(lambda x: x == "1", raw_input().split())
+    last = results[len(results)-1]
+    sums = {True:0, False: 0}
+    max = sum(results) if last else len(results) - last
+
+    print max
+    return True
+
+    end = results[len(results)-1]
+
+    for r in results[::-1]:
+        sums[r] += 1
+        if sums[end] > sums[not end]:
+            print "Testando para", sums[end]
+
+    return False
     win = sum(results)
-    win = win if results[len(results)-1] else len(results) - win
+    win = win if results[len(results) - 1] else len(results) - win
     games = []
 
     print win
@@ -59,7 +48,7 @@ def main():
     # print factors
     return True
 
-    for t in range(1, max+1):
+    for t in range(1, max + 1):
         gena = petya = sgena = spetya = 0
         for result in results:
             if result:
@@ -72,13 +61,13 @@ def main():
             if petya == t:
                 spetya += 1
                 gena = petya = 0
-        if petya == 0 and gena == 0 and sgena != spetya and (spetya > sgena) != results[len(results)-1]:
-            games.append((spetya if (spetya>sgena) else sgena, t))
+        if petya == 0 and gena == 0 and sgena != spetya and (spetya > sgena) != results[len(results) - 1]:
+            games.append((spetya if (spetya > sgena) else sgena, t))
     print len(games)
     games.sort()
     for game in games:
         print game[0], game[1]
 
+
 if __name__ == "__main__":
     main()
-

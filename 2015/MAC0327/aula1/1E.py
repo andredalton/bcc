@@ -42,9 +42,9 @@ def main():
         for part in filter(lambda x: x['start'] >= actors[i]['start'] and x['end'] <= actors[i]['end'], parts):
             part['actors'].append(actors[i])
 
-    parts.sort(key=lambda x: len(x['actors']))
+    parts.sort(key=lambda x: x['start'])
     for part in parts:
-        part['actors'].sort(key=lambda x: x['end']-x['start'])
+        part['actors'].sort(key=lambda x: x['end'])
 
     if posibilities < nparts or len(parts[0]['actors']) == 0:
         print "NO"
