@@ -1,0 +1,11 @@
+Nome: André Meneghelli Vale
+NUSP: 4898948
+
+Editor: eercase
+
+Observações:
+
+A forma como implementei foi a mais simples que consegui pensar,
+no entanto uma prescrição contém apenas um medicamento.
+
+

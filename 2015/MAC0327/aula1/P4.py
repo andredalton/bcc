@@ -10,36 +10,31 @@ __author__ = 'andre'
  ******************************************************************************/
 """
 
-def bin_search(lst, pos, value):
-    print "a"
+def bin_search(lst, value, left, right):
     if len(lst) == 0:
         return 0
-    print "b"
-    if value > lst[len(lst)-1][pos]:
-        return -1
-    print "c"
-    l = 0
-    r = len(lst)
-    m = r/2
-    while r-l > 1:
-        print "d", r, l, m
-        if lst[m][pos] > value:
-            r = m
-        elif lst[m][pos] < value:
-            l = m
+    l = left
+    r = right
+    m = (l+r)/2
+    while r > l:
+        # print l, m, r
+        if lst[m] < value:
+            l = m + 1
+        elif lst[m] > value:
+            r = m - 1
         else:
-            break
+            r = m
         m = (r+l)/2
-        print "e", r, l, m
-
-    print "f", r, l, m
+    if value != lst[m]:
+        return False
     return m
 
 def main():
-    raw_input()
+    n = int(raw_input())
     results = map(lambda x: x == "1", raw_input().split())
     last = results[len(results)-1]
-    sums = []
+    ppetya = []
+    pgena = []
 
     petya = gena = 0
     for result in results:
@@ -47,14 +42,33 @@ def main():
             petya += 1
         else:
             gena += 1
-        sums.append((petya, gena))
+        ppetya.append(petya)
+        pgena.append(gena)
 
-    print sums
-    print bin_search(sums, 0, 1)
-    print bin_search(sums, 1, 1)
+    maxp = petya if petya > gena else gena
+
+    print range(n)
+    print map(lambda x: 1 if x else 2, results)
+    print ppetya
+    print pgena
+    print maxp
+
+    for t in range(2, maxp+1):
+        tpetya = tgena = i = 0
+        while i < len(results):
+            left = i+t-1
+            right = i+2*t-2 if i+2*t-2 < len(results) else len(results)-1
+            print "------------------"
+            print "limits:", i, left, right
+            gena = bin_search(pgena, tgena + t, 0, len(results)-1)
+            petya = bin_search(ppetya, tpetya + t, 0, len(results)-1)
+            i = 1 + (gena if gena < petya and gena is not False else petya)
+            print "busca:", petya, gena, i, "\ttargets:", tpetya+t, tgena+t
+            print "pos:", ppetya[i], pgena[i]
+            tgena = pgena[i]
+            tpetya = ppetya[i]
+
     return True
-
-    end = results[len(results)-1]
 
     for r in results[::-1]:
         sums[r] += 1
