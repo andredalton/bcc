@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <stack>
 #include <list>
 #include <vector>
 
@@ -31,7 +30,7 @@ int busca(string &amusing, string &last, int p, int w) {
         if ( wu ) return wu;
     }
 
-    return 0;
+    return -1;
 }
 
 int main() {
@@ -43,7 +42,7 @@ int main() {
 
     resp = busca(amusing, last, 0, 0);
 
-    if (resp) {
+    if (resp != -1) {
         cout << "NO" << endl;
         int l = 0;
         for (int i = 1; i <= resp; ++i) {

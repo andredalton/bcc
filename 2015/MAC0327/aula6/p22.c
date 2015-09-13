@@ -1,86 +1,58 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void heapsort(long int v[], int n) {
-   int i = n / 2, pai, filho, t;
+int bin_search(unsigned int array[], unsigned int search, int n) {
+    int first = 0;
+    int last = n - 1;
+    int middle = (first+last)/2;
 
-   for (;;) {
-      if (i > 0) {
-          i--;
-          t = v[i];
-      } else {
-          n--;
-          if (n == 0) return;
-          t = v[n];
-          v[n] = v[0];
-      }
+    while (first <= last) {
+        if (array[middle] < search)
+            first = middle + 1;
+        else if (array[middle] == search) {
+            break;
+        }
+        else
+            last = middle - 1;
 
-      pai = i;
+        middle = (first + last)/2;
+    }
+    return middle;
+}
 
-      filho = i * 2 + 1;
+void insert(unsigned int v[], int n, unsigned int value) {
+    int i, N = bin_search(v, value, n/2+1);
 
-      while (filho < n) {
+    if (v[N] > value)
+        N--;
 
-          if ((filho + 1 < n)  &&  (v[filho + 1] > v[filho]))
-              filho++;
-          if (v[filho] > t) {
-             v[pai] = v[filho];
-             pai = filho;
-             filho = pai * 2 + 1;
-          } else {
-             break;
-          }
-      }
-      v[pai] = t;
-   }
+    for (i=0; i<N; i++)
+        v[i] = v[i+1];
+    if (N >= 0)
+        v[N] = value;
 }
 
 int main() {
-    unsigned int *v;
-    int N, n, i, pai, filho, t;
+    unsigned int *v, tmp;
+    int n, i;
 
     scanf("%d", &n);
-    N = n;
-    v = (unsigned int *) malloc(n*sizeof(unsigned int));
+    v = (unsigned int *) malloc((n/2+1)*sizeof(unsigned int));
 
-    for ( i=0; i<n; i++) {
-        scanf("%lu", v+i);
+    for ( i=0; i<n/2+1; i++) {
+        v[i] = 0;
     }
 
-   for (i=n/2;;) {
-      if (i > 0) {
-          i--;
-          t = v[i];
-      } else {
-          n--;
-          if (n == 0) break;
-          t = v[n];
-          v[n] = v[0];
-      }
+    for ( i=0; i<n; i++) {
+        scanf("%u", &tmp);
+        insert(v, n, tmp);
+    }
 
-      pai = i;
-
-      filho = i * 2 + 1;
-
-      while (filho < n) {
-
-          if ((filho + 1 < n)  &&  (v[filho + 1] > v[filho]))
-              filho++;
-          if (v[filho] > t) {
-             v[pai] = v[filho];
-             pai = filho;
-             filho = pai * 2 + 1;
-          } else {
-             break;
-          }
-      }
-      v[pai] = t;
-   }
-
-    if (N%2==0)
-        printf("%.1f", ((float)v[N/2-1]+(float)v[N/2])/2);
+    if (n%2==0){
+        printf("%.1lf\n", ((double)v[0]+v[1])/2);
+    }
     else
-        printf("%lu", v[N/2]);
+        printf("%u.0\n", v[0]);
 
     free(v);
     return 0;

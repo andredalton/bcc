@@ -10,6 +10,8 @@
 *.aux
 *.gch
 __pycache__/
+callgraph.*
+callgrind.*
 
 # Packages #
 ############
