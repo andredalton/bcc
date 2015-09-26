@@ -1,0 +1,55 @@
+4 50
+kteempxafxafcvfwmwhsixwzgbmubcqqceevbbwijeerqbsj
+qxsievaratndjoekltlqwppfgcukjwxdxexhejbfhzklppkk
+katxpbjdbmjpwhussetytneohgzxgirluwnbraxtxmaupuid
+ppatavdzktqlrjqttmwwroathnulubpjgsjazcycecwmxwvn
+
+
+5 4
+code
+forc
+esco
+defo
+rces
+
+4 4
+case
+care
+test
+code
+
+3 10
+aaaaaaaaaz
+aaaabaaaab
+aaaaaaaaac
+
+1 10
+codeforces
+
+5 4
+code
+forc
+esco
+defo
+rces
+
+1 10
+codeforces
+
+2 10
+zaaaaaaaaa
+aaaabaaaab
+
+4 4
+case
+care
+test
+code
+
+4 4
+abcd
+efgh
+ijkl
+mnop
+
+

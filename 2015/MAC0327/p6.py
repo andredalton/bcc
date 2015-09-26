@@ -1,27 +1,30 @@
-# coding=utf-8
-__author__ = 'andre'
+m = int(raw_input())
 
-"""
-/*******************************************************************************
- * Aluno:  André Meneghelli Vale,      Núm. USP: 4898948
- * Curso: Bacharelado em Ciências da Computação
- * Aula 2 - Desafio A
- * MAC0327 -- 08/07/2015 -- IME/USP, -- Prof. Cristina Gomes Fernandes
- ******************************************************************************/
-"""
+market = {}
+for i in range(m):
+    (qt, name, name) = raw_input().split()
+    market[name] = int(qt)
 
-def main():
-    levels = int(raw_input())
-    xplayer = map(int, raw_input().split())
-    yplayer = map(int, raw_input().split())
-    xlevels = xplayer[1:]
-    ylevels = yplayer[1:]
-    wins = set(xlevels+ylevels)
+n = int(raw_input())
+queue = []
+for i in range(n):
+    (qt, name, name) = raw_input().split()
+    queue.append({'qt': int(qt), 'name': name})
 
-    if len(wins) == levels and sum(wins) == (levels+1)*levels/2:
-        print "I become the guy."
-    else:
-        print "Oh, my keyboard!"
+queue.append({'qt': 'me'})
 
-if __name__ == "__main__":
-    main()
+time = 0
+while len(queue) > 0:
+    guy = queue.pop(0)
+    if guy['qt'] == 'me':
+        break
+    if market.has_key(guy['name']):
+        if market[guy['name']] > 0:
+            if market[guy['name']] >= guy['qt']:
+                market[guy['name']] -= guy['qt']
+            else:
+                guy['qt'] = market[guy['name']]
+                queue.insert(1, guy)
+    time += 1
+
+print time
