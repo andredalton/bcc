@@ -1,0 +1,290 @@
+Nome: André Menghelli Vale
+NUSP: 4898948
+
+---------------------------- Exercicio 4 ----------------------------
+
+Classes(classe, tipo, pais, numArmas, calibre, deslocamento)
+Navios(nome, classe, lancamento)
+Batalhas(nome, data)
+Resultados(navio, batalha, desfecho)
+
+a) Encontre o tipo e o calibre do navio Haruna.
+SELECT
+    tipo, calibre
+FROM
+    classes
+WHERE
+    classe = ( SELECT classe FROM navios WHERE nome = 'Haruna')
+
+b) O tratado de Washington (de 1921) proibiu navios de guerra com deslocamento maior que 35000
+toneladas. Liste os navios que não violaram esse tratado.
+SELECT
+    nome
+FROM
+    navios
+WHERE
+    classe IN (SELECT classe from classes WHERE deslocamento <= 35000 )
+
+c) Encontre os países das classes de navios que possuem o menor deslocamento.
+SELECT
+    pais
+FROM
+    classes
+WHERE
+    deslocamento IN (SELECT deslocamento FROM classes WHERE deslocamento <= ALL (SELECT deslocamento FROM classes) )
+
+d) Liste o nome dos navios que participaram de batalhas, mas que não aparecem na relação Navios. 
+SELECT
+    navio
+FROM
+    resultados
+WHERE
+    navio NOT IN ( SELECT nome FROM navios )
+
+e) Liste a classe, o lançamento e o tipo dos navios que não foram afundados em batalha. O resultado
+deve estar em ordem decrescente de classe e, para cada classe, em ordem crescente de lançamento. 
+SELECT
+    navios.classe,
+    navios.lancamento,
+    classes.tipo
+FROM
+    navios,
+    classes
+WHERE
+    navios.nome IN
+    (
+        SELECT
+            navio
+        FROM
+            resultados
+        WHERE
+            desfecho != 'afundado'
+    ) AND
+    navios.classe = classes.classe
+
+f) Encontre o número de armas dos navios que foram lançados mais recentemente.  
+SELECT
+    classes.numArmas
+FROM
+    classes,
+    navios
+WHERE
+    classes.classe = navios.classe AND
+    navios.lancamento IN (SELECT lancamento FROM navios WHERE lancamento >= ALL (SELECT lancamento FROM navios))
+
+g) Encontre os nomes dos navios cujo deslocamento era o maior entre os navios do mesmo tipo.
+SELECT
+	nome
+FROM
+	navios
+WHERE
+	classe IN
+	(
+		SELECT
+			c.classe
+		FROM
+			classes c
+		WHERE
+			deslocamento >= ALL
+			(
+				SELECT
+					deslocamento
+				FROM
+					classes
+				WHERE
+					tipo = c.tipo
+			)
+	);
+
+h) Encontre os  pares  de navios que pertencem a uma mesma classe e que cujos  lançamentos
+ocorreram em um intervalo de tempo inferior a 2 anos.   
+Um par de nomes deve ser listado uma única vez. Por exemplo, se o par (Musashi, Resolution) é listado, então (Resolution, Musashi) não deve ser listado.
+SELECT
+	n1.nome,
+	n2.nome
+FROM
+	navios n1,
+	navios n2
+WHERE
+	n1.classe = n2.classe AND
+	n1.lancamento > n2.lancamento AND
+	n1.lancamento - n2.lancamento <= 2;
+
+i) Encontre os navios que lutaram em mais de uma batalha.
+SELECT
+	r1.navio
+FROM
+	resultados r1,
+	batalhas b1,
+	resultados r2
+WHERE
+	r2.navio = r1.navio AND
+	r1.batalha < r2.batalha AND
+	r2.batalha IN
+	(
+		SELECT
+			nome
+		FROM
+			batalhas
+		WHERE
+			nome <> r1.batalha
+	);
+
+j) Encontre os países que têm ao menos um navio que não participou de nenhuma batalha ou que
+não foi afundado em batalha.
+SELECT
+	pais
+FROM
+	classes
+WHERE
+	pais IN (
+		SELECT
+			c.pais
+		FROM
+			navios n1,
+			classes c
+		WHERE
+			n1.classe = c.classe AND
+			NOT EXISTS (SELECT * FROM resultados WHERE desfecho = 'afundado' AND navio = n1.nome)
+	) AND
+	classe IN
+	(
+		SELECT
+			classe
+		FROM
+			classes c
+		WHERE
+			classe <= ALL
+			(
+				SELECT
+					classe
+				FROM
+					classes
+				WHERE
+					pais = c.pais
+			)
+	)
+
+k) Encontre os nomes dos navios que participaram de batalhas que ocorreram depois da batalha de
+Guadalacanal. 
+SELECT
+	navio
+FROM
+	resultados
+WHERE
+	batalha IN (
+		SELECT
+			b2.nome
+		FROM
+			batalhas b1,
+			batalhas b2
+		WHERE
+			b1.nome = 'Guadalacanal' AND
+			b2.data > b1.data
+	)
+
+l) Encontre os navios que “sobreviveram para combater novamente”, ou seja, os navios que foram
+danificados em uma batalha,  mas que participaram de outra depois.
+SELECT
+	r1.navio
+FROM
+	resultados r1,
+	batalhas b1,
+	resultados r2
+WHERE
+	r1.desfecho = 'danificado' AND
+	b1.nome = r1.batalha AND
+	r2.navio = r1.navio AND
+	r2.batalha IN
+	(
+		SELECT
+			nome
+		FROM
+			batalhas
+		WHERE
+			data > b1.data
+	)
+
+m) Encontre os países que não possuem os navios mais antigos.
+SELECT
+	pais
+FROM
+	classes
+WHERE
+	classe IN
+	(
+		SELECT
+			classe
+		FROM
+			classes c
+		WHERE
+			classe <= ALL
+			(
+				SELECT
+					classe
+				FROM
+					classes
+				WHERE
+					pais = c.pais
+			) AND
+			classe <>
+			(
+				SELECT
+					classe
+				FROM
+					navios
+				WHERE
+					lancamento <= ALL
+					(
+						SELECT
+							lancamento
+						FROM
+							navios
+					)
+			)
+	)
+
+n) Encontre os navios mais antigos entre os navios das classes que possuem menos armas.
+SELECT
+	*
+FROM
+	navios
+WHERE
+	classe IN
+	(
+		SELECT
+			classe
+		FROM
+			classes c1
+		WHERE
+			c1.numarmas <= ALL
+			(
+				SELECT
+					numarmas
+				FROM
+					classes
+			)
+	) AND
+	lancamento <= ALL
+	(
+		SELECT
+			lancamento
+		FROM
+			navios
+		WHERE
+			classe IN
+			(
+				SELECT
+					classe
+				FROM
+					classes c1
+				WHERE
+					c1.numarmas <= ALL
+					(
+						SELECT
+							numarmas
+						FROM
+							classes
+					)
+			)
+	)

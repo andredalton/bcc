@@ -1,7 +1,7 @@
 # coding=utf-8
 __author__ = 'avale'
 
-from pprint import pprint
+# from pprint import pprint
 
 saidas = {}             # Guarda as linhas pelas quais se deixa um ponto
 linhas_restantes = []   # Linhas ainda não utilizadas

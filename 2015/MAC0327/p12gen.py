@@ -2,7 +2,7 @@ __author__ = 'avale'
 
 import sys
 from random import randint
-from pprint import pprint
+
 
 def main():
     if len(sys.argv) < 3:
