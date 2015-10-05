@@ -2,6 +2,10 @@ __author__ = 'avale'
 
 from pprint import pprint
 
+def run_2_the_hills(m, mapa, origem):
+    for np in mapa[m]:
+        print np
+
 def main():
     buffer = [4, 2]
     while len(buffer) == 2:
@@ -26,6 +30,9 @@ def main():
                 elif mapa[b][a] > l:
                     mapa[b][a] = l
             pprint(mapa)
+            for p in range(1, m+1):
+                print "\nPercorrendo a partir de", p
+                run_2_the_hills(p, mapa, p)
     pass
 
 

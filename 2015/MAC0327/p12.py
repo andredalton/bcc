@@ -1,6 +1,7 @@
 # coding=utf-8
 __author__ = 'avale'
 
+import sys
 # from pprint import pprint
 
 saidas = {}             # Guarda as linhas pelas quais se deixa um ponto
@@ -82,22 +83,49 @@ def main():
     global linhas
     global caminhos
     global jesus
-    n = int(raw_input())
+
+    # n = int(raw_input())
+
+
+    all_input = iter(sys.stdin.read().strip().replace('\n', ' ').split(' '))
+    n = int(all_input.next())
+
+    for i in xrange(n):
+        # print i
+        linhas_restantes.append(i)
+        linhas.append([])
+        npontos = int(all_input.next())
+        for j in xrange(1, npontos+1):
+            ponto = int(all_input.next())
+            # print "    ", ponto
+            linhas[len(linhas)-1].append(ponto)
+            if caminhos.has_key(ponto):
+                if not caminhos[ponto].has_key(i):
+                    caminhos[ponto][i] = j-1
+            else:
+                caminhos[ponto] = {i: j-1}
+            if not saidas.has_key(ponto):
+                saidas[ponto] = []
+            saidas[ponto].append(i)
+            j += 1
+        all_input.next()
+
+    # return 0
 
     # Inicializando as variaveis globais
-    for i in xrange(n):
-        linha = map(int, raw_input().split())
-        linhas_restantes.append(i)
-        linhas.append(linha[1:len(linha)-1])
-        for j in xrange(1, linha[0]+1):
-            if caminhos.has_key(linha[j]):
-                if not caminhos[linha[j]].has_key(i):
-                    caminhos[linha[j]][i] = j-1
-            else:
-                caminhos[linha[j]] = {i: j-1}
-            if not saidas.has_key(linha[j]):
-                saidas[linha[j]] = []
-            saidas[linha[j]].append(i)
+    # for i in xrange(n):
+    #     linha = map(int, raw_input().split())
+    #     linhas_restantes.append(i)
+    #     linhas.append(linha[1:len(linha)-1])
+    #     for j in xrange(1, linha[0]+1):
+    #         if caminhos.has_key(linha[j]):
+    #             if not caminhos[linha[j]].has_key(i):
+    #                 caminhos[linha[j]][i] = j-1
+    #         else:
+    #             caminhos[linha[j]] = {i: j-1}
+    #         if not saidas.has_key(linha[j]):
+    #             saidas[linha[j]] = []
+    #         saidas[linha[j]].append(i)
 
     # Aqui é só pra dar uma olhada nas variáveis
     # print "saidas"
