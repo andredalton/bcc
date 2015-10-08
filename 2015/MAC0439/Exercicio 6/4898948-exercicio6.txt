@@ -1,0 +1,178 @@
+Nome: André Menghelli Vale
+NUSP: 4898948
+
+Exercício 1: Escreva as consultas a seguir em SQL. Use apenas as operações e cláusulas que vimos
+até a aula de hoje.
+
+a) Encontre o deslocamento médio das classes de navios.
+SELECT AVG(deslocamento) FROM classes;
+
+b) Encontre o número de classes de navios cruzadores de batalha.
+Obs: Eu não sabia o que era um navio cruzador de batalha, então admiti que são navios do tipo 'nc'
+SELECT
+	COUNT(*)
+FROM
+	classes
+WHERE
+	tipo = 'nc';
+
+c) Encontre o número médio de armas das classes de navios que têm deslocamento acima de 40000.
+SELECT AVG(numarmas) FROM classes WHERE deslocamento > 40000;
+
+d) Encontre o número médio de armas dos navios das classes que têm deslocamento acima de
+40000. (Atente para a diferença entre este item e o anterior! É ou não preciso levar em conta nesse
+cálculo o número de navios nas classes?)
+SELECT
+	AVG(classes.numarmas)
+FROM
+	navios,
+	classes
+WHERE
+	navios.classe = classes.classe AND
+	classes.deslocamento > 40000;
+
+e) Encontre o ano em que o primeiro navio do país 'USA' foi lançado.
+SELECT
+	MIN(navios.lancamento)
+FROM
+	navios,
+	classes
+WHERE
+	navios.classe = classes.classe AND
+	classes.pais = 'USA';
+
+f) Encontre o número de navios de cada país.
+SELECT
+	COUNT(*) AS Total,
+	classes.pais
+FROM
+	navios,
+	classes
+WHERE
+	navios.classe = classes.classe
+GROUP BY
+	classes.pais;
+
+g) Encontre, para cada classe, o número de navios da classe que “sobreviveram” a uma batalha.
+SELECT
+	COUNT(*),
+	n.classe
+FROM
+	navios n,
+	(
+		SELECT
+			COUNT(*) as total,
+			navio
+		FROM
+			resultados
+		GROUP BY
+			navio
+	) ng
+WHERE
+	n.nome = ng.navio AND
+	ng.total > 1
+GROUP BY
+	n.classe;
+
+h) Encontre as classes que possuem pelo menos três navios.
+SELECT
+	classe
+FROM
+	navios
+GROUP BY
+	classe
+HAVING
+	COUNT(*)>=3;
+
+
+i) Encontre, para cada calibre de classe de navio maior que 15, o deslocamento médio.
+SELECT
+	AVG(deslocamento)
+FROM
+	classes
+WHERE
+	calibre > 15;
+
+
+j) Encontre o número de navios para cada classe de navio que possua pelo menos dois navios
+lançados antes de 1920.
+SELECT
+	n.classe,
+	COUNT(*) AS Total
+FROM
+	navios n,
+	(
+		SELECT
+			COUNT(*) AS total,
+			classe
+		FROM
+			navios
+		WHERE
+			lancamento < 1920
+		GROUP BY
+			classe
+	) ng
+WHERE
+	n.classe = ng.classe AND
+	ng.total >= 2
+GROUP BY
+	n.classe
+
+k) O peso (em libras) de um morteiro disparado por uma arma naval é aproximadamente a metade
+do cubo do seu calibre (em polegadas). Encontre o peso médio do morteiro dos navios para cada
+país.
+SELECT
+	pais,
+	AVG(calibre*calibre*calibre/2) AS Peso
+FROM
+	classes
+GROUP BY
+	pais;
+
+l) Encontre, para cada classe que possui pelo menos três navios, o número de navios da classe que
+participaram de uma batalha.
+SELECT
+	n.classe,
+	COUNT(*) AS Total
+FROM
+	navios n,
+	resultados r
+WHERE
+	n.nome = r.navio AND
+	n.classe IN
+	(
+		SELECT
+			classe
+		FROM
+			navios
+		GROUP BY
+			classe
+		HAVING
+			COUNT(*) > 2
+	)
+GROUP BY
+	n.classe;
+
+
+Exercício 2 (Use apenas as relações Classes e Navios): Escreva uma consulta em SQL que
+produza todas as informações disponíveis sobre navios, incluindo as informações disponíveis na
+relação Classes. Você não deve produzir informações sobre uma classe se não existir nenhum navio
+da classe na relação Navios.
+Dica: Use a operação join para resolver este exercício .
+SELECT
+	n.nome,
+	c.*,
+	n.lancamento
+FROM
+	navios n JOIN classes c ON c.classe = n.classe;
+
+Exercício 3: Repita o exercício 2, mas também inclua no resultado as classes que não aparecem em
+Navios.
+Dica: Use junções externas para resolver este exercício.
+
+SELECT
+	n.nome,
+	c.*,
+	n.lancamento
+FROM
+	classes c LEFT OUTER JOIN navios n ON c.classe = n.classe;

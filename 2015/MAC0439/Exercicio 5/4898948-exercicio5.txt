@@ -1,0 +1,227 @@
+Nome: André Meneghelli Vale
+NUSP: 4898948
+
+------------------------------------------ Exercicio 5 ------------------------------------------
+
+Exercício 1: Escreva em SQL as consultas a seguir. Use apenas as operações e cláusulas vistas até a
+aula 13.
+
+a) Encontre o número do modelo e o preço de todos os produtos que estão no BD.
+
+SELECT
+	prod.modelo,
+	prod.preco
+FROM
+	produto,
+	(
+		SELECT modelo, preco FROM impressora UNION
+		SELECT modelo, preco FROM laptop UNION
+		SELECT modelo, preco FROM pc
+	) as prod
+WHERE
+	produto.modelo = prod.modelo;
+
+
+
+b) Encontre os fabricantes que vendem tanto PCs por menos de R$1000, quanto Laptops a menos
+de R$1500.
+
+SELECT
+	DISTINCT(fabricante)
+FROM
+	produto p
+WHERE
+	EXISTS (SELECT * FROM pc WHERE modelo = p.modelo AND preco < 1000) OR
+	EXISTS (SELECT * FROM laptop WHERE modelo = p.modelo AND preco < 1000);
+	
+
+c) Encontre os fabricantes que vendem PCs, mas não impressoras. (Forneça dois comandos
+diferentes para essa consulta.)
+SELECT
+	DISTINCT(fabricante)
+FROM
+	produto
+WHERE
+	fabricante IN
+	(
+		SELECT
+			DISTINCT(fabricante)
+		FROM
+			produto
+		WHERE
+			modelo IN (SELECT modelo FROM pc)
+	)
+	AND
+	fabricante NOT IN
+	(
+		SELECT
+			DISTINCT(fabricante)
+		FROM
+			produto
+		WHERE
+			modelo IN (SELECT modelo FROM impressora)
+	);
+
+SELECT
+	DISTINCT(fabricante)
+FROM
+	produto
+WHERE
+	modelo IN (SELECT modelo FROM pc)
+EXCEPT
+SELECT
+	DISTINCT(fabricante)
+FROM
+	produto
+WHERE
+	modelo IN (SELECT modelo FROM impressora);
+
+d) Encontre o(s) modelos(s) dos computadores (PC ou laptop) com o menor preço.
+SELECT
+	modelo
+FROM
+	(
+		SELECT
+			modelo,
+			preco
+		FROM
+			pc
+		UNION
+		SELECT
+			modelo,
+			preco
+		FROM
+			laptop
+	) AS comp
+WHERE
+	comp.preco <= ALL
+	(
+		SELECT
+			preco
+		FROM
+			pc
+		UNION
+		SELECT
+			preco
+		FROM
+			laptop
+	);
+
+
+e) Encontre os fabricantes que fazem pelo menos 2 modelos de computadores diferentes (PCs ou
+laptops) com velocidades de pelo menos 133.
+SELECT
+	DISTINCT(p.fabricante)
+FROM
+	produto p,
+	(
+		SELECT
+			fabricante,
+			modelo
+		FROM
+			produto
+		WHERE
+			tipo = 'pc' OR
+			tipo = 'laptop'
+	) AS comp1,
+	(
+		SELECT
+			fabricante,
+			modelo
+		FROM
+			produto
+		WHERE
+			tipo = 'pc' OR
+			tipo = 'laptop'
+	) AS comp2
+WHERE
+	p.modelo = comp1.modelo AND
+	comp1.fabricante = comp2.fabricante AND
+	comp1.modelo <> comp2.modelo;
+
+Exercício 2: Escreva comandos em SQL para as seguintes modificações:
+
+a) Usando dois comandos INSERT, armazene no banco de dados o fato de que a impressora
+colorida ink-jet modelo 1100 é feita pelo fabricante D e custa R$249,00.
+insert into produto (fabricante, modelo, tipo) values ('D', 1100, 'impressora');
+insert into impressora (modelo, colorida, tipo, preco) values (1100, true,  'ink-jet',  249);
+
+b) Insira o fato de que, para todo Laptop, existe um PC do mesmo fabricante, com os mesmos
+valores de velocidade, RAM e HD, um número de modelo maior em 1100 unidades e R$250,00 a
+menos de preço.
+INSERT INTO produto (fabricante, modelo, tipo)
+SELECT
+	produto.fabricante,
+	prodito.modelo + 1100,
+	"pc"
+FROM
+	produto,
+	laptop
+WHERE
+	produto.modelo = laptop.modelo
+
+INSERT INTO pc (modelo, velocidade, ram, hd, preco)
+SELECT
+	modelo + 1100,
+	velocidade,
+	ram,
+	hd,
+	preco - 250
+FROM
+	laptop;
+
+
+c) Remova todos os PCs com menos de 10 gigabytes de HD.
+DELETE FROM pc WHERE hd < 10;
+
+
+d) Modifique as relações PC e Laptops de modo que o tamanho dos HDs passe a ser indicado em
+megabytes, e não mais em gigabytes.
+UPDATE pc SET hd = 1000 * hd;
+UPDATE laptop SET hd = 1000 * hd;
+
+e) O fabricante C comprou o fabricante D. Modifique todos os produtos feitos por D, de modo a
+indicar que agora eles são produzidos por C.
+UPDATE produto SET fabricante = 'C' WHERE fabricante = 'D';
+
+f) Remova todos as impressoras feitas por um fabricante que não faz laptops.
+DELETE FROM
+	impressora
+WHERE
+	modelo IN
+	(
+		SELECT
+			DISTINCT(modelo)
+		FROM
+			produto
+		WHERE
+			tipo = 'impressora' AND
+			fabricante NOT IN
+			(
+				SELECT
+					DISTINCT(fabricante)
+				FROM
+					produto
+				WHERE
+					tipo = 'laptop'
+			)
+	);
+
+g) Para cada laptop, duplique a velocidade e adicione 1000 MB à quantidade de HD.
+UPDATE
+	laptop
+SET
+	velocidade = 2 * velocidade,
+	hd = 1000 + hd;
+
+h) Para cada PC feito pelo fabricante C, desconte R$100 do preço e acrescente 128MB à RAM.
+UPDATE
+	pc
+SET
+	preco = preco - 100,
+	ram = 128 + ram
+WHERE
+	modelo IN
+	(
+		SELECT modelo FROM produto WHERE tipo = 'pc' AND fabricante = 'C'
+	);
