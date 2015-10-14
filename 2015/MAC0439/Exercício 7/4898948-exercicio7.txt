@@ -1,0 +1,158 @@
+Nome: André Meneghelli Vale
+NUSP: 4898948
+
+---------------------------- Exercício 7 ----------------------------
+
+1:
+
+a) Uma visão ImpressorasColoridas, que fornece modelo, tipo e preço das impressoras coloridas.
+
+CREATE VIEW ImpressorasColoridas AS
+SELECT
+    modelo, tipo, preco
+FROM
+    impressora
+WHERE
+    colorida IS TRUE;
+
+b) Uma visão PCsPotentes, que fornece o modelo, a velocidade e o preço de todos os PCs com
+velocidade superior a 1000 MHz.
+CREATE VIEW PCsPotentes AS
+SELECT
+    modelo, velocidade, preco
+FROM
+    pc
+WHERE
+    velocidade > 1000;
+
+c) Uma visão LaptopsIguaisPCs, que fornece todos os atributos dos laptops que possuem velocidade
+igual a de um PC do BD.
+CREATE VIEW LaptopsIguaisPCs AS
+SELECT
+    *
+FROM
+    laptop
+WHERE
+    velocidade IN (SELECT velocidade FROM pc);
+
+d) Uma visão InfoImpressoras que fornece o nome do fabricante, o modelo, o tipo e o preço das
+impressoras.
+CREATE VIEW InfoImpressoras AS
+SELECT
+    p.fabricante,
+    i.modelo,
+    i.tipo,
+    i.preco
+FROM
+    impressora i LEFT JOIN produto p ON i.modelo = p.modelo;
+
+e) Uma visão NaviosMaisNovos, que mostra o nome, a classe e o ano de lançamento dos navios
+lançados mais recentemente.
+CREATE VIEW NaviosMaisNovos AS
+SELECT
+    *
+FROM
+    navios
+WHERE
+    navios.lancamento >= ALL (SELECT lancamento FROM navios);
+
+
+f) Uma visão NaviosAfundados, que mostra o nome e o ano de lançamento de todos os navios que
+afundaram em batalha.
+CREATE VIEW NaviosAfundados AS
+SELECT
+    nome, lancamento
+FROM
+    navios
+WHERE
+    navios.nome IN (SELECT navio FROM resultados WHERE desfecho = 'afundado');
+
+g) Uma visão NaviosPorClasse, que possui três atributos – classe, numNavios, ultLancamento –
+que mostra, para cada classe, o número de navios na classe e o ano do último lançamento de navio
+na classe. Na visão, as classes devem ser listadas por ordem decrescente de número de navios. Uma
+classe que não tiver navios não precisa aparecer na visão.
+CREATE VIEW NaviosPorClasse (classe, numNavios, ultLancamento) AS
+SELECT
+    classe,
+    COUNT(*),
+    MAX(lancamento)
+FROM
+    navios
+GROUP BY
+    classe
+ORDER BY COUNT(*) DESC;
+
+Exercício 2: 
+a) Listar o modelo e o preço das impressoras laser coloridas.
+SELECT
+    modelo,
+    preco
+FROM
+    ImpressorasColoridas
+WHERE
+    tipo = 'laser';
+
+b) Listar o modelo, a velocidade e o preço dos PCs potentes de menor preço.
+SELECT
+    modelo,
+    velocidade,
+    preco
+FROM
+    PCsPotentes
+WHERE
+    preco <= ALL (SELECT preco FROM PCsPotentes );
+
+c) Listar o país das classes de navios encouraçados que  possuem mais do que 2 navios.
+SELECT
+    c.pais
+FROM
+    NaviosPorClasse npc JOIN classes c ON c.classe = npc.classe
+WHERE
+    npc.numNavios > 2 AND
+    c.tipo = 'ne';
+
+d) Exibir o número médio de armas dos navios que afundaram em batalhas.
+SELECT
+    AVG(c.numArmas)
+FROM
+    NaviosAfundados na,
+    navios n,
+    classes c
+WHERE
+    n.nome = na.nome AND
+    c.classe = n.classe;
+
+Exercício 3:
+a) Quais das visões do Exercício 1 
+não são atualizáveis?  Justifique sua resposta. 
+Obs.: Uma visão é não atualizável quando 
+não se pode executar comandos de inserção, alteração e
+remoção diretamente sobre ela.
+
+InfoImpressoras: Utiliza informação de duas tabelas.
+NaviosMaisNovos: Utiliza subrequisição para si mesma.
+NaviosAfundados: Não contém a informação classe, que não tem valor padrão definido na tabela navios.
+NaviosPorClasse: Utiliza um agrupamento.
+
+
+b) Para cada visão que você indicou na resposta do item (a), quando isso for possível,  torne a visão
+atualizável. Isso pode ser feito de duas maneiras:
+1) reescrevendo a definição da visão 
+e/ou
+2) modificando algumas restrições sobre atributos das tabelas base da visão.
+
+NaviosAfundados: Inserindo um valor padrão para a coluna classe na tabela navios, mas isso tornaria a inserção anômala.
+
+c) Em quais das visões atualizáveis que você criou no Exercício 1 e no item (b) deste exercício
+podem ocorrer modificações com anomalias? Para cada visão apontada, justifique a sua resposta
+com pelo menos um exemplo de comando que cause uma anomalia. 
+Obs.: uma modificação com anomalia é um comando INSERT ou UPDATE sobre a visão que é
+aceito como válido pelo SGBD, mas que causa uma modificação que não é refletida na visão em
+questão ou que causa o desaparecimento de tuplas na visão.
+
+LaptopsIguaisPCs: Faz referência à todas as colunas de laptops, possibilitanto a inserção,
+no entanto uma inserção de um laptop que não possua características iguais a um pc não seria
+visível.
+
+NaviosAfundados: Ao inserir um valor padrão em navios.classe permitiria a inserção, mas não garantiria a existência de
+um resultado de batalha onde este novo navia tenha afundado.
