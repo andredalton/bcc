@@ -1,0 +1,78 @@
+------------------------------------------------------------------------------------------------------------
+FEEDBACK (correção obrigatória para próxima entrega)
+------------------------------------------------------------------------------------------------------------
+
+André, Fernanda, Florence e Yoshio,
+
+>>> Sobre o documento de Análise de Requisitos:
+
+- O documento ficou um pouco "descuidado". Vocês descreveram informalmente alguns requisitos de dados, mas não os requisitos funcionais. 
+Pelo texto, não dá para saber como será o sistema de software que interagirá com o banco de dados, nem quem são os seus tipos de usuários e quais funcionalidades eles terão acesso. Sem essas informações, não é possível avaliar de forma completa o esquema EER criado por vocês. 
+ 
+Observem que o seguinte parágrafo do documento
+
+"Um paciente vai ter uma ou mais doenças associadas a ele. Cada doença vai gerar um determinado
+grupo de exames pedidos. Um mesmo exame pode ser pedido para problemas de saúde diferentes e
+podem ser feitos em laboratórios diferentes."
+
+contradiz este outro
+
+"Uma pessoa pode fazer um exame como resultado de um pedido médico ou por conta própria, por
+exemplo, um exame de sangue."
+
+Para a próxima etapa do trabalho, é muito importante que vocês corrijam o documento de análise de requisitos. 
+Algumas sugestões seguem no arquivo "Fase1_Projeto_LabBD_comentado.pdf". 
+
+>>> Sobre o esquema EER 
+
+- Vocês usaram uma notação para as restrições de cardinalidade e participação que é diferente da que usei nas aulas e isso não é um problema. Entretanto, nessa notação que vocês usaram, que se baseia em pares do tipo (card_mínima, card_máxima), os valores para cardinalidade tem que aparecer nos lados contrários aos usados na aula. Por exemplo, no relacionamento  "um departamento tem muitos funcionários e todo funcionário trabalha para um só departamento", na notação que vimo em aula a cardinalidade deve ficar:  DEPARTAMENTO 1 : N FUNCIONÁRIOS. Na notação usada por vocês, ela deveria ser DEPARTAMENTO (0,N) : (1,1) FUNCIONÁRIOS. Portanto, vocês precisam inverter o lado de todas as cardinalidades no diagrama de vocês.
+
+
+
+
+
+
+>>> Sobre a proposta de uso do Sistema NoSQL
+
+- Ambas as opções apresentadas por vocês estão ok. Sugerimos que vocês se concentrem na opção 1 (de uso de um BD orientado a documentos para a manutenção de exames de pacientes), por essa ser opção mais factível dentro do período de tempo que vocês terão para o término do projeto.
+
+
+
+------------------------------------------------------------------------------------------------------------
+OBSERVAÇÕES DA MONITORA
+------------------------------------------------------------------------------------------------------------
+
+
+- Sobre os requisitos:
+	- A descrição da categoria para doenças ficou confusa. Uma doença é sub-doença de outra? Ou ela pode estar em uma subcategoria em que a supercategoria pertence a outra doença? Não entendi.
+	- Não é descrita nenhuma informação sobre o medicamento além da dose. Um medicamento pode ter marcas e fabricantes diferentes, não?
+	- Não é descrita nenhuma informação sobre os planos de saúde (qual tipo de plano, qual entidade é responsável, etc)
+		
+
+- Sobre o modelo conceitual:
+	- Não foi especificado no documento de requisitos que Procedimento teria um código da Anvisa. Todo medicamento tem esse código?
+	- Medicamento: princípio ativo não deveria ser multivalorado e talvez ser composto (concetração da mistura)? Pode ser prescrito uma marca específica de medicamento, não?
+	- E a avaliação do resultado de um exame? Como é armazenada?
+	- A prescrição do medicamento é textual?
+	- O  registro de medicamentos e doenças só faz sentido se forem salvos juntos, não? Pelo modelo, parece que isso é exibido de modo separado no prontuário. Por exemplo: uma lista de medicamentos em um bloco e uma lista de doenças em outro, mas sem relacionamento entre eles.
+	- E as doenças crônicas ou tratamentos longos? São modelados também?
+	- Tratamento dentário seria incluso também? Para alguns casos, são receitados medicamentos, não? :)
+
+
+- Sobre o modelo NoSQL:
+	- NoSQL não é um protocolo. Pode ser definido como um sistema ou um modelo de dados não-relacional.
+	- O argumento a respeito de espaço para armazenamento de dados é válido como justificativa. Mas poderiam ainda argumentar que os modelos relacionais atuais possuem limites de escalabilidade.
+	- JSON é maiúsculo mesmo. -> http://www.json.org/
+	- NoSQL não tem traço. A comunidade usa o termo NOSQL ou NoSQL para se referir a esses sistemas.
+	- BigTable é tudo junto.
+	- A busca de atributos diferentes do atributo chave, que é possível nos modelos de documentos, não é chamada de visibilidade, é busca por atributos diferentes da chave mesmo, não? 
+	- Vocês argumentam que poderiam usar um banco de dados de colunas para que as consultas e o armazenamento fossem mais eficientes. Eficiente nesse contexto é ambíguo: pode ser usar menos espaço (o que os NoSQL não fazem) e o tempo das consultas é relativo porque depende de como os dados foram armazenados (depende da forma como foi criado o agregado).
+	- Vocês falam que poderiam armazenar informações de pacientes + doenças e comentam depois que poderiam consultar isso :
+		- identificando doenças endêmicas: como vocês identificariam a região da doença? Considerariam o fator data/tempo?
+		- identificando eventos (que não é definido no texto) e relações entre doenças + diagnósticos + exames + medicamentos. Mas vocês falaram que armazenariam apenas paciente + doenças, como obteriam essas outras informações? Tudo estaria no NoSQL?
+		- distribuindo equipamentos de acordo com a necessidade do local. Isso não faria muito sentido se não fossem hospitais/estabelecimentos mantidos pela mesma instituição, não? Isso não faria parte do sistema de prontuários. No máximo, vocês poderiam identificar "estabelecimentos deficientes" de acordo com a demanda.
+	- Todo modelo de documentos utiliza JSON? OrientDB -> https://github.com/orientechnologies/orientdb/
+
+
+
+

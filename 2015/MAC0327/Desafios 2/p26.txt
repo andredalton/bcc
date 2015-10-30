@@ -1,0 +1,46 @@
+#X#
+XOX
+O##
+
+X##
+OOX
+OX#
+
+X##
+O#X
+XOO
+
+#X#
+O#O
+XOX
+
+#X#
+#OX
+XOO
+
+1 -2 1 1
+X  O # 0
+O  # X 0
+X  O # 0
+       1
+
+ 0 0 0 1
+ # X # 1
+ O # O -2
+ X O X 1
+
+
+1 -1  0  0
+#  X  #  1
+#  O  X  0
+X  O  O  -1
+         -2
+
+X X #
+# O X
+X O O
+
+-1  0  1  -2
+ X  #  #   1
+ O  O  X  -1
+ O  X  #   0

@@ -1,0 +1,12 @@
+11
+BBB CCC AAA
+Ayzenshteyn Oparin Samsonov
+Ayzenshteyn Chevdar Samsonov
+Dublennykh Fominykh Ivankov
+Burmistrov Dublennykh Kurpilyanskiy
+Cormen Leiserson Rivest
+Oparin AA AAA
+AA DD PP
+PP QQ RR
+RR SS TT
+TT Toropov Oparin

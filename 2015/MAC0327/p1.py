@@ -1,69 +1,48 @@
 __author__ = 'avale'
 
+from math import sqrt
+# from pprint import pprint
 
-def padrao2int(padrao):
-    h = 0
-    for i in range(16):
-        if padrao[i % 4][i / 4]:
-            h += 2 ** i
-    return h
+def  main():
+    n = int(raw_input())
+    cidades = []
+    distancias = {}
 
+    for i in range(n):
+        cidades.append(map(int, raw_input().split()))
 
-def main():
-    visitados = [False] * 2 ** 16
-    padrao = []
-    movimento = set()
-    m1 = []
+    for i in range(n):
+        for j in range(i+1, n):
+            # print cidades[i], cidades[j]
+            if (cidades[i][0] - cidades[j][0]) != 0:
+                a = 1.0*(cidades[i][1] - cidades[j][1]) / (cidades[i][0] - cidades[j][0])
+            else:
+                a = "inf"
+            if a != "inf":
+                b = cidades[i][1] - cidades[i][0]*a
+            else:
+                b = cidades[i][0]
+                # b = cidades[i][1]
+            d = sqrt((cidades[i][0] - cidades[j][0])**2 + (cidades[i][1] - cidades[j][1])**2)
+            # print "----------------------------------"
+            # print (cidades[i][0] - cidades[j][0])**2, (cidades[i][1] - cidades[j][1])**2
+            # print (cidades[i][0] - cidades[j][0])**2 + (cidades[i][1] - cidades[j][1])**2
+            # print sqrt((cidades[i][0] - cidades[j][0])**2 + (cidades[i][1] - cidades[j][1])**2)
+            # print d, "\n----------------------------------"
 
-    for i in range(4):
-        padrao.append(map(lambda x: x == "W", list(raw_input())))
+            try:
+                if distancias[(a,b)] < d:
+                    distancias[(a,b)] = d
+            except KeyError:
+                distancias[(a,b)] = d
+            # print a, b, d, "\n================================="
 
-    for i in range(3):
-        m1.append(map(lambda x: x == "1", list(raw_input())))
-
-    m1[0].append(False)
-    m1[1].append(False)
-    m1[2].append(False)
-    m1[0].append(False)
-    m1[1].append(False)
-    m1[2].append(False)
-    m1[0].insert(0, False)
-    m1[1].insert(0, False)
-    m1[2].insert(0, False)
-    m1[0].insert(0, False)
-    m1[1].insert(0, False)
-    m1[2].insert(0, False)
-    m1.append([False] * 7)
-    m1.append([False] * 7)
-    m1.insert(0, [False] * 7)
-    m1.insert(0, [False] * 7)
-
-    for i in range(4):
-        for j in range(4):
-            movimento.add(padrao2int([x[i:i+4] for x in m1[j:j+4]]))
-
-    padrao = [padrao2int(padrao)]
-    if padrao[0] == 0 or padrao[0] == 2 ** 16 - 1:
-        print 0
-    else:
-        visitados[padrao[0]] = True
-        movimentos = 1
-        while (len(padrao) > 0):
-            npadrao = []
-            for p in padrao:
-                for m in movimento:
-                    a = p ^ m
-                    if a == 0 or a == 2 ** 16 - 1:
-                        print movimentos
-                        return True
-                    if not visitados[a]:
-                        visitados[a] = True
-                        npadrao.append(a)
-            padrao = npadrao
-            movimentos += 1
-        print "Impossible"
-    return False
-
+    # print cidades
+    # print "\n\n\n"
+    # pprint(distancias)
+    # print "\n\n\n"
+    print int(round(sum(distancias.values())))
+    # print int(sum(map(round, distancias.values())))
 
 if __name__ == '__main__':
     main()

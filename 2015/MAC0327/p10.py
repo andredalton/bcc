@@ -1,69 +1,22 @@
 __author__ = 'avale'
 
-pais = {}
-filhos = {}
-suspeitos = []
-
-def mata_filhos(index):
-    global filhos
-    global suspeitos
-    if index in suspeitos:
-        suspeitos.remove(index)
-    for filho in filhos[index]:
-        mata_filhos(filho)
-
-def mata_pais(index):
-    global pais
-    global suspeitos
-    if index in suspeitos:
-        suspeitos.remove(index)
-    for pai in pais[index]:
-        mata_pais(pai)
-
-def killing_in_the_index(index):
-    global pais
-    global filhos
-    global suspeitos
-    if index in suspeitos:
-        suspeitos.remove(index)
-    for pai in pais[index]:
-        mata_pais(pai)
-    for filho in filhos[index]:
-        mata_filhos(filho)
+from math import sqrt, pi, acos, sin
 
 def main():
-    global pais
-    global filhos
-    global suspeitos
+    (l, r) = map(float, raw_input().split())
 
-    n = int(raw_input())
-
-    for i in range(1, n+1):
-        pais[i] = set()
-        filhos[i] = set()
-        suspeitos.append(i)
-
-    buffer = "fadas"
-    while buffer != "BLOOD":
-        buffer = raw_input()
-        if buffer != "BLOOD":
-            (filho, pai) = map(int, buffer.split())
-            pais[filho].add(pai)
-            filhos[pai].add(filho)
-
-    killingtime = True
-    while killingtime:
-        try:
-            killing_in_the_index(int(raw_input()))
-        except EOFError:
-            killingtime = False
-
-    if len(suspeitos) > 0:
-        for s in suspeitos:
-            print s, "",
+    # Circulo menor que o quadrado
+    if l/2 >= r:
+        print round(pi*r**2, 3)
+    # Quadrado dentro do circulo
+    elif sqrt(2)*l/2 <= r:
+        print l**2
+    # Quadrado recortando circulo
     else:
-        print 0
-    return True
-
-if __name__ == "__main__":
+        theta = acos(l/2/r)
+        triangulo = r**2*sin(2*theta)/2
+        setor = theta*r**2
+        borda = setor - triangulo
+        print round(pi*r**2 - 4*borda, 3)
+if __name__ == '__main__':
     main()

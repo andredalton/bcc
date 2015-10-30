@@ -1,0 +1,222 @@
+﻿Fernanda passou por aqui:
+
+
+---------------------------------------------------------
+CREATE TABLE Convênio (
+nome varchar(50) PRIMARY KEY
+);
+ 
+CREATE TABLE Procedimento (
+código_procedimento int PRIMARY KEY,
+nome char(30),
+descrição varchar(256)
+);
+ 
+CREATE TABLE é_beneficiado_pelo (
+cpf_paciente char(15),
+tipo_plano varchar(30),
+nome_convênio varchar(30),
+num_plano int,
+dt_início date,
+dt_fim date,
+PRIMARY KEY(cpf_paciente,tipo_plano,nome_convênio),
+FOREIGN KEY(cpf_paciente) REFERENCES Paciente (cpf) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY(tipo_plano,nome_convênio) REFERENCES Plano (tipo,nome_convênio) ON UPDATE CASCADE
+--ON DELETE NO ACTION: pode ser que o convênio tenha deixado de existir, mas mesmo assim, no passado a pessoa foi atendida por aquele convênio
+);
+ 
+CREATE TABLE Paciente (
+tipo_sanguíneo enum('A+', 'A-', 'B+', 'B-', 'AB+',  'AB-', 'O+', 'O-'),
+cpf char(15) PRIMARY KEY,
+FOREIGN KEY(cpf) REFERENCES Pessoa (cpf) ON UPDATE CASCADE ON DELETE CASCADE
+);
+ 
+CREATE TABLE Plano (
+nome varchar(30),
+faixa_etária char(30),
+carência boolean,
+tipo varchar(30),
+nome_convênio varchar(50),
+PRIMARY KEY(tipo,nome_convênio),
+FOREIGN KEY(nome_convênio) REFERENCES Convênio (nome) ON UPDATE CASCADE ON DELETE CASCADE
+);
+ 
+CREATE TABLE Contato_E-mail (
+e-mail char(40),
+cpf_pessoa char(15),
+PRIMARY KEY(e-mail,cpf_pessoa),
+FOREIGN KEY(cpf_pessoa) REFERENCES Pessoa (cpf) ON UPDATE CASCADE ON DELETE CASCADE
+);
+ 
+CREATE TABLE Contato_Telefone (
+telefone int,
+cpf_pessoa char(15),
+PRIMARY KEY(telefone,cpf_pessoa),
+FOREIGN KEY(cpf_pessoa) REFERENCES Pessoa (cpf) ON UPDATE CASCADE ON DELETE CASCADE
+)
+ 
+CREATE TABLE Pessoa (
+cpf char(15) PRIMARY KEY,
+rg char(15),
+nome varchar(50),
+dt_nascimento date,
+telefone_emergência int
+);
+ 
+CREATE TABLE Dependente (
+nome varchar(50),
+cpf_pessoa char(15),
+parentesco char(20),
+dt_nascimento date,
+PRIMARY KEY(nome,cpf_pessoa),
+FOREIGN KEY(cpf_pessoa) REFERENCES Pessoa (cpf) ON UPDATE CASCADE ON DELETE CASCADE
+);
+ 
+CREATE TABLE Local (
+cep int,
+número int,
+complemento char(15),
+logradouro varchar(40),
+cidade varchar(40),
+estado varchar(40),
+PRIMARY KEY(cep,número,complemento)
+);
+ 
+CREATE TABLE Reside_em (
+cep int,
+número int,
+complemento char(15),
+cpf_pessoa char(15),
+PRIMARY KEY(cep,número,complemento,cpf_pessoa),
+FOREIGN KEY(cep,número,complemento) REFERENCES Local (cep,número,complemento) ON UPDATE CASCADE ON DELETE RESTRICT,
+FOREIGN KEY(cpf_pessoa) REFERENCES Pessoa (cpf) ON UPDATE CASCADE ON DELETE CASCADE
+);
+ 
+CREATE TABLE Realiza (
+data date,
+horário time,
+cpf_paciente char(15),
+código_procedimento int,
+laudo varchar(500),
+PRIMARY KEY(data,horário,cpf_paciente,código_procedimento),
+FOREIGN KEY(cpf_paciente) REFERENCES Paciente (cpf) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY(código_procedimento) REFERENCES Procedimento (código_procedimento)
+);
+ 
+CREATE TABLE Arquivos (
+arquivos varchar(500),
+data date,
+horário time,
+cpf_paciente char(15),
+código_procedimento int,
+PRIMARY KEY(arquivos,data,horário,cpf_paciente,código_procedimento),
+FOREIGN KEY(data,horário,cpf_paciente,código_procedimento) REFERENCES Realiza (data,horário,cpf_paciente,código_procedimento) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+
+--------------------------------------------------------------------
+Alyssa passou por aqui
+
+
+CREATE TABLE Medico (
+CPF CHAR(11),
+CRM INT,
+PRIMARY KEY (CPF, CRM),
+FOREING KEY (CPF) REFERENCES Pessoa(CPF) ON DELETE CASCADE ON UPDATE CASCADE;
+);
+
+
+CREATE TABLE Especialidade (
+Codigo_espec INT PRIMARY KEY;
+);
+
+
+CREATE TABLE Tem (
+CPF CHAR(11),
+CRM INT,
+Codigo_espec INT,
+PRIMARY KEY(CRM, CPF, Codigo_espec),
+FOREIGN KEY (CPF, CRM) REFERENCES Medico(CPF, CRM) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (Codigo_espec) REFERENCES Especialidade(Codigo_espec) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Doenca (
+CID INT PRIMARY KEY,
+Nome CHAR(50),
+);
+
+
+CREATE TABLE Sintoma(
+Nome CHAR(40) PRIMARY KEY,
+Descricao CHAR(50)
+);
+
+
+CREATE TABLE Possui (
+CID INT,
+Nome_Sintoma CHAR(40),
+PRIMARY KEY (CID, Nome),
+FOREIGN KEY (CID) REFERENCES Doenca(CID) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (Nome_Sintoma) REFERENCES Sintoma(Nome) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+
+CREATE TABLE Principio_Ativo (
+Substancia CHAR(40) PRIMARY KEY,
+Inespecifico CHAR(40),
+Especifico CHAR(40)
+);
+
+
+CREATE TABLE Medicamento (
+Nome CHAR(50) PRIMARY KEY,
+Tarja CHAR(40)
+);
+
+
+CREATE TABLE Compoem (
+Substancia CHAR(40),
+Nome Char(50),
+Concentracao CHAR(20),
+PRIMARY KEY (Substancia, Nome),
+FOREIGN KEY (Substancia) REFERENCES Principio_Ativo(Substancia) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (Nome) REFERENCES Medicamento(Nome) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+***************************************
+CREATE TABLE Atende (
+CPF_Medico CHAR(11),
+CRM INT,
+CPF_Paciente CHAR(11),
+PRIMARY KEY (CPF_Medico, CRM, CPF_Paciente)
+FOREIGN KEY (CPF_Medico, CRM) REFERENCES Medico(CPF,CRM) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (CPF_Paciente) REFERENCES Paciente(CPF) ON DELETE CASCADE ON UPDATE CASCADE
+);
+*****************************************
+
+
+CREATE TABLE E_detectada_no (
+CID INT,
+CPF CHAR(11),
+dt_fim DATE,
+dt_inicio DATE,
+PRIMARY KEY (CID, CPF),
+FOREIGN KEY (CID) REFERENCES Doenca(CID) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (CPF) REFERENCES Paciente(CPF) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+CREATE TABLE E_tratada_pelo (
+CID INT,
+Nome CHAR(50),
+PRIMARY KEY (CID, Nome),
+FOREIGN KEY (CID) REFERENCES Doenca(CID) ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (Nome) REFERENCES Medicamento(Nome) ON DELETE CASCADE ON DELETE CASCADE
+
+
+);
+--------------------------------------------------------------------------------------------------------------------
