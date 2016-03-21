@@ -1,0 +1,227 @@
+/******************************************
+* Nome: André Meneghelli Vale             *
+* NUSP: 4898989                           *
+* Exercício 11 - LabBD                    *
+******************************************/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define NO_ERRORS !(strcmp(SQLSTATE,"00000"))
+#define NO_MORE_TUPLES !(strcmp(SQLSTATE,"02000"))
+
+/*
+Exercício 1: Os exercícios a seguir envolvem programas que manipulam as seguintes relações:
+
+Produto (fabricante, modelo, tipo)
+PC(modelo, velocidade, ram, hd, cd, preco)
+Laptop (modelo, velocidade, ram, hd, tela, preco)
+Impressora(modelo, colorida, tipo, preco)
+
+Usando SQL embutida, faça os seguintes programas em C. Não se esqueça de executar os
+comandos BEGIN TRANSACTION, COMMIT e ROLLBACK quando for apropriado e de dizer ao
+sistema que suas transações são do tipo “somente leitura” quando for o caso. Para testar o seus
+programas, use o banco de dados que pode ser criado por meio do script
+“criacao_bd_computadores.sql”.
+*/
+
+/*
+a) Dado um número de modelo de um equipamento, remova-o do BD. (Atenção: isso requer uma
+modificação em dados de mais de uma tabela do BD).
+*/
+void ApagaEquipamento() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		int numModelo;
+		char moTipo[20];
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL WHENEVER SQLERROR SQLPRINT; //ou  EXEC SQL WHENEVER SQLERROR GOTO sql_error;
+ 
+	printf("\n*** Remocao de um equipamento. ***\n");	
+	printf("Digite o numero do equipamento: ");
+	scanf("%d", numModelo);
+	
+	EXEC SQL SELECT tipo INTO :moTipo
+		 FROM Produto
+	         WHERE modelo = :numModelo;
+
+	if (NO_ERRORS) {
+		if (strcmp(moTipo, "pc"))
+			 EXEC SQL DELETE FROM PC WHERE modelo = :numModelo;
+		else if (strcmp(moTipo, "laptop"))
+			 EXEC SQL DELETE FROM laptop WHERE modelo = :numModelo;
+		else if (strcmp(moTipo, "impressora"))
+			 EXEC SQL DELETE FROM Impressora WHERE modelo = :numModelo;
+		
+		EXEC SQL DELETE FROM Produto WHERE modelo = :numModelo;		
+		printf("O equipamento de numero %d foi removido corretamente.\n", numModelo);
+	}
+	else
+		printf("Falha ao remover equipamento.\n");
+
+	EXEC SQL COMMIT;
+}
+
+/*
+b) Dado um fabricante, aumente o preço dos Laptops desse fabricante em R$200.
+*/
+void AumentaPrecoLaptop() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		int numModelo;
+		char nFabricante;
+	EXEC SQL END DECLARE SECTION;
+
+	printf("\n*** Aumentando preco dos laptops ***\n");	
+	printf("Digite o nome do fabricante: ");
+	scanf("%[^\n]", nFabricante);
+	getchar();
+
+	EXEC SQL DECLARE cursorModelos CURSOR FOR
+		SELECT modelo FROM Produto WHERE fabricante = :nFabricante AND tipo = "laptop";
+	
+	EXEC SQL OPEN cursorModelos;
+	while (1) {
+		EXEC SQL FETCH FROM cursorModelos INTO :numModelo;
+		if (NO_MORE_TUPLES) break;
+		EXEC SQL UPDATE Laptop SET preco = preco + 200 WHERE modelo = :numModelo;
+	}
+	EXEC SQL CLOSE cursorExecutivos;
+	EXEC SQL COMMIT;
+}
+
+/*
+c) Dados um fabricante, um número de modelo, um tipo de impressora, a indicação de que a
+impressora é ou não colorida e um preço, insira essas informações do novo equipamento nas tabelas
+Impressora e Produto. Caso já exista no BD um produto com o mesmo número de modelo que o
+fornecido, use como número de modelo para o novo equipamento o menor número de modelo ainda
+não existente no BD que seja maior que o número inicialmente fornecido.
+*/
+void InsereImpressora() {
+	int i, digitos, contadores[15];
+	EXEC SQL BEGIN DECLARE SECTION;
+		char nFabricante;
+		int numModelo;
+		int color;
+		char impTipo[15];
+		float impPreco;
+		int cmodelo;
+	EXEC SQL END DECLARE SECTION;
+
+	printf("\n*** Inserindo impressora ***\n");	
+	printf("Digite o nome do fabricante: ");
+	scanf("%[^\n]", nFabricante);
+	getchar();
+	printf("Digite o numero do equipamento: ");
+	scanf("%d", numModelo);
+	printf("O equipamento e colorido [0, 1]: ");
+	scanf("%d", color);
+	printf("Digite o tipo da impressora: ");
+	scanf("%[^\n]", impTipo);
+	getchar();
+	printf("Digite o preco da impressora: ");
+	scanf("%f", impPreco);
+	
+
+	EXEC SQL DECLARE cursorModelos CURSOR FOR
+		SELECT modelo FROM Produto WHERE modelo >= :numModelo;
+	
+	EXEC SQL OPEN cursorModelos;
+	while (1) {
+		EXEC SQL FETCH FROM cursorModelos INTO :cmodelo;
+		if (NO_MORE_TUPLES) break;
+		if (cmodelo==numModelo) {
+			numModelo += 1;
+			continue;
+		}
+		EXEC SQL INSERT INTO Produto(fabricante, modelo, tipo) VALUES (:nFabricante, :numModelo, "impressora");
+		EXEC SQL INSERT INTO Impressora(modelo, colorida, tipo, preco) VALUES (:numModelo, :color, :impTipo, :impPreco);
+		break;
+	}
+	EXEC SQL CLOSE cursorExecutivos;
+	EXEC SQL COMMIT;
+}
+
+/*
+d) Dados uma velocidade e um preço, liste os Laptops com a velocidade e preços dados, mostrando
+o número do modelo e o nome do fabricante. 
+*/
+void ListaLaptops() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		int lapVelocidade;
+		float lapPreco;
+		int lapModelo;
+		char lapFabricante;
+	EXEC SQL END DECLARE SECTION;
+
+	printf("\n*** Lista laptops por velocidade e preco ***\n");	
+	printf("Digite a velocidade: ");
+	scanf("%d", velocidade);
+	printf("Digite o preco: ");
+	scanf("%f", preco);
+
+	EXEC SQL DECLARE cursorLaptops CURSOR FOR
+		SELECT modelo FROM Laptop WHERE velocidade = :lapVelocidade AND preco = :lapPreco;
+	
+	printf("Resultados:\nModelo\tFabricante");
+	EXEC SQL OPEN cursorLaptops;
+	while (1) {
+		EXEC SQL FETCH FROM cursorLaptops INTO :lapModelo;
+		if (NO_MORE_TUPLES) break;
+
+		EXEC SQL SELECT fabricante INTO :lapFabricante
+			FROM Produto
+				WHERE modelo = lapModelo;
+
+		printf("%d\t%c\n", lapModelo, lapFabricante);
+	}
+	EXEC SQL CLOSE cursorLaptops;
+	EXEC SQL COMMIT;
+}
+
+/*
+Os dados de conexão e BD devems er atualizados!.
+*/
+
+int main(){
+	EXEC SQL BEGIN DECLARE SECTION;
+		/* Substitua os dados de conexao abaixo pelos seus dados */
+		const char *bd_url = "usuario@linux.ime.usp.br:5432";
+		const char *usuario = "usuario";
+		const char *senha = "senha";
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL WHENEVER SQLERROR GOTO sql_error; 
+
+        EXEC SQL CONNECT TO :bd_url AS conexaoBD USER :usuario USING :senha;
+
+	EXEC SQL SET search_path TO 'bd';
+
+	EXEC SQL DISCONNECT conexaoBD;
+
+	return 0;
+
+sql_error:
+	printf("ERRO: %s - %s\n", SQLSTATE, sqlca.sqlerrm.sqlerrmc);
+
+	return 1;
+}
+
+/*
+Exercício 2: Para cada um dos programas dos Exercício 1, discuta os problemas de atomicidade (se
+houver algum) que podem ocorrer no caso de uma falha (queda) do sistema no meio da execução do
+programa.
+
+a) Nesta função o equipamento é removido inicialmente da sua tabela e depois de produtos, portanto
+se ocorrer um erro no sistema após a remoção do equipamento mas antes de remover o produto, existirá
+um produto sem nenhuma referência em sua respectiva tabela.
+
+b) Como o aumento de preços ocorre uma vez pra cada laptop, então caso o sistema tenha falha durante 
+o aumento de preço, apenas os laptops atualizados até então terão o acréscimo e os demais manterão o
+preço antigo, tornando impossível saber onde o erro ocorreu a menos que se compara_angulos com um backup anterior.
+
+c) Caso o sistema falhe, a única consequência será a não inserção da impressora.
+
+d) Caso o sistema falhe, a única consequência será mostrar uma lista incompleta.
+
+*/

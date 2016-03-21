@@ -1,0 +1,181 @@
+Nome: André Meneghelli Vale
+NUSP: 4898948
+
+Exercício 2
+
+*************************************   Mapeamento Modelo Relacional   *************************************
+Obs 1:
+	PK = chave primária
+	Unique = chave única
+	FK = chave estrangeira
+Obs 2:
+	Também deixei a definição dos domínios de dados apenas no modelo físico.
+
+Banco
+	Codigo		PK
+	Nome		Unique
+
+Cartao
+	Numero			PK
+	NumeroConta		PK
+	NumAgencia		PK
+	CodigoBanco		PK
+	CpfCliente		PK
+	DtEmissao
+	DtValidade
+	CodSeguranca
+	Tipo
+	NumeroConta FK Conta.Numero
+	NumAgencia FK Conta.NumAgencia
+	CodigoBanco FK Conta.CodigoBanco
+	CpfCliente	FK Cliente.Cpf
+
+Conta
+	Numero			PK
+	NumAgencia		PK
+	CodigoBanco		PK
+	CpfPrincipal
+	Saldo
+	NumAgencia FK Agencia.NumAgencia
+	CodigoBanco FK Agencia.CodigoBanco
+	CpfPrincipal FK Cliente.Cpf
+
+Cliente
+	Cpf			PK
+	Nome
+	DtNascimento
+
+ClientePlatina
+	Cpf			PK
+	LimiteEmprestimo
+	Cpf FK Cliente.Cpf
+
+Agencia
+	Estado
+	Cidade
+	Rua
+	CodigoBanco	PK
+	NumAgencia	PK
+	CodigoBanco FK Banco.Codigo
+
+Emprestimo
+	NumAgencia		PK
+	CodigoBanco 	PK
+	CpfCliente		PK
+	DtEmprestimo	PK
+	Valor
+	NumAgencia FK Agencia.NumAgencia
+	CodigoBanco FK Agencia.CodigoBanco
+	CpfCliente FK ClientePlatina.Cpf
+
+Telefone
+	DDD			PK
+	Numero		PK
+	CpfCliente	PK
+	CpfCliente FK Cliente.Cpf
+
+*****************************************   Modelo Físico   *****************************************
+
+Obs 1:
+	A escolha de uso dos domínios se deve ao fato de os tipos de dados não estarem especificados no
+diagrama conceitual, facilitando a alteração de um tipo de dado quando necessário.
+Obs 2:
+	Não restringi o valor do empréstimo pelo limite de crédito de um cliente platina,
+	desta forma é possível diminuir o limite de um cliente platina mesmo que ele possua um empréstimo maior
+	que o novo limite.
+Obs 3:
+	Escolhi não gerar tabelas de Estado e Cidade, embora o armazenamento textual represente um grande
+	desperdício de memória.
+	O estado está definido como dois caractéres, então é armazenada apenas a sigla da unidade federativa.
+
+CREATE DOMAIN "CPF" AS character(11) NOT NULL;
+CREATE DOMAIN "CodBanco" AS character varying(10) NOT NULL;
+CREATE DOMAIN "CodSeguranca" AS character(3) NOT NULL;
+CREATE DOMAIN "DDD" AS character(2) NOT NULL DEFAULT 11;
+CREATE DOMAIN "Limite" AS money NOT NULL CONSTRAINT "Limite_check" CHECK (((VALUE > '$100.00'::money) AND (VALUE <= '$100,000.00'::money)));
+CREATE DOMAIN "NumAgencia" AS character varying(10) NOT NULL;
+CREATE DOMAIN "NumCartao" AS character varying(100) NOT NULL;
+CREATE DOMAIN "NumConta" AS character varying(30) NOT NULL;
+
+CREATE TYPE tipocartao AS ENUM (
+    'débito',
+    'crédito',
+    'débito/crédito'
+);
+
+CREATE TABLE "Banco" (
+    "Codigo" "CodBanco" NOT NULL,
+    "Nome" character varying(50),
+    UNIQUE ("Nome"),
+    PRIMARY KEY ("Codigo")
+);
+
+CREATE TABLE "Agencia" (
+    "CodigoBanco" "CodBanco" NOT NULL,
+    "NumAgencia" "NumAgencia" NOT NULL,
+    "Rua" character varying(100) NOT NULL,
+    "Cidade" character varying(100) NOT NULL,
+    "Estado" character(2) NOT NULL,
+    PRIMARY KEY ("CodigoBanco", "NumAgencia"),
+    FOREIGN KEY ("CodigoBanco") REFERENCES "Banco"("Codigo") ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE "Cliente" (
+    "Cpf" "CPF" NOT NULL,
+    "Nome" character varying(100) NOT NULL,
+    "DtNascimento" date NOT NULL,
+    PRIMARY KEY ("Cpf")
+);
+
+CREATE TABLE "ClientePlatina" (
+    "Cpf" "CPF" NOT NULL,
+    "LimiteEmprestimo" "Limite",
+    PRIMARY KEY ("Cpf"),
+    FOREIGN KEY ("Cpf") REFERENCES "Cliente"("Cpf") ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE "Emprestimo" (
+    "NumAgencia" "NumAgencia" NOT NULL,
+    "CodigoBanco" "CodBanco" NOT NULL,
+    "CpfCliente" "CPF" NOT NULL,
+    "DtEmprestimo" date NOT NULL,
+    "Valor" "Limite",
+    PRIMARY KEY ("NumAgencia", "CodigoBanco", "CpfCliente", "DtEmprestimo"),
+    FOREIGN KEY ("CpfCliente") REFERENCES "ClientePlatina"("Cpf") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("NumAgencia", "CodigoBanco") REFERENCES "Agencia"("NumAgencia", "CodigoBanco") ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE "Telefone" (
+    "CpfCliente" "CPF" NOT NULL,
+    "DDD" "DDD" NOT NULL,
+    "Numero" character varying(20) NOT NULL,
+    PRIMARY KEY ("CpfCliente", "DDD", "Numero"),
+    FOREIGN KEY ("CpfCliente") REFERENCES "Cliente"("Cpf") ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE "Conta" (
+    "Numero" "NumConta" NOT NULL,
+    "NumAgencia" "NumAgencia" NOT NULL,
+    "CodigoBanco" "CodBanco" NOT NULL,
+    "CpfPrincipal" "CPF" NOT NULL,
+    "Valor" money,
+    PRIMARY KEY ("Numero", "NumAgencia", "CodigoBanco"),
+    FOREIGN KEY ("CpfPrincipal") REFERENCES "Cliente"("Cpf") ON UPDATE CASCADE ON DELETE RESTRICT,
+    FOREIGN KEY ("NumAgencia", "CodigoBanco") REFERENCES "Agencia"("NumAgencia", "CodigoBanco") ON UPDATE CASCADE ON DELETE RESTRICT
+);
+
+CREATE TABLE "Cartao" (
+    "Numero" "NumCartao" NOT NULL,
+    "NumeroConta" "NumConta" NOT NULL,
+    "NumAgencia" "NumAgencia" NOT NULL,
+    "CodigoBanco" "CodBanco" NOT NULL,
+    "CpfCliente" "CPF" NOT NULL,
+    "DtEmissao" date DEFAULT now() NOT NULL,
+    "DtValidade" date,
+    "CodSeguranca" "CodSeguranca",
+    "Tipo" tipocartao DEFAULT 'débito'::tipocartao,
+    PRIMARY KEY ("Numero", "NumeroConta", "NumAgencia", "CodigoBanco", "CpfCliente"),
+    FOREIGN KEY ("CpfCliente") REFERENCES "Cliente"("Cpf") ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY ("NumeroConta", "NumAgencia", "CodigoBanco") REFERENCES "Conta"("Numero", "NumAgencia", "CodigoBanco") ON UPDATE CASCADE ON DELETE CASCADE,
+    CHECK ( DtValidade >= DtEmissao  + '2 years'::interval )
+);

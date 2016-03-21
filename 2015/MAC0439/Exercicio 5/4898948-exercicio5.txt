@@ -225,3 +225,4 @@ WHERE
 	(
 		SELECT modelo FROM produto WHERE tipo = 'pc' AND fabricante = 'C'
 	);
+	

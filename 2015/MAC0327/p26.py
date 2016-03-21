@@ -1,60 +1,49 @@
-__author__ = 'avale'
-
-import sys
-import select
-
-from pprint import pprint
-
-
-
-pprint()
-
-if select.select([sys.stdin,],[],[],0.0)[0]:
-    print "Have data!"
-else:
-    print "No data"
-
-
-
 def main():
-    mtz = [[], [], []]
-    i = 0
-    while i < 9:
-        buff = raw_input()
-        for c in buff:
-            if c == "X":
-                mtz[i/3].append(1)
-            elif c == "#":
-                mtz[i/3].append(0)
-            else:
-                mtz[i/3].append(-1)
-            i += 1
+    dic = {}
+    lados = {}
+    for i in xrange(4):
+        x1, y1, x2, y2 = map(int, raw_input().split())
 
-    lins = []
-    for i in xrange(3):
-        lins.append(sum(mtz[i]))
+        if (x1 != x2 and y1 != y2) or (x1 == x2 and y1 == y2):
+            print "NO"
+            exit(0)
 
-    dp = 0
-    ds = 0
-    cols = [0, 0, 0]
-    for i in xrange(3):
-        for j in xrange(3):
-            if i == j:
-                dp += mtz[j][i]
-            if i + j == 2:
-                ds += mtz[j][i]
-            cols[i] += mtz[j][i]
+        if x1 > x2 or (x1 == x2 and y1 > y2):
+            x1, y1, x2, y2 = x2, y2, x1, y1
 
-    all = lins + cols + [dp, ds]
-    print all
+        try:
+            lados[(x1, y1, x2, y2)] += 1
+        except KeyError:
+            lados[(x1, y1, x2, y2)] = 1
 
+        try:
+            dic[(x1, y1)] += 1
+        except KeyError:
+            dic[(x1, y1)] = 1
 
-    if 3 in all or 2 in all:
-        print "Crosses win"
-    elif -3 in all or all.count(-2) > 1:
-        print "Ouths win"
+        try:
+            dic[(x2, y2)] += 1
+        except KeyError:
+            dic[(x2, y2)] = 1
+
+    cx = cy = 0
+
+    if len(lados) < 4:
+        print "NO"
     else:
-        print "Draw"
+        for p in dic:
+            if dic[p] != 2:
+                cx = cy = 4
+                break
+            if p[0] == x2:
+                cx += 1
+            if p[1] == y2:
+                cy += 1
+
+        if cx == 4 or cy == 4:
+            print "NO"
+        else:
+            print "YES"
 
 if __name__ == '__main__':
     main()

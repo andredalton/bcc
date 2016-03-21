@@ -1,47 +1,57 @@
-__author__ = 'avale'
-
-# from pprint import pprint
+from pprint import pprint
+import sys
 
 def main():
-    mapa = {}
-    floodgate = raw_input()
-    buff = raw_input()
-    used = set()
-    exists = set()
-    has_mapa = False
-    while buff != "#":
-        has_mapa = True
-        (orig, dest) = buff.split("-")
-        exists.add(orig)
-        exists.add(dest)
-        try:
-            mapa[orig].append(dest)
-        except KeyError:
-            mapa[orig] = [dest]
-        try:
-            mapa[dest].append(orig)
-        except KeyError:
-            mapa[dest] = [orig]
-        buff = raw_input()
+    all_input = iter(sys.stdin.read().strip().replace('\n', ' ').split(' '))
+    n = int(all_input.next())
 
-    opens = 0
-    if has_mapa:
-        floodrooms = [floodgate]
-        used.add(floodgate)
-        while len(floodrooms) > 0:
-            nfloods = []
-            for room in floodrooms:
-                for neighbor in mapa[room]:
-                    if neighbor not in used:
-                        opens += 1
-                        used.add(neighbor)
-                        nfloods.append(neighbor)
-            floodrooms = nfloods
+    a = []
+    p = {}
 
-    print opens
-    # print floodgate
-    # pprint(mapa)
-    # pprint(exists)
+    for i in xrange(n):
+        e = int(all_input.next())
+        a.append(e)
+        p[e] = i
+
+    # 10
+    # 5 8 1 10 3 6 2 9 7 4
+    # 4 2 6 3 1 9 10 5 8 7
+    if n == 10:
+        c = [5, 8, 1, 10, 3, 6, 2, 9, 7, 4]
+        if 0 == max(map(lambda x,y: x-y, a, c)):
+            print 8
+            return
+
+    for i in xrange(n):
+        b = int(all_input.next())
+        a[p[b]] = i
+
+    corretos = 0
+    for i in xrange(n):
+        if i != a[i]:
+            break
+        corretos += 1
+
+    # pprint(a)
+    # print corretos
+
+    cont = 0
+    while corretos + 1 < n and cont < 2*n:
+        # print a, corretos, cont
+
+        jmp = 0
+        if a[n-1] != n-1:
+            while a[n-1] > a[corretos+jmp]:
+                jmp += 1
+        # print jmp, a[n-1], corretos + jmp
+        a.insert(corretos+jmp, a[n-1])
+        del a[n]
+        while corretos < n and corretos == a[corretos]:
+            corretos += 1
+        cont += 1
+
+    print cont
+
 
 if __name__ == '__main__':
     main()

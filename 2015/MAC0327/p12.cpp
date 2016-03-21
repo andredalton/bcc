@@ -1,78 +1,95 @@
-#include <iostream>
-#include <cstdlib>
-#include <string>
-#include <cstring>
-#include <list>
-#include <set>
-#include <vector>
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
 
 using namespace std;
 
-static const unsigned long int MAX_SIZE = 10000;
-static const unsigned long int INITIAL_NUMBER_OF_BUS = 1;
+const int maxn=155;
+const int inf=1000;
+int w[maxn][maxn];
+int lx[maxn],ly[maxn];
+bool s[maxn],t[maxn];
+int match[maxn];
+int slack[maxn];
+int n;
 
-int main() {
-    unsigned short **mtz;
+bool metodoHungaro(int u) {
+	s[u] = true;
+	for(int v=1;v<=n;v++)
+	{
+		if(!t[v] && lx[u]+ly[v] == w[u][v])
+		{
+			t[v] = true;
+			if(match[v]==-1 || metodoHungaro(match[v]))
+			{
+				match[v]=u;
+				return true;
+			}
+		}
+		else if(slack[v] > lx[u]+ly[v]-w[u][v]) slack[v] = lx[u]+ly[v]-w[u][v];
+	}
+	return false;
+}
 
-    mtz = (unsigned short **) malloc(MAX_SIZE*sizeof(short*));
-    for (short i=0; i<MAX_SIZE; i++) {
-        mtz[i] = (unsigned short *) malloc(MAX_SIZE*sizeof(short));
-        memset(mtz[i], 0, MAX_SIZE*sizeof(short));
-    }
+int KM() {
+	int sum=0;
+	memset(match,-1,sizeof(match));
+	memset(ly,0,sizeof(ly));
+	for(int i=1;i<=n;i++)
+	{
+		lx[i]= -inf;
+		for(int j=1;j<=n;j++)
+			lx[i]=max(lx[i],w[i][j]);
+	}
+	for(int i=1;i<=n;i++)
+	{
+		while(true)
+		{
+			memset(s,false,sizeof(s));
+			memset(t,false,sizeof(t));
+			for(int j=1;j<=n;j++)
+				slack[j]=inf;
+			if(metodoHungaro(i)) break;
+			else
+			{
+				int a=inf;
+				for(int j=1;j<=n;j++)
+					if(!t[j] && slack[j]<a)
+						a=slack[j];
+				for(int j=1;j<=n;j++)
+				{
+					if(s[j]) lx[j]-=a;
+					if(t[j]) ly[j]+=a;
+				}
+			}
+		}
+	}
+	for(int i=1;i<=n;i++) sum+=w[match[i]][i];
+	return sum;
+}
 
-    int n;
-    unsigned short maxid = 0;
-    cin >> n;
-
-    vector< set<unsigned short> > ins(INITIAL_NUMBER_OF_BUS);
-    vector< set<unsigned short> > outs(INITIAL_NUMBER_OF_BUS);
-
-    for (unsigned short i=1; i<=n; i++) {
-        unsigned short m, a, b;
-        cin >> m >> a;
-        for (int j=0; j<m; j++) {
-            cin >> b;
-            if (b>maxid)
-                maxid = b;
-            while (maxid - 1 >= outs.size()) {
-                ins.resize(ins.size() * 2);
-                outs.resize(outs.size() * 2);
-            }
-            outs[a - 1].insert(i);
-            ins[b - 1].insert(i);
-            mtz[a-1][b-1] = i;
-            a = b;
-        }
-    }
-
-    cout << maxid << endl;
-
-    for (int i=0; i<maxid; i++) {
-        for (int j=0; j<maxid; j++) {
-            cout << mtz[i][j] << " ";
-        }
-        cout << endl;
-    }
-
-    cout << endl;
-
-    for (auto& it : outs) {
-        for (auto& it2 : it) {
-            cout << it2 << " ";
-        }
-        cout << endl;
-    }
-
-    cout << endl;
-
-    for (auto& it : ins) {
-        for (auto& it2 : it) {
-            cout << it2 << " ";
-        }
-        cout << endl;
-    }
-
-
-
-    return 0;
+int main()
+{
+	int peso;
+	while(scanf("%d",&n)!=EOF)
+	{
+		for(int i=1;i<=n;i++)
+		{
+			peso=0;
+			for(int j=1;j<=n;j++)
+			{
+				scanf("%d",&w[i][j]);
+				peso+=w[i][j];
+			}
+			for(int j=1;j<=n;j++)
+				w[i][j]=peso-w[i][j];
+		}
+		for(int i=1;i<=n;i++)
+		{
+			for(int j=1;j<=n;j++)
+				w[i][j] = -w[i][j];
+		}
+		printf("%d\n",-KM());
+	}
+	return 0;
 }

@@ -1,0 +1,26 @@
+void getStudio () {
+  EXEC SQL BEGIN DECLARE SECTION;
+     char studioName[50], studioAddr[256];
+     char SQLSTATE[6];
+  EXEC SQL END DECLARE SECTION;
+
+  printf("Digite o nome do estudio e o seu endereço: \n");
+  scanf("%[^\n]", studioName);
+  scanf("%[^\n]", stdioAddr);
+
+  EXEC SQL INSERT INTO Studio(name, address)
+  VALUES (:studioName, :studioAddr);
+}
+
+int main(){
+
+EXEC SQL BEGIN DECLARE SECTION;
+const char *target = "public@localhost";
+const char *user = "postgres";
+const char *passwd = "postgres";
+EXEC SQL END DECLARE SECTION;
+ 
+EXEC SQL CONNECT TO :target USER :user USING :passwd;
+
+  return 0;
+}

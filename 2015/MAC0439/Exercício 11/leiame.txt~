@@ -1,0 +1,25 @@
+>>>>>> Instruções para execução do exemplo
+
+>> Primeiro, conecte-se a uma máquina que tenha o pacote do ECPG instalado (as da sala 6 do CEC têm). 
+  As máquinas da rede Linux também possuem o ECPG.  Caso queiram usar ECPG em uma máquina da rede Linux via acesso remoto, a orientação é a seguinte:
+
+1) faça o login na rede Linux via ssh normalmente 
+
+2) edite o arquivo fonte do programa do exemplo (o "ex_ecpg.pgc"), para trocar as informações de conexão com o banco de dados para as informações do seu banco (na função main, no final do arquivo, mude os valores das variáveis compartilhadas bd_url, usuario e senha).
+
+3) Para copiar o arquivo fonte do programa do exemplo (o "ex_ecpg.pgc") de uma máquina do CEC para a sua conta na Rede Linux, você pode usar o comando scp:
+
+$ scp ex_ecpg.pgc seu_username@shell.linux.ime.usp.br:/algum/diretorio/remoto
+
+4) Para fazer o pré-processamento do programa em C + SQL (PostgreSQL): 
+$ ecpg ex_ecpg.pgc
+
+5) O comando anterior gerará o arquivo ex_ecpg.c .
+   Para compilá-lo e gerar o executável "ex_ecpg" a partir dele, faça:
+
+$ gcc -I /usr/include/postgresql/ ex_ecpg.c -o ex_ecpg -lecpg
+
+6) Para executar o programa:
+$ ./ex_ecpg
+
+Obs.: O exemplo usa o esquema bd_filmes, que pode ser criado por meio do script "criacao_bd_filmes.sql". Caso você não tenha esse esquema em seu BD, você deve criá-lo usando o script disponibilizado junto com a lista 7 no Paca.

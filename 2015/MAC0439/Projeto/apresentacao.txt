@@ -1,0 +1,60 @@
+Slide 0
+	Quem nós somos
+
+Slide 1
+	Apresentação do problema:
+		- Atualmente os dados gerados em estabelecimentos médicos, na maioria das vezes, é utilizado apenas em mídia física
+		- Isso dificulta muito a recuperação e compartilhamento da informação
+		- Armazenamento físico também está sujeito a problemas como extravio ou destruição da informação
+		- Inviabiliza técnicas de cruzamento de dados
+		- Como evitar estes problemas?
+
+Slide 2
+	Slide grande com o nome da solução:
+		Prontuário eletrônico!
+
+Slide 3
+	Requisitos do sistema:
+		- armazenar informações do prontuário:
+			- diagnosticos de doenças, que seguem uma categoria hierárquica (dar um exemplo: doença cardíaca, infarto)
+			- solicitações de procedimentos médicos (aqui explicamos o que é um procedimento médico, exame, cirurgia, etc)
+			- prescrições de medicamentos
+			- resultados dos procedimentos (conteúdo e laudo de exame, ata de cirurgia, relatório de fisioterapia, etc)
+
+Slide 4
+	Requisitos do sistema:
+		- segurança:
+			- usuários: pacientes e médicos
+			- apenas os médicos podem inserir dados sobre diagnóstico, prescrição de medicamentos, e fazer pedidos de procedimentos médicos
+			- apenas pacientes e medicos podem inserir dados sobre os procedimentos
+			- nenhum usuário esta habilitado à apagar nenhum dos dados (histórico)
+
+Slide 5
+	Requisitos do sistema:
+		- NoQSL:
+			- Procedimentos possuem formatos distintos de dados (variando até mesmo entre os estabelecimentos médicos)
+			- Implementação relacional complicada
+			- Implementação relacional também é mais lenta do que o NoSQL
+
+Slide 6
+	Modelo conceitual (colocamos o simplificado?)
+
+Slide 7
+	Visões utilizadas
+
+Slide 8
+	Procedimentos e gatilhos utilizados
+
+Slide 9
+	Tecnologia utilizada
+
+Slide 10
+	Implementação:
+		- extensão de classe de usuário do django
+		- configuração de acessos a multiplos bancos de dados e usuários
+		- dificuldades tecnicas encontradas
+
+Slide 11
+	Conclusão e agradecimento.
+
+		

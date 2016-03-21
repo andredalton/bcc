@@ -1,0 +1,202 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define NO_ERRORS !(strcmp(SQLSTATE,"00000"))
+#define NO_MORE_TUPLES !(strcmp(SQLSTATE,"02000"))
+
+/*  Inclui um novo estudio na tabela Estudio, 
+   solicitando o seu nome e endereco ao 
+   usuario.  */
+void InsereEstudio() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		char nomeEstudio[50], enderecoEstudio[256];
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL WHENEVER SQLERROR SQLPRINT; //ou  EXEC SQL WHENEVER SQLERROR GOTO sql_error;
+ 
+	printf("\n*** Insercao de um novo estudio ***\n");	
+	printf("Digite o nome do estudio: ");
+	scanf("%[^\n]", nomeEstudio);
+	getchar(); /* elimina o enter armazenado no buffer de leitura */
+	printf("Digite o endereco do estudio: ");
+	scanf("%[^\n]", enderecoEstudio);
+	getchar();
+
+	EXEC SQL INSERT INTO Estudio(nome, endereco) VALUES (:nomeEstudio, :enderecoEstudio);
+
+	EXEC SQL COMMIT;
+/*
+	return;
+sql_error:
+	printf("ERRO: %s\n", SQLSTATE);
+*/
+}
+
+/*  Solicita o nome de um estudio e exibe o
+    patrimonio do presidente do estudio  */
+void ExibePatrimonio() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		char nomeEstudio [50];
+		int patrimonioPresidente;
+	EXEC SQL END DECLARE SECTION;
+
+	printf("\n*** Mostra o patrimonio do presidente do estudio ***\n");	
+	printf("Digite o nome do estudio: ");
+	scanf("%[^\n]", nomeEstudio);
+	getchar();
+
+	EXEC SQL SELECT patrimonio INTO :patrimonioPresidente
+		 FROM Estudio, ExecutivoDeCinema
+	         WHERE num_certificado_presidente = num_certificado AND Estudio.nome = :nomeEstudio;
+
+	if (NO_ERRORS) 
+		printf("O patrimonio do presidente do estudio eh: %d \n", patrimonioPresidente);
+	else
+		printf("Nao foi possivel responder a consulta.\n");
+}
+
+/*
+  Separa os executivos em faixas de patrimonio e  
+  mostra quantos executivos estao em cada faixa.
+  Dois executivos estao em uma mesma faixa se
+  seus rendimentos possuem a mesma quantidade de
+  digitos. 
+*/
+void FaixasPatrimonio() {
+	int i, digitos, contadores[15];
+	EXEC SQL BEGIN DECLARE SECTION;
+		int patrimonio;
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL DECLARE cursorExecutivos CURSOR FOR
+		SELECT patrimonio FROM ExecutivoDeCinema;
+	
+	EXEC SQL OPEN cursorExecutivos;
+	printf("\n*** Numero de executivos por faixa de patrimonio ***\n");	
+	for(i = 0; i<15; i++)  contadores[i] = 0;
+	while (1) {
+		EXEC SQL FETCH FROM cursorExecutivos INTO :patrimonio;
+		if (NO_MORE_TUPLES) break;
+		digitos = 1;
+		while ((patrimonio /= 10) > 0) digitos++;
+			if (digitos <= 14) contadores[digitos]++;
+	}
+	EXEC SQL CLOSE cursorExecutivos;
+	for (i= 0; i<15; i++)
+		printf("digitos = %d: numero de executivos = %d\n", i, contadores[i]) ;
+}
+
+/* Modifica o patrimonio dos executivos */
+void MudaPatrimonio() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		int numCert;
+		long int patrimonio;
+		char nomeExec[31], endExec[256];
+	EXEC SQL END DECLARE SECTION; 
+
+	EXEC SQL WHENEVER SQLERROR GOTO sql_error;
+
+	EXEC SQL DECLARE cursorExecutivos2 CURSOR FOR SELECT * FROM ExecutivoDeCinema;
+	EXEC SQL OPEN cursorExecutivos2;
+
+	printf("\n*** Modifica o patrimonio dos executivos ***\n");	
+	while (1) {
+		EXEC SQL FETCH FROM cursorExecutivos2 INTO :numCert, :nomeExec, :endExec, :patrimonio;
+	if (NO_MORE_TUPLES) break;
+	if (patrimonio < 1000)
+		EXEC SQL DELETE FROM ExecutivoDeCinema 
+                WHERE CURRENT OF cursorExecutivos2;
+	else
+		EXEC SQL UPDATE ExecutivoDeCinema SET patrimonio = 0.5 * patrimonio
+ 		WHERE CURRENT OF cursorExecutivos2;
+	}
+	EXEC SQL CLOSE cursorExecutivos2;
+	
+	EXEC SQL COMMIT;
+	return;
+
+sql_error:
+	printf("ERRO: %s - %s\n", SQLSTATE, sqlca.sqlerrm.sqlerrmc);
+}
+
+/* Executa um comando SQL qualquer digitado pelo usuario */
+void LeComando(){
+	EXEC SQL BEGIN DECLARE SECTION;
+		char consulta[1024];
+	EXEC SQL END DECLARE SECTION;
+
+	printf("\n*** Executa um comando dinamico ***\n");	
+	printf("Digite um comando SQL de modificação do BD: ");
+	scanf("%[^\n]", consulta);
+	getchar();
+
+	EXEC SQL WHENEVER SQLERROR GOTO sql_error;
+
+	EXEC SQL PREPARE ConsultaUsuario FROM :consulta;
+	EXEC SQL EXECUTE ConsultaUsuario;
+	//ou EXEC SQL EXECUTE IMMEDIATE :consulta;
+
+	return;
+
+sql_error:
+	printf("ERRO: %s - %s\n %s", SQLSTATE, sqlca.sqlerrm.sqlerrmc, consulta);
+}
+
+void ObtemData(){
+	EXEC SQL BEGIN DECLARE SECTION;
+		char data_hora[30];
+		char data[11];
+		char hora[19];
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL WHENEVER SQLERROR SQLPRINT;
+	
+	EXEC SQL SELECT current_timestamp INTO :data_hora; 
+	printf("\nData e hora: %s \n\n", data_hora);	
+	
+	EXEC SQL SELECT current_date INTO :data;
+	printf("\nSomente data: %s \n\n", data);	
+
+        EXEC SQL SELECT current_time INTO :hora;
+	printf("\nSomente hora: %s \n\n", hora);	
+}
+
+int main(){
+	EXEC SQL BEGIN DECLARE SECTION;
+		const char *bd_url = "usuario@postgresql.linux.ime.usp.br:5432";
+		const char *usuario = "usuario";
+		const char *senha = "senha";
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL WHENEVER SQLERROR GOTO sql_error; 
+
+        EXEC SQL CONNECT TO :bd_url AS conexaoBD USER :usuario USING :senha;
+
+	EXEC SQL SET search_path TO 'bd_filmes';
+
+	/* Testa as funcoes criadas */
+	InsereEstudio();
+	if (NO_ERRORS) {
+		ExibePatrimonio();
+		if (NO_ERRORS) { 
+			FaixasPatrimonio();
+			if (NO_ERRORS) {
+				MudaPatrimonio(); 
+				if (NO_ERRORS) { 
+					LeComando();
+					if (NO_ERRORS)  
+        					ObtemData(); 
+				}
+			}
+		}
+	}
+        
+        EXEC SQL DISCONNECT conexaoBD;
+
+	return 0;
+
+sql_error:
+	printf("ERRO: %s - %s\n", SQLSTATE, sqlca.sqlerrm.sqlerrmc);
+
+	return 1;
+}

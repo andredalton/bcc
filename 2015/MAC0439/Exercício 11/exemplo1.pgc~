@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define NO_ERRORS !(strcmp(SQLSTATE,"00000"))
+#define NO_MORE_TUPLES !(strcmp(SQLSTATE,"02000"))
+
+/*  Inclui um novo estudio na tabela Studio, 
+   solicitando o seu nome e endereco ao 
+   usuario.  */
+void getStudio() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		char studioName[50], studioAddr[256];
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL WHENEVER SQLERROR SQLPRINT; //GOTO sql_error;
+ 
+	printf("\n*** Insertion a new studio ***\n");	
+	printf("Enter the name of the studio: ");
+	scanf("%s", studioName);
+	printf("Enter the address of the studio: ");
+	scanf("%s", studioAddr);
+
+	EXEC SQL INSERT INTO Studio(name, address) VALUES (:studioName, :studioAddr);
+
+	EXEC SQL COMMIT;
+/*
+sql_error:
+	printf("ERROR: %s\n", SQLSTATE);
+*/
+}
+
+/*  Inclui um novo estudio na tabela Studio, 
+   solicitando o seu nome e endereco ao 
+   usuario.  */
+void printNetWorth() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		char studioName [50];
+		int presNetWorth;
+	EXEC SQL END DECLARE SECTION;
+
+	printf("\n*** Show the net worth of the studio's president ***\n");	
+	printf("Enter the name of the studio: ");
+	scanf("%s", studioName);
+
+	EXEC SQL SELECT netWorth INTO :presNetWorth
+		 FROM Studio , MovieExec
+	         WHERE presC = cert AND Studio.name = :studioName;
+
+	if (NO_ERRORS) 
+		printf("The net worth of the studio's president is: %d \n", presNetWorth);
+	else
+		printf("It was not possible to answer the query.\n");
+}
+
+/*
+  Separa os executivos em faixas de salarios e  
+  mostra quantos executivos estao em cada faixa.
+  Dois executivos estao em uma mesma faixa se
+  seus rendimentos possuem a mesma quantidade de
+  digitos. 
+*/
+void worthRanges() {
+	int i, digits, counts[15];
+	EXEC SQL BEGIN DECLARE SECTION;
+		int worth;
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL DECLARE execCursor CURSOR FOR
+		SELECT netWorth FROM MovieExec;
+	
+	EXEC SQL OPEN execCursor;
+	printf("\n*** Number of executives by net worth bands ***\n");	
+	for(i = 0; i<15; i++)  counts[i] = 0;
+	while (1) {
+		EXEC SQL FETCH FROM execCursor INTO :worth;
+		if (NO_MORE_TUPLES) break;
+		digits = 1;
+		while ((worth /= 10) > 0) digits++;
+			if (digits <= 14) counts[digits]++;
+	}
+	EXEC SQL CLOSE execCursor;
+	for (i= 0; i<15; i++)
+		printf("digits = %d: number of execs = %d\n", i, counts[i]) ;
+}
+
+/* Modifica o salario dos executivos */
+void changeWorth() {
+	EXEC SQL BEGIN DECLARE SECTION;
+		int certNo, worth;
+		char execName[31], execAddr[256];
+	EXEC SQL END DECLARE SECTION; 
+
+	EXEC SQL WHENEVER SQLERROR GOTO sql_error;
+
+	EXEC SQL DECLARE execCursor2 CURSOR FOR SELECT * FROM MovieExec;
+	EXEC SQL OPEN execCursor2;
+
+	printf("\n*** Modify net worth of executives ***\n");	
+	while (1) {
+		EXEC SQL FETCH FROM execCursor2 INTO :certNo, :execName, :execAddr, :worth;
+	if (NO_MORE_TUPLES) break;
+	if (worth < 1000)
+		EXEC SQL DELETE FROM MovieExec 
+                WHERE CURRENT OF execCursor2;
+	else
+		EXEC SQL UPDATE MovieExec SET netWorth = 2 * netWorth
+ 		WHERE CURRENT OF execCursor2;
+	}
+	EXEC SQL CLOSE execCursor2;
+	
+	EXEC SQL COMMIT;
+
+sql_error:
+	printf("ERROR: %s - %s\n", SQLSTATE, sqlca.sqlerrm.sqlerrmc);
+}
+
+/* Executa um comando SQL qualquer digitado pelo usuario */
+void readQuery(){
+	EXEC SQL BEGIN DECLARE SECTION;
+		char query[1024];
+	EXEC SQL END DECLARE SECTION;
+
+	printf("\n*** Execute a dynamic query ***\n");	
+	printf("Enter the query: ");
+	scanf("%[^\n]s", query);
+
+	EXEC SQL WHENEVER SQLERROR GOTO sql_error;
+
+	EXEC SQL EXECUTE IMMEDIATE :query;
+	//EXEC SQL PREPARE SQLquery FROM :query;
+	//EXEC SQL EXECUTE SQLquery;
+
+sql_error:
+	printf("ERROR: %s - %s\n %s", SQLSTATE, sqlca.sqlerrm.sqlerrmc, query);
+}
+
+int main(){
+	EXEC SQL BEGIN DECLARE SECTION;
+		const char *target = "bd_teste@data.ime.usp.br:23001";
+		const char *user = "kelly";
+		const char *passwd = "senha";
+	EXEC SQL END DECLARE SECTION;
+
+	EXEC SQL WHENEVER SQLERROR GOTO sql_error; 
+
+        EXEC SQL CONNECT TO :target AS conexaoBD USER :user USING :passwd;
+
+	EXEC SQL SET search_path TO 'aula14';
+
+	/*  getStudio(); */
+	/* printNetWorth(); */
+	/* worthRanges();  */
+	/* changeWorth(); */
+	readQuery();
+
+        EXEC SQL DISCONNECT conexaoBD;
+
+	return 0;
+
+sql_error:
+	printf("ERROR: %s - %s\n", SQLSTATE, sqlca.sqlerrm.sqlerrmc);
+
+	return 1;
+}
