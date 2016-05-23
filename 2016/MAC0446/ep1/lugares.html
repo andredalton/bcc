@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="js/geral.js" language="JavaScript"></script>
+    <script language="JavaScript">
+        var urlParams = parseURLParams(document.URL);
+        var day = urlParams['dia'];
+        var filme = urlParams['filme'];
+        var horario = urlParams['horario'];
+    </script>
+    <title>eTicket -</title>
+    <title></title>
+</head>
+<body>
+<script language="JavaScript">
+    document.title += " " + filmesNames[filme];
+    document.write("<a href='index.html'>" + nomeDia(day) + "</a> >");
+    document.write("<a href='filmes.html?dia=" + day + "'> " + filmesNames[filme] + "</a> > ");
+    document.write("<a href='horarios.html?dia=" + day + "&filme=" + filme + "'> " + horarios[horario] + "</a> > ");
+</script>
+
+<br />
+<br />
+
+<script language="JavaScript">
+    for (i = 0; i < 30; i++) {
+        for (j = 0; j < 50; j++) {
+            if (Math.random()>ocupacao[filme]) {
+                document.write("o");
+            }
+            else {
+                document.write("v");
+            }
+        }
+        document.write("<br />");
+    }
+</script>
+
+</body>
+</html>
+

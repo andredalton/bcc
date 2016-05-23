@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="js/geral.js" language="JavaScript"></script>
+    <title>eTicket - Filmes</title>
+</head>
+<body>
+
+<script language="JavaScript">
+    var urlParams = parseURLParams(document.URL);
+    var day = urlParams['dia'];
+    document.write("<a href='index.html'>" + nomeDia(day) + "</a> >");
+</script>
+
+<br />
+<br />
+
+<script language="JavaScript">
+    for (i = 0; i < 4; i++) {
+        imprimeFilme(day, i);
+    }
+</script>
+
+</body>
+</html>
