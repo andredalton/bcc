@@ -1,0 +1,50 @@
+NUSP    Nome
+4898948 André Meneghelli Vale
+5173890 Evandro Fernandes Giovanini
+7289482 Gilmar Cintra da Silva
+8515919 Victor Oreliana Fernandes Faria
+
+Comentários pertinentes.
+
+ALU: Arithmetic Logic Unit, contém duas entradas de dados de 8 bits
+representando dois operandos e uma entranda de 3 bits representando o operador.
+Contém duas saídas, uma com 8 bits representando o resultado a outra de 1 bit
+representando o overflow (caso exista).
+
+    As operações possíveis são soma, subtração, multiplicação, divisão e resto
+e serão descritas a seguir. As operações são calculadas paralelamente e apenas
+o resultado e o overflow da operação escolhidas são devolvidos por este circuito
+auxiliado pelos circuitos Seletor1 e Seletor8 para 1 e 8 bits respesctivamente.
+
+
+Soma: A soma é montada com o auxílio do circuito Half Adder que soma os dois
+primeiros bits e o Full Adder que soma os bits restantes. Retorna o resultado
+em 8 bits e um bit para overflow.
+
+
+Subtração: É implementada usando a soma do primeiro operando com o complemento
+de dois do segundo. Para isso foi criado um circuito pra calcular complemento
+de 2. Retorna o resultado em 8 bits e overflow em 1.
+
+
+Multiplicação: A multiplicação é realizada com o algoritmo de Baugh-Wooley, isto
+é, cada bit do resultado será dado por uma soma proveniente dos bits da interação
+e dos possíveis carries das operações anteriores - obviamente a primeira soma não
+recebe carry.
+
+     AB
+  x  CD
+---------------------------------------------------
+          DxA      DxB
++         CxB
+   AxC
+----------------------------------------------------
+(Carry3)  (AC + Carry2)   (DA + CB + Carry1)   (DB)
+
+O circuito implementa essa ideia para 8 bits lidando com o sinal dos números.
+
+
+Divisão: A divisão foi criada usando um circuito auxiliar de forma a combinar
+sucessivas subtrações da esquerda para a direita sem o uso do clock. Entram dois
+operandos com 8 bits, retornando 2 operandos de 8 bits para quociente e resto.
+Neste caso usamos o bit de overflow pra sinalizar divisão por zero.
